@@ -14,7 +14,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.util.Random;
@@ -23,13 +22,13 @@ import javafx.animation.AnimationTimer;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
-import javafx.scene.input.KeyEvent;
 
 public class GameViewManager {
 	
 	private AnchorPane gamePane;
 	private Scene gameScene;
 	private Stage gameStage;
+
 	
 	private static final int GAME_WIDTH = 600;
 	private static final int GAME_HEIGHT = 800;
@@ -44,14 +43,15 @@ public class GameViewManager {
 	private GridPane gridPane1;
 	private GridPane gridPane2;
 	private final static String BACKGROUND_IMAGE = "application/gamebg.jpeg";
-	private StackPane blocksPane;
+//	private StackPane blocksPane;
 	
 	private final static String BALL_IMAGE = "application/ball_bowling2.png";
 	private ImageView[] balls;
 	private Random randomPositionGenerator;
 	
 	private ImageView coin,shield,block_destroyer,magnet,speedup,slomo,multiplier;
-	private GameRectangle wall;
+	private Rectangle wall;
+	private Palette colors;
 
 	private SmallInfoLabel coinLabel;
 	private int coins;
@@ -66,6 +66,7 @@ public class GameViewManager {
 
 	private final static String BLOCK_IMAGE = "application/red_button07.png";
 //	private ImageView[] blocks;
+//	private GameRectangle[] blocks;
 	private GameRectangle[] blocks;
 
 	//private StackPane[] blocksPane;
@@ -123,6 +124,7 @@ public class GameViewManager {
 		this.menuStage.hide();
 		createBackground();
 		createSnake();
+		colors = new Palette();
 		createGameElements();
 		createGameLoop();
 		gameStage.setTitle("Snakes vs Blocks");
@@ -165,7 +167,7 @@ public class GameViewManager {
 		blocks = new GameRectangle[10];
 
 		for (int i=0; i<blocks.length; i++) {
-			blocks[i] = new GameRectangle();
+			blocks[i] = new GameRectangle(i,gamePane,colors);
 
 //			blocks[i].setHeight(60);
 //			blocks[i].setHeight(60);
@@ -173,12 +175,12 @@ public class GameViewManager {
 //			blocks[i].setLayoutY(100);
 //			blocks[i].setLayoutX(60 * i);
 
-			blocks[i].createRectangle("20",gamePane);
+//			blocks[i].createRectangle("20",gamePane);
 //			gamePane.getChildren().add(blocks[i]);
 		}
 
 //		for (int i=0; i<blocks.length; i++) {
-			wall = new GameRectangle();
+			wall = new Rectangle();
 
 			wall.setWidth(15);
 			wall.setFill(Color.WHITE);
@@ -189,23 +191,6 @@ public class GameViewManager {
 
 			gamePane.getChildren().add(wall);
 //		}
-
-			StackPane pane = new StackPane();
-			int value = 20;
-			String name = value+"";
-			Label text = new Label(name);
-			text.setTextFill(Color.WHITE);
-	//        text.setMinWidth(100);
-	//        text.setMinHeight(100);
-			text.setFont(new Font("Cambria", 32));
-			text.setStyle("-fx-font-weight: bold");
-			GameRectangle rect = new GameRectangle(60,60,gamePane);
-			rect.setFill(Color.BLUE);
-			// add to stackpane
-			pane.getChildren().addAll(rect,text);
-			pane.setAlignment(Pos.BASELINE_CENTER);
-			// display stackpane
-			gamePane.getChildren().add(pane);
 
             shield = new ImageView(SHIELD_IMAGE);
             shield.setFitHeight(25);
@@ -405,12 +390,12 @@ public class GameViewManager {
         return placeElement;
     }
 
-	private void setNewWallPosition(GameRectangle image) {
+	private void setNewWallPosition(Rectangle image) {
 		image.setLayoutX(randomPositionGenerator.nextInt(450));
 		image.setLayoutY(randomPositionGenerator.nextInt(100));
 	}
 
-	private void setNewWallDimension(GameRectangle image) {
+	private void setNewWallDimension(Rectangle image) {
 
 		Random r = new Random();
 		int low = 20;
