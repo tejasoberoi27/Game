@@ -280,7 +280,7 @@ public class GameViewManager {
 		}
 
 //		for (int i=0; i<blocks.length; i++) {
-			wall.setLayoutY(wall.getLayoutY()+7);
+			wall.setLayoutY(wall.getLayoutY()+5);
 //		}
  	}
 	
