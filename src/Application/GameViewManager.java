@@ -260,7 +260,7 @@ public class GameViewManager {
 
 		
 		for (int i=0; i<balls.length; i++) {
-			balls[i].setLayoutY(balls[i].getLayoutY()+7);
+			balls[i].setLayoutY(balls[i].getLayoutY()+5);
 			balls[i].setRotate(balls[i].getRotate()+4);
 		}
 		
@@ -277,7 +277,7 @@ public class GameViewManager {
 		}
 
 //		for (int i=0; i<blocks.length; i++) {
-			wall.setLayoutY(wall.getLayoutY()+7);
+			wall.setLayoutY(wall.getLayoutY()+5);
 //		}
  	}
 	
