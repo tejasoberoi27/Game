@@ -265,9 +265,9 @@ public class GameViewManager {
 			blocks[i].setLayoutY(blocks[i].getLayoutY()+7);
 		}
 
-		for (int i=0; i<blocks.length; i++) {
-			wall.setLayoutY(wall.getLayoutY()+0.5);
-		}
+//		for (int i=0; i<blocks.length; i++) {
+			wall.setLayoutY(wall.getLayoutY()+7);
+//		}
  	}
 	
 	private void elementBelowScreen() {
