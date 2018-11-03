@@ -45,10 +45,11 @@ public class GameViewManager {
 	
 	private final static String BALL_IMAGE = "application/ball_bowling2.png";
 	private ImageView[] balls;
-	Random randomPositionGenerator;
+	private Random randomPositionGenerator;
 	
 	private ImageView coin,shield,block_destroyer,magnet,speedup,slomo,multiplier;
-	private Rectangle wall;
+	private GameRectangle wall;
+
 	private SmallInfoLabel coinLabel;
 	private int coins;
 	private final static String COIN_IMAGE 	= "application/coin.png";
@@ -61,7 +62,9 @@ public class GameViewManager {
 
 
 	private final static String BLOCK_IMAGE = "application/red_button07.png";
-	private ImageView[] blocks;
+//	private ImageView[] blocks;
+	private GameRectangle[] blocks;
+
 	//private StackPane[] blocksPane;
 	
 	private final static int COIN_RADIUS = 12;
@@ -72,7 +75,7 @@ public class GameViewManager {
 
 
 	
-	public GameViewManager() {
+	GameViewManager() {
 		initializeStage();
 		createKeyListeners();
 		randomPositionGenerator = new Random();
@@ -143,21 +146,36 @@ public class GameViewManager {
 			gamePane.getChildren().add(balls[i]);
 		}
 		
-		blocks = new ImageView[10];	
-		
+//		blocks = new ImageView[10];
+//
+//		for (int i=0; i<blocks.length; i++) {
+//			blocks[i] = new ImageView(BLOCK_IMAGE);
+//			blocks[i].setFitHeight(60);
+//			blocks[i].setFitWidth(60);
+//
+//			blocks[i].setLayoutY(100);
+//			blocks[i].setLayoutX(60 * i);
+//
+//			gamePane.getChildren().add(blocks[i]);
+//		}
+
+				blocks = new GameRectangle[10];
+
 		for (int i=0; i<blocks.length; i++) {
-			blocks[i] = new ImageView(BLOCK_IMAGE);
-			blocks[i].setFitHeight(60);
-			blocks[i].setFitWidth(60);
-			
+			blocks[i] = new GameRectangle();
+
+			blocks[i].setHeight(60);
+			blocks[i].setHeight(60);
+
 			blocks[i].setLayoutY(100);
-			blocks[i].setLayoutX(60 * i);			
-			
-			gamePane.getChildren().add(blocks[i]);
+			blocks[i].setLayoutX(60 * i);
+
+			blocks[i].createRectangle("20",gamePane);
+//			gamePane.getChildren().add(blocks[i]);
 		}
 
 //		for (int i=0; i<blocks.length; i++) {
-			wall = new Rectangle();
+			wall = new GameRectangle();
 
 			wall.setWidth(15);
 			wall.setFill(Color.WHITE);
@@ -303,7 +321,6 @@ public class GameViewManager {
 		//Logic for placing block ends
 
         //Logic for placing shield begins
-        boolean placeShield = false;
         if (shield.getLayoutY() > 1200) {
 
             if(findChance(4,500)) {
@@ -367,12 +384,12 @@ public class GameViewManager {
         return placeElement;
     }
 
-	private void setNewWallPosition(Rectangle image) {
+	private void setNewWallPosition(GameRectangle image) {
 		image.setLayoutX(randomPositionGenerator.nextInt(450));
 		image.setLayoutY(randomPositionGenerator.nextInt(100));
 	}
 
-	private void setNewWallDimension(Rectangle image) {
+	private void setNewWallDimension(GameRectangle image) {
 
 		Random r = new Random();
 		int low = 20;
