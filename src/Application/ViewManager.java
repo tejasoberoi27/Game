@@ -27,8 +27,7 @@ public class ViewManager {
 	
 	private final static int MENU_BUTTONS_START_X = 300;
 	private final static int MENU_BUTTONS_START_Y = 200;
-	
-	private GameSubscene startGameSubscene;
+
 	
 	List<MainPageButton> menuButtons;
 	
@@ -83,6 +82,15 @@ public class ViewManager {
 		button3.setLayoutX(MENU_BUTTONS_START_X);
 		button3.setLayoutY(MENU_BUTTONS_START_Y + 200);
 		menuButtons.add(button3);
+
+		button3.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				Leaderboard leaderboard = new Leaderboard();
+				leaderboard.createNewLeaderboard(mainStage);
+				//gameManager.createNewGame(mainStage);
+			}
+		});
 		
 		MainPageButton button4 = new MainPageButton("EXIT GAME");		
 		button4.setLayoutX(MENU_BUTTONS_START_X);
@@ -115,4 +123,6 @@ public class ViewManager {
 		mainPane.getChildren().add(logo);
 		
 	}
+
+
 }
