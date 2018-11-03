@@ -26,16 +26,16 @@ import javafx.geometry.Pos;
 
 public class GameViewManager {
 	
-	private AnchorPane gamePane;
+	AnchorPane gamePane;
 	private Scene gameScene;
 	private Stage gameStage;
 
 	
-	private static final int GAME_WIDTH = 600;
-	private static final int GAME_HEIGHT = 800;
+	static final int GAME_WIDTH = 600;
+	static final int GAME_HEIGHT = 800;
 	
 	private Stage menuStage;
-	private ObservableList<Node> snake;
+//	private ObservableList<Node> snake;
 	
 	private boolean isLeftKeyPressed;
 	private boolean isRightKeyPressed;	
@@ -48,12 +48,13 @@ public class GameViewManager {
 //	private StackPane blocksPane;
 	
 	private final static String BALL_IMAGE = "application/ball_bowling2.png";
-	private ImageView[] balls;
+//	private ImageView[] balls;
 	private Random randomPositionGenerator;
 	
 	private ImageView coin,shield,block_destroyer,magnet,speedup,slomo,multiplier;
 	private Rectangle wall;
 	private Palette colors;
+	private Snake player;
 
 	private SmallInfoLabel coinLabel;
 	private int coins;
@@ -64,8 +65,6 @@ public class GameViewManager {
 	private final static String SPEEDUP_IMAGE 	= "application/icons8-voltage-64.png";
 	private final static String SLOMO_IMAGE 	= "application/icons8-snail-48.png";
 	private final static String MULTIPLIER_IMAGE 	= "application/icons8-diamond-48.png";
-
-
 	private final static String BLOCK_IMAGE = "application/red_button07.png";
 //	private ImageView[] blocks;
 //	private GameRectangle[] blocks;
@@ -73,9 +72,9 @@ public class GameViewManager {
 
 	//private StackPane[] blocksPane;
 	
-	private final static int COIN_RADIUS = 12;
-	private final static int SNAKE_RADIUS = 10;
-	private final static int BALL_RADIUS = 20;
+	final static int COIN_RADIUS = 12;
+//	private final static int SNAKE_RADIUS = 10;
+//	private final static int BALL_RADIUS = 20;
 	private final static int BLOCK_RADIUS = 30;
 	private final static int WALL_RADIUS = 30;
 
@@ -146,13 +145,16 @@ public class GameViewManager {
 		coinLabel.setLayoutX(460);
 		coinLabel.setLayoutY(20);
 		gamePane.getChildren().add(coinLabel);
-		
-		balls = new ImageView[4];
-		for (int i=0; i<balls.length; i++) {
-			balls[i] = new ImageView(BALL_IMAGE);
-			setNewElementPosition(balls[i]);
-			gamePane.getChildren().add(balls[i]);
-		}
+
+//		ImageView[] balls = player.getBalls();
+//		player.balls = new ImageView[4];
+//		for (int i=0; i<player.balls.length; i++) {
+//			player.balls[i] = new ImageView(BALL_IMAGE);
+//			setNewElementPosition(player.getBalls()[i]);
+//			gamePane.getChildren().add(player.getBalls()[i]);
+//		}
+
+		player.createBalls();
 		
 //		blocks = new ImageView[10];
 //
@@ -259,10 +261,11 @@ public class GameViewManager {
 
 
 		
-		for (int i=0; i<balls.length; i++) {
-			balls[i].setLayoutY(balls[i].getLayoutY()+7);
-			balls[i].setRotate(balls[i].getRotate()+4);
-		}
+//		for (int i=0; i<balls.length; i++) {
+//			balls[i].setLayoutY(balls[i].getLayoutY()+7);
+//			balls[i].setRotate(balls[i].getRotate()+4);
+//		}
+		player.moveSnake();
 		
 		for (int i=0; i<blocks.length; i++) {
 //			int a =(int) blocks[i].getLayoutY();
@@ -292,11 +295,12 @@ public class GameViewManager {
 			setNewWallDimension(wall);
 		}
 		
-		for (int i=0; i<balls.length; i++) {
-			if (balls[i].getLayoutY() > 900) {
-				setNewElementPosition(balls[i]);
-			}
-		}
+//		for (int i=0; i<balls.length; i++) {
+//			if (balls[i].getLayoutY() > 900) {
+//				setNewElementPosition(balls[i]);
+//			}
+//		}
+		player.SetNewPosition();
 		
 		//Logic for placing blocks begins 
 		int no_of_blocks = randomPositionGenerator.nextInt(10);
@@ -385,7 +389,7 @@ public class GameViewManager {
 
     }
 	
-	private void setNewElementPosition(ImageView image) {
+	void setNewElementPosition(ImageView image) {
 		image.setLayoutX(randomPositionGenerator.nextInt(450));
 		image.setLayoutY(randomPositionGenerator.nextInt(100));
 	}
@@ -424,16 +428,8 @@ public class GameViewManager {
     }
 	
 	private void createSnake() {
-		Group snakeBody = new Group();
-		snake = snakeBody.getChildren();
-		
-		Circle head = new Circle();
-		head.setCenterX(GAME_WIDTH/2);
-		head.setCenterY(GAME_HEIGHT - 90);
-		head.setRadius(10.0);
-		head.setFill(Color.YELLOW);
-		snake.add(head);
-		gamePane.getChildren().add(snakeBody);
+		player = new Snake(this);
+		gamePane.getChildren().add(player.getSnakeBody());
 	}
 	
 	private void createGameLoop() {
@@ -452,19 +448,20 @@ public class GameViewManager {
 	}
 	
 	private void moveSnake() {
+//			ObservableList<Node> snake = player.getSnake();
 		if (isLeftKeyPressed && !isRightKeyPressed) {
-			if (((Circle) snake.get(snake.size()-1)).getCenterX() > 20) {
-				for (int i=0; i<snake.size(); i++) {
-					((Circle) snake.get(i)).setCenterX(((Circle) snake.get(i)).getCenterX() - 6);
+			if (((Circle) player.getSnake().get(player.getSnake().size()-1)).getCenterX() > 20) {
+				for (int i=0; i<player.getSnake().size(); i++) {
+					((Circle) player.getSnake().get(i)).setCenterX(((Circle) player.getSnake().get(i)).getCenterX() - 6);
 				}
 				
 			}
 		}
 		
 		if (!isLeftKeyPressed && isRightKeyPressed) {
-			if (((Circle) snake.get(snake.size()-1)).getCenterX() < 580) {
-				for (int i=0; i<snake.size(); i++) {
-					((Circle) snake.get(i)).setCenterX(((Circle) snake.get(i)).getCenterX() + 6);
+			if (((Circle) player.getSnake().get(player.getSnake().size()-1)).getCenterX() < 580) {
+				for (int i=0; i<player.getSnake().size(); i++) {
+					((Circle) player.getSnake().get(i)).setCenterX(((Circle) player.getSnake().get(i)).getCenterX() + 6);
 				}
 			}
 		}
@@ -512,6 +509,8 @@ public class GameViewManager {
 	
 	private void checkCollision() {
 	//	System.out.println(calculateDistance(((Circle) snake.get(snake.size()-1)).getCenterY(),coin.getLayoutX(),((Circle) snake.get(snake.size()-1)).getCenterY(),coin.getLayoutY()));
+		 int SNAKE_RADIUS = player.getSnakeRadius();
+		 ObservableList<Node> snake = player.getSnake();
 		if (SNAKE_RADIUS + COIN_RADIUS > calculateDistance(((Circle) snake.get(snake.size()-1)).getCenterX(),coin.getLayoutX(),((Circle) snake.get(snake.size()-1)).getCenterY(),coin.getLayoutY())) {
 			setNewElementPosition(coin);
 			
@@ -523,18 +522,22 @@ public class GameViewManager {
 			coinLabel.setText(textToSet + coins);
 			
 		}
-		for (int i=0; i<balls.length; i++) {
-			if (SNAKE_RADIUS + COIN_RADIUS > calculateDistance(((Circle) snake.get(snake.size()-1)).getCenterX(),balls[i].getLayoutX(),((Circle) snake.get(snake.size()-1)).getCenterY(),balls[i].getLayoutY())) {
-				setNewElementPosition(balls[i]);
-				Circle head = new Circle();
-				head.setCenterX(((Circle) snake.get(snake.size()-1)).getCenterX());
-				head.setCenterY(((Circle) snake.get(snake.size()-1)).getCenterY()-15.0);
-				head.setRadius(10.0);
-				head.setFill(Color.YELLOW);
-				snake.add(head);
-				
-			}
-		}
+
+
+//		for (int i=0; i<balls.length; i++) {
+//			if (SNAKE_RADIUS + COIN_RADIUS > calculateDistance(((Circle) snake.get(snake.size()-1)).getCenterX(),balls[i].getLayoutX(),((Circle) snake.get(snake.size()-1)).getCenterY(),balls[i].getLayoutY())) {
+//				setNewElementPosition(balls[i]);
+//				Circle head = new Circle();
+//				head.setCenterX(((Circle) snake.get(snake.size()-1)).getCenterX());
+//				head.setCenterY(((Circle) snake.get(snake.size()-1)).getCenterY()-15.0);
+//				head.setRadius(10.0);
+//				head.setFill(Color.YELLOW);
+//				snake.add(head);
+//
+//			}
+//		}
+
+		player.Grow();
 		
 		for (int i=0; i<blocks.length; i++) {
 			if (SNAKE_RADIUS + BLOCK_RADIUS > calculateDistance(((Circle) snake.get(snake.size()-1)).getCenterX(),blocks[i].getLayoutX(),((Circle) snake.get(snake.size()-1)).getCenterY(),blocks[i].getLayoutY())) {
@@ -549,7 +552,7 @@ public class GameViewManager {
 		
 	}
 	
-	private double calculateDistance(double x1, double x2, double y1, double y2) {
+	double calculateDistance(double x1, double x2, double y1, double y2) {
 		return Math.sqrt(Math.pow(x1-x2,2)+Math.pow(y1-y2, 2));
 	}
 }
