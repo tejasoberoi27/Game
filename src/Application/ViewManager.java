@@ -27,8 +27,7 @@ public class ViewManager {
 	
 	private final static int MENU_BUTTONS_START_X = 300;
 	private final static int MENU_BUTTONS_START_Y = 200;
-	
-	private GameSubscene startGameSubscene;
+
 	
 	List<MainPageButton> menuButtons;
 	
@@ -124,4 +123,6 @@ public class ViewManager {
 		mainPane.getChildren().add(logo);
 		
 	}
+
+
 }

@@ -1,8 +1,10 @@
 package Application;
 
+import javafx.animation.TranslateTransition;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -12,7 +14,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Text;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import java.util.Random;
@@ -21,13 +23,13 @@ import javafx.animation.AnimationTimer;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
-import javafx.scene.input.KeyEvent;
 
 public class GameViewManager {
 	
 	private AnchorPane gamePane;
 	private Scene gameScene;
 	private Stage gameStage;
+
 	
 	private static final int GAME_WIDTH = 600;
 	private static final int GAME_HEIGHT = 800;
@@ -38,17 +40,20 @@ public class GameViewManager {
 	private boolean isLeftKeyPressed;
 	private boolean isRightKeyPressed;	
 	private AnimationTimer gameTimer;
-	
+	private TranslateTransition translate;
+
 	private GridPane gridPane1;
 	private GridPane gridPane2;
 	private final static String BACKGROUND_IMAGE = "application/gamebg.jpeg";
+//	private StackPane blocksPane;
 	
 	private final static String BALL_IMAGE = "application/ball_bowling2.png";
 	private ImageView[] balls;
 	private Random randomPositionGenerator;
 	
 	private ImageView coin,shield,block_destroyer,magnet,speedup,slomo,multiplier;
-	private GameRectangle wall;
+	private Rectangle wall;
+	private Palette colors;
 
 	private SmallInfoLabel coinLabel;
 	private int coins;
@@ -63,6 +68,7 @@ public class GameViewManager {
 
 	private final static String BLOCK_IMAGE = "application/red_button07.png";
 //	private ImageView[] blocks;
+//	private GameRectangle[] blocks;
 	private GameRectangle[] blocks;
 
 	//private StackPane[] blocksPane;
@@ -120,7 +126,9 @@ public class GameViewManager {
 		this.menuStage.hide();
 		createBackground();
 		createSnake();
+		colors = new Palette();
 		createGameElements();
+		translate = new TranslateTransition();
 		createGameLoop();
 		gameStage.setTitle("Snakes vs Blocks");
 		gameStage.show();
@@ -159,23 +167,23 @@ public class GameViewManager {
 //			gamePane.getChildren().add(blocks[i]);
 //		}
 
-				blocks = new GameRectangle[10];
+		blocks = new GameRectangle[10];
 
 		for (int i=0; i<blocks.length; i++) {
-			blocks[i] = new GameRectangle();
+			blocks[i] = new GameRectangle(i,gamePane,colors);
 
-			blocks[i].setHeight(60);
-			blocks[i].setHeight(60);
+//			blocks[i].setHeight(60);
+//			blocks[i].setHeight(60);
 
-			blocks[i].setLayoutY(100);
-			blocks[i].setLayoutX(60 * i);
+//			blocks[i].setLayoutY(100);
+//			blocks[i].setLayoutX(60 * i);
 
-			blocks[i].createRectangle("20",gamePane);
+//			blocks[i].createRectangle("20",gamePane);
 //			gamePane.getChildren().add(blocks[i]);
 		}
 
 //		for (int i=0; i<blocks.length; i++) {
-			wall = new GameRectangle();
+			wall = new Rectangle();
 
 			wall.setWidth(15);
 			wall.setFill(Color.WHITE);
@@ -186,6 +194,7 @@ public class GameViewManager {
 
 			gamePane.getChildren().add(wall);
 //		}
+
             shield = new ImageView(SHIELD_IMAGE);
             shield.setFitHeight(25);
             shield.setFitWidth(25);
@@ -256,12 +265,20 @@ public class GameViewManager {
 		}
 		
 		for (int i=0; i<blocks.length; i++) {
-			blocks[i].setLayoutY(blocks[i].getLayoutY()+7);
+//			int a =(int) blocks[i].getLayoutY();
+//			System.out.println(a);
+
+			blocks[i].setLayoutY(blocks[i].getLayoutY()+5);
+//			blocks[i].setLayoutY(blocks[i].getLayoutY()+20);
+
+//			translate.setNode(blocks[i]);
+//			translate.setByY(7);
+//			blocks[i].setLayoutY(blocks[i].getLayoutY()+7);
 		}
 
-		for (int i=0; i<blocks.length; i++) {
-			wall.setLayoutY(wall.getLayoutY()+0.5);
-		}
+//		for (int i=0; i<blocks.length; i++) {
+			wall.setLayoutY(wall.getLayoutY()+7);
+//		}
  	}
 	
 	private void elementBelowScreen() {
@@ -284,8 +301,9 @@ public class GameViewManager {
 		//Logic for placing blocks begins 
 		int no_of_blocks = randomPositionGenerator.nextInt(10);
 		
-		int y_coordinate = randomPositionGenerator.nextInt(400);
-		
+//		int y_coordinate = randomPositionGenerator.nextInt(400);
+		int y_coordinate = randomPositionGenerator.nextInt(150);
+
 		int[] x_coordinates = new int[10];
 		boolean[] occupiedCoordinates = new boolean[10];
 		
@@ -323,7 +341,7 @@ public class GameViewManager {
         //Logic for placing shield begins
         if (shield.getLayoutY() > 1200) {
 
-            if(findChance(4,500)) {
+            if(findChance(1,500)) {
                 setNewElementPosition(shield);
             }
 
@@ -332,35 +350,35 @@ public class GameViewManager {
 
         if (block_destroyer.getLayoutY() > 1200) {
 
-            if(findChance(4,1000)) {
+            if(findChance(1,1000)) {
                 setNewElementPosition(block_destroyer);
             }
         }
 
         if (magnet.getLayoutY() > 1200) {
 
-            if(findChance(4,500)) {
+            if(findChance(1,500)) {
                 setNewElementPosition(magnet);
             }
         }
 
         if (speedup.getLayoutY() > 1200) {
 
-            if(findChance(4,500)) {
+            if(findChance(1,500)) {
                 setNewElementPosition(speedup);
             }
         }
 
         if (slomo.getLayoutY() > 1200) {
 
-            if(findChance(4,20)) {
+            if(findChance(1,500)) {
                 setNewElementPosition(slomo);
             }
         }
 
         if (multiplier.getLayoutY() > 1200) {
 
-            if(findChance(4,20)) {
+            if(findChance(1,500)) {
                 setNewElementPosition(multiplier);
             }
         }
@@ -384,12 +402,13 @@ public class GameViewManager {
         return placeElement;
     }
 
-	private void setNewWallPosition(GameRectangle image) {
-		image.setLayoutX(randomPositionGenerator.nextInt(450));
-		image.setLayoutY(randomPositionGenerator.nextInt(100));
+	private void setNewWallPosition(Rectangle image) {
+		image.setLayoutX(randomPositionGenerator.nextInt(GAME_WIDTH));
+		image.setLayoutY(10);
+//		image.setLayoutY(randomPositionGenerator.nextInt(100));
 	}
 
-	private void setNewWallDimension(GameRectangle image) {
+	private void setNewWallDimension(Rectangle image) {
 
 		Random r = new Random();
 		int low = 20;
