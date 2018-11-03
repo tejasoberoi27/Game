@@ -25,10 +25,10 @@ public class GameRectangle extends StackPane{
 //    {
 //        this.gamePane = gamePane;
 //    }
+
     GameRectangle(int i, AnchorPane gamePane, Palette colors) {
         this.gamePane = gamePane;
         this.colors = colors;
-        StackPane pane = new StackPane();
         Label text = new Label(nextNum());
         text.setTextFill(Color.BLACK);
 //        text.setMinWidth(100);
@@ -40,14 +40,12 @@ public class GameRectangle extends StackPane{
         rect.setArcHeight(10.0);
         rect.setArcWidth(10.0);
         // add to stackpane
-        pane.getChildren().addAll(rect,text);
-        pane.setLayoutY(100);
-        pane.setLayoutX(60 * i);
+        this.getChildren().addAll(rect,text);
+        this.setLayoutY(10);
+        this.setLayoutX(60 * i);
         // display stackpane
-        gamePane.getChildren().add(pane);
+        gamePane.getChildren().add(this);
     }
-
-
 
 
     private String nextNum()
@@ -58,6 +56,7 @@ public class GameRectangle extends StackPane{
         int num = (r.nextInt(high - low) + low);
         return (num+"");
     }
+
 
 
 }

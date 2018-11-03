@@ -1,5 +1,6 @@
 package Application;
 
+import javafx.animation.TranslateTransition;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -39,7 +40,8 @@ public class GameViewManager {
 	private boolean isLeftKeyPressed;
 	private boolean isRightKeyPressed;	
 	private AnimationTimer gameTimer;
-	
+	private TranslateTransition translate;
+
 	private GridPane gridPane1;
 	private GridPane gridPane2;
 	private final static String BACKGROUND_IMAGE = "application/gamebg.jpeg";
@@ -126,6 +128,7 @@ public class GameViewManager {
 		createSnake();
 		colors = new Palette();
 		createGameElements();
+		translate = new TranslateTransition();
 		createGameLoop();
 		gameStage.setTitle("Snakes vs Blocks");
 		gameStage.show();
@@ -262,7 +265,15 @@ public class GameViewManager {
 		}
 		
 		for (int i=0; i<blocks.length; i++) {
-			blocks[i].setLayoutY(blocks[i].getLayoutY()+7);
+//			int a =(int) blocks[i].getLayoutY();
+//			System.out.println(a);
+
+			blocks[i].setLayoutY(blocks[i].getLayoutY()+5);
+//			blocks[i].setLayoutY(blocks[i].getLayoutY()+20);
+
+//			translate.setNode(blocks[i]);
+//			translate.setByY(7);
+//			blocks[i].setLayoutY(blocks[i].getLayoutY()+7);
 		}
 
 //		for (int i=0; i<blocks.length; i++) {
@@ -290,8 +301,9 @@ public class GameViewManager {
 		//Logic for placing blocks begins 
 		int no_of_blocks = randomPositionGenerator.nextInt(10);
 		
-		int y_coordinate = randomPositionGenerator.nextInt(400);
-		
+//		int y_coordinate = randomPositionGenerator.nextInt(400);
+		int y_coordinate = randomPositionGenerator.nextInt(150);
+
 		int[] x_coordinates = new int[10];
 		boolean[] occupiedCoordinates = new boolean[10];
 		
@@ -329,7 +341,7 @@ public class GameViewManager {
         //Logic for placing shield begins
         if (shield.getLayoutY() > 1200) {
 
-            if(findChance(4,500)) {
+            if(findChance(1,500)) {
                 setNewElementPosition(shield);
             }
 
@@ -338,35 +350,35 @@ public class GameViewManager {
 
         if (block_destroyer.getLayoutY() > 1200) {
 
-            if(findChance(4,1000)) {
+            if(findChance(1,1000)) {
                 setNewElementPosition(block_destroyer);
             }
         }
 
         if (magnet.getLayoutY() > 1200) {
 
-            if(findChance(4,500)) {
+            if(findChance(1,500)) {
                 setNewElementPosition(magnet);
             }
         }
 
         if (speedup.getLayoutY() > 1200) {
 
-            if(findChance(4,500)) {
+            if(findChance(1,500)) {
                 setNewElementPosition(speedup);
             }
         }
 
         if (slomo.getLayoutY() > 1200) {
 
-            if(findChance(4,20)) {
+            if(findChance(1,500)) {
                 setNewElementPosition(slomo);
             }
         }
 
         if (multiplier.getLayoutY() > 1200) {
 
-            if(findChance(4,20)) {
+            if(findChance(1,500)) {
                 setNewElementPosition(multiplier);
             }
         }
@@ -391,8 +403,9 @@ public class GameViewManager {
     }
 
 	private void setNewWallPosition(Rectangle image) {
-		image.setLayoutX(randomPositionGenerator.nextInt(450));
-		image.setLayoutY(randomPositionGenerator.nextInt(100));
+		image.setLayoutX(randomPositionGenerator.nextInt(GAME_WIDTH));
+		image.setLayoutY(10);
+//		image.setLayoutY(randomPositionGenerator.nextInt(100));
 	}
 
 	private void setNewWallDimension(Rectangle image) {
