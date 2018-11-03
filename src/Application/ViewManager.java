@@ -115,4 +115,6 @@ public class ViewManager {
 		mainPane.getChildren().add(logo);
 		
 	}
+
+
 }

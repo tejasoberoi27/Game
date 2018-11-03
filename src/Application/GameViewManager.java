@@ -3,6 +3,7 @@ package Application;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -12,6 +13,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -42,6 +44,7 @@ public class GameViewManager {
 	private GridPane gridPane1;
 	private GridPane gridPane2;
 	private final static String BACKGROUND_IMAGE = "application/gamebg.jpeg";
+	private StackPane blocksPane;
 	
 	private final static String BALL_IMAGE = "application/ball_bowling2.png";
 	private ImageView[] balls;
@@ -159,16 +162,16 @@ public class GameViewManager {
 //			gamePane.getChildren().add(blocks[i]);
 //		}
 
-				blocks = new GameRectangle[10];
+		blocks = new GameRectangle[10];
 
 		for (int i=0; i<blocks.length; i++) {
 			blocks[i] = new GameRectangle();
 
-			blocks[i].setHeight(60);
-			blocks[i].setHeight(60);
+//			blocks[i].setHeight(60);
+//			blocks[i].setHeight(60);
 
-			blocks[i].setLayoutY(100);
-			blocks[i].setLayoutX(60 * i);
+//			blocks[i].setLayoutY(100);
+//			blocks[i].setLayoutX(60 * i);
 
 			blocks[i].createRectangle("20",gamePane);
 //			gamePane.getChildren().add(blocks[i]);
@@ -186,6 +189,24 @@ public class GameViewManager {
 
 			gamePane.getChildren().add(wall);
 //		}
+
+			StackPane pane = new StackPane();
+			int value = 20;
+			String name = value+"";
+			Label text = new Label(name);
+			text.setTextFill(Color.WHITE);
+	//        text.setMinWidth(100);
+	//        text.setMinHeight(100);
+			text.setFont(new Font("Cambria", 32));
+			text.setStyle("-fx-font-weight: bold");
+			GameRectangle rect = new GameRectangle(60,60,gamePane);
+			rect.setFill(Color.BLUE);
+			// add to stackpane
+			pane.getChildren().addAll(rect,text);
+			pane.setAlignment(Pos.BASELINE_CENTER);
+			// display stackpane
+			gamePane.getChildren().add(pane);
+
             shield = new ImageView(SHIELD_IMAGE);
             shield.setFitHeight(25);
             shield.setFitWidth(25);

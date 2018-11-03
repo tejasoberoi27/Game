@@ -1,5 +1,6 @@
 package Application;
 
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
@@ -37,7 +38,7 @@ public class GameRectangle extends Rectangle{
         rect.setFill(Color.BLUE);
         // add to stackpane
         pane.getChildren().addAll(rect,text);
-
+        pane.setAlignment(Pos.BASELINE_CENTER);
         // display stackpane
         gamePane.getChildren().add(pane);
     }
