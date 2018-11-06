@@ -345,7 +345,7 @@ public class GameViewManager {
         //Logic for placing shield begins
         if (shield.getLayoutY() > 1200) {
 
-            if(findChance(1,500)) {
+            if(findChance(10,500)) {
                 setNewElementPosition(shield);
             }
 
@@ -354,35 +354,35 @@ public class GameViewManager {
 
         if (block_destroyer.getLayoutY() > 1200) {
 
-            if(findChance(1,1000)) {
+            if(findChance(10,1000)) {
                 setNewElementPosition(block_destroyer);
             }
         }
 
         if (magnet.getLayoutY() > 1200) {
 
-            if(findChance(1,500)) {
+            if(findChance(10,500)) {
                 setNewElementPosition(magnet);
             }
         }
 
         if (speedup.getLayoutY() > 1200) {
 
-            if(findChance(1,500)) {
+            if(findChance(10,500)) {
                 setNewElementPosition(speedup);
             }
         }
 
         if (slomo.getLayoutY() > 1200) {
 
-            if(findChance(1,500)) {
+            if(findChance(10,500)) {
                 setNewElementPosition(slomo);
             }
         }
 
         if (multiplier.getLayoutY() > 1200) {
 
-            if(findChance(1,500)) {
+            if(findChance(10,500)) {
                 setNewElementPosition(multiplier);
             }
         }
