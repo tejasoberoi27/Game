@@ -25,7 +25,8 @@ import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 
 public class GameViewManager {
-	
+
+	private int gameSpeedFactor;
 	AnchorPane gamePane;
 	private Scene gameScene;
 	private Stage gameStage;
@@ -84,6 +85,7 @@ public class GameViewManager {
 		initializeStage();
 		createKeyListeners();
 		randomPositionGenerator = new Random();
+		gameSpeedFactor = 1;
 	}
 
 	private void createKeyListeners() {
@@ -245,19 +247,19 @@ public class GameViewManager {
 	
 	private void moveGameElements() {
 		
-		coin.setLayoutY(coin.getLayoutY() + 5);
+		coin.setLayoutY(coin.getLayoutY() + gameSpeedFactor * 5);
 
-        shield.setLayoutY(shield.getLayoutY() + 5);
+        shield.setLayoutY(shield.getLayoutY() +  gameSpeedFactor * 5);
 
-        block_destroyer.setLayoutY(block_destroyer.getLayoutY() + 5);
+        block_destroyer.setLayoutY(block_destroyer.getLayoutY() +  gameSpeedFactor * 5);
 
-        magnet.setLayoutY(magnet.getLayoutY() + 5);
+        magnet.setLayoutY(magnet.getLayoutY() +  gameSpeedFactor * 5);
 
-        speedup.setLayoutY(speedup.getLayoutY() + 5);
+        speedup.setLayoutY(speedup.getLayoutY() +  gameSpeedFactor * 5);
 
-        slomo.setLayoutY(slomo.getLayoutY() + 5);
+        slomo.setLayoutY(slomo.getLayoutY() +  gameSpeedFactor * 5);
 
-        multiplier.setLayoutY(multiplier.getLayoutY() + 5);
+        multiplier.setLayoutY(multiplier.getLayoutY() +  gameSpeedFactor * 5);
 
 
 		
@@ -271,7 +273,7 @@ public class GameViewManager {
 //			int a =(int) blocks[i].getLayoutY();
 //			System.out.println(a);
 
-			blocks[i].setLayoutY(blocks[i].getLayoutY()+5);
+			blocks[i].setLayoutY(blocks[i].getLayoutY()+ gameSpeedFactor * 5);
 //			blocks[i].setLayoutY(blocks[i].getLayoutY()+20);
 
 //			translate.setNode(blocks[i]);
@@ -280,7 +282,7 @@ public class GameViewManager {
 		}
 
 //		for (int i=0; i<blocks.length; i++) {
-			wall.setLayoutY(wall.getLayoutY()+5);
+			wall.setLayoutY(wall.getLayoutY()+ gameSpeedFactor * 5);
 //		}
  	}
 	
@@ -452,7 +454,7 @@ public class GameViewManager {
 		if (isLeftKeyPressed && !isRightKeyPressed) {
 			if (((Circle) player.getSnake().get(player.getSnake().size()-1)).getCenterX() > 20) {
 				for (int i=0; i<player.getSnake().size(); i++) {
-					((Circle) player.getSnake().get(i)).setCenterX(((Circle) player.getSnake().get(i)).getCenterX() - 6);
+					((Circle) player.getSnake().get(i)).setCenterX(((Circle) player.getSnake().get(i)).getCenterX() - gameSpeedFactor * 6);
 				}
 				
 			}
@@ -461,7 +463,7 @@ public class GameViewManager {
 		if (!isLeftKeyPressed && isRightKeyPressed) {
 			if (((Circle) player.getSnake().get(player.getSnake().size()-1)).getCenterX() < 580) {
 				for (int i=0; i<player.getSnake().size(); i++) {
-					((Circle) player.getSnake().get(i)).setCenterX(((Circle) player.getSnake().get(i)).getCenterX() + 6);
+					((Circle) player.getSnake().get(i)).setCenterX(((Circle) player.getSnake().get(i)).getCenterX() + gameSpeedFactor * 6);
 				}
 			}
 		}
