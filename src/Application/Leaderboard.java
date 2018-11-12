@@ -12,6 +12,8 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 public class Leaderboard {
@@ -24,6 +26,8 @@ public class Leaderboard {
 
     private Stage menuStage;
 
+    private ArrayList<DatedScore> leaderboardList;
+
     /*private final static int MENU_BUTTONS_START_X = 300;
     private final static int MENU_BUTTONS_START_Y = 200;
     List<Label> menuLabels; */
@@ -35,6 +39,7 @@ public class Leaderboard {
         lbPane = new AnchorPane();
         lbScene = new Scene(lbPane,WIDTH,HEIGHT);
         lbStage = new Stage();
+        leaderboardList = new ArrayList<DatedScore>();
         lbStage.setScene(lbScene);
         lbStage.setTitle("Leaderboard");
 
@@ -86,84 +91,49 @@ public class Leaderboard {
             }
         });
 
+        VBox lbLayout = new VBox();
+        lbLayout.setSpacing(10);
+        lbLayout.setLayoutX(50);
+        lbLayout.setLayoutY(125);
+
         HBox heading = new HBox();
         MainPageButton scoreHeading = new MainPageButton("SCORE");
         MainPageButton dateHeading = new MainPageButton("DATE");
         heading.getChildren().addAll(scoreHeading,dateHeading);
         heading.setSpacing(120);
-
-        HBox entry1 = new HBox();
-        MainPageButton scoreHeading1 = new MainPageButton("EMPTY");
-        MainPageButton dateHeading1 = new MainPageButton("EMPTY");
-        entry1.getChildren().addAll(scoreHeading1,dateHeading1);
-        entry1.setSpacing(120);
-
-        HBox entry2 = new HBox();
-        MainPageButton scoreHeading2 = new MainPageButton("EMPTY");
-        MainPageButton dateHeading2 = new MainPageButton("EMPTY");
-        entry2.getChildren().addAll(scoreHeading2,dateHeading2);
-        entry2.setSpacing(120);
-
-        HBox entry3 = new HBox();
-        MainPageButton scoreHeading3 = new MainPageButton("EMPTY");
-        MainPageButton dateHeading3 = new MainPageButton("EMPTY");
-        entry3.getChildren().addAll(scoreHeading3,dateHeading3);
-        entry3.setSpacing(120);
-
-        HBox entry4 = new HBox();
-        MainPageButton scoreHeading4 = new MainPageButton("EMPTY");
-        MainPageButton dateHeading4 = new MainPageButton("EMPTY");
-        entry4.getChildren().addAll(scoreHeading4,dateHeading4);
-        entry4.setSpacing(120);
-
-        HBox entry5 = new HBox();
-        MainPageButton scoreHeading5 = new MainPageButton("EMPTY");
-        MainPageButton dateHeading5 = new MainPageButton("EMPTY");
-        entry5.getChildren().addAll(scoreHeading5,dateHeading5);
-        entry5.setSpacing(120);
-
-        HBox entry6 = new HBox();
-        MainPageButton scoreHeading6 = new MainPageButton("EMPTY");
-        MainPageButton dateHeading6 = new MainPageButton("EMPTY");
-        entry6.getChildren().addAll(scoreHeading6,dateHeading6);
-        entry6.setSpacing(120);
-
-        HBox entry7 = new HBox();
-        MainPageButton scoreHeading7 = new MainPageButton("EMPTY");
-        MainPageButton dateHeading7 = new MainPageButton("EMPTY");
-        entry7.getChildren().addAll(scoreHeading7,dateHeading7);
-        entry7.setSpacing(120);
-
-        HBox entry8 = new HBox();
-        MainPageButton scoreHeading8 = new MainPageButton("EMPTY");
-        MainPageButton dateHeading8 = new MainPageButton("EMPTY");
-        entry8.getChildren().addAll(scoreHeading8,dateHeading8);
-        entry8.setSpacing(120);
-
-        HBox entry9 = new HBox();
-        MainPageButton scoreHeading9 = new MainPageButton("EMPTY");
-        MainPageButton dateHeading9 = new MainPageButton("EMPTY");
-        entry9.getChildren().addAll(scoreHeading9,dateHeading9);
-        entry9.setSpacing(120);
-
-        HBox entry10 = new HBox();
-        MainPageButton scoreHeading10 = new MainPageButton("EMPTY");
-        MainPageButton dateHeading10 = new MainPageButton("EMPTY");
-        entry10.getChildren().addAll(scoreHeading10,dateHeading10);
-        entry10.setSpacing(120);
+        lbLayout.getChildren().add(heading);
 
 
-        VBox lbLayout = new VBox();
-        lbLayout.getChildren().addAll(heading,entry1,entry2,entry3,entry4,entry5,entry6,entry7,entry8,entry9,entry10);
-        lbLayout.setSpacing(10);
-        lbLayout.setLayoutX(50);
-        lbLayout.setLayoutY(125);
+        for (int i=leaderboardList.size(); i>0; i--) {
+            HBox entry = new HBox();
+            MainPageButton entryScore = new MainPageButton(Integer.toString(leaderboardList.get(i).getScore()));
+            MainPageButton entryDate = new MainPageButton(leaderboardList.get(i).getDate().toString());
+            entry.getChildren().addAll(entryScore,entryDate);
+            entry.setSpacing(120);
+            lbLayout.getChildren().add(entry);
+        }
 
 
         lbPane.getChildren().addAll(backButton,lbLayout);
 
 
 
+    }
+
+    public void addNewLeaderboardEntry(DatedScore d) {
+        if (leaderboardList.size() < 10) {
+            leaderboardList.add(d);
+            leaderboardList.sort(Comparator.comparing(DatedScore::getScore));
+        }
+
+        else {
+            if (leaderboardList.get(0).getScore() < d.getScore()) {
+                leaderboardList.remove(0);
+                leaderboardList.add(d);
+                leaderboardList.sort(Comparator.comparing(DatedScore::getScore));
+            }
+
+        }
     }
 
 
