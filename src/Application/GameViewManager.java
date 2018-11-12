@@ -74,7 +74,7 @@ public class GameViewManager {
 	
 	final static int COIN_RADIUS = 12;
 //	private final static int SNAKE_RADIUS = 10;
-//	private final static int BALL_RADIUS = 20;
+	final static int BALL_RADIUS = 20;
 	private final static int BLOCK_RADIUS = 30;
 	private final static int WALL_RADIUS = 30;
 
