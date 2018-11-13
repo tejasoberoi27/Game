@@ -55,7 +55,7 @@ public class GameViewManager {
 //	private ImageView[] balls;
 Random randomPositionGenerator;
 	
-	private ImageView coin,shield,block_destroyer,magnet,speedup,slomo,multiplier;
+//	private ImageView coin,shield,block_destroyer,magnet,speedup,slomo,multiplier;
 //	private Rectangle wall;
 	private Wall wall;
 	private Palette colors;
@@ -254,7 +254,9 @@ Random randomPositionGenerator;
 //        speedup.setFitWidth(25);
         //coin.setPreserveRatio(true);
        // setNewElementPosition(speedup);
-        gamePane.getChildren().add(speedup);
+		speedUp = new SpeedUp(5,this);
+        gamePane.getChildren().add(speedUp.getImage());
+
 
 
 
