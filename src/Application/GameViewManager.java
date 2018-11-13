@@ -215,6 +215,7 @@ Random randomPositionGenerator;
 
         ball = new Ball(randomPositionGenerator.nextInt(5),this);
         ComponentList.add(ball);
+        gamePane.getChildren().add(ball.getImage());
 //        wall.setWidth(15);
 //        wall.setFill(Color.WHITE);
 //
@@ -248,9 +249,9 @@ Random randomPositionGenerator;
     //    setNewElementPosition(magnet);
         gamePane.getChildren().add(magnet);
 
-        speedup = new ImageView(SPEEDUP_IMAGE);
-        speedup.setFitHeight(25);
-        speedup.setFitWidth(25);
+//        speedup = new ImageView(SPEEDUP_IMAGE);
+//        speedup.setFitHeight(25);
+//        speedup.setFitWidth(25);
         //coin.setPreserveRatio(true);
        // setNewElementPosition(speedup);
         gamePane.getChildren().add(speedup);
