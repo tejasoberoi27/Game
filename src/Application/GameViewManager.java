@@ -237,12 +237,14 @@ Random randomPositionGenerator;
         gamePane.getChildren().add(shield.getImage());
         ComponentList.add(shield);
 
-        block_destroyer = new ImageView(BLOCK_DESTROYER_IMAGE);
-        block_destroyer.setFitHeight(25);
-        block_destroyer.setFitWidth(25);
-        //coin.setPreserveRatio(true);
-       // setNewElementPosition(block_destroyer);
-        gamePane.getChildren().add(block_destroyer);
+		blockDestroyer = new BlockDestroyer(5,this);
+//        block_destroyer.setFitHeight(25);
+//        block_destroyer.setFitWidth(25);
+		//coin.setPreserveRatio(true);
+		// setNewElementPosition(block_destroyer);
+
+		gamePane.getChildren().add(blockDestroyer.getImage());
+		ComponentList.add(blockDestroyer);
 
         magnet = new Magnet(5,this);
         //coin.setPreserveRatio(true);
@@ -258,12 +260,11 @@ Random randomPositionGenerator;
 		speedUp = new SpeedUp(5,this);
         gamePane.getChildren().add(speedUp.getImage());
 
-        slomo = new ImageView(SLOMO_IMAGE);
-        slomo.setFitHeight(25);
-        slomo.setFitWidth(25);
+        slomo = new SloMo(5,this);
         //coin.setPreserveRatio(true);
        // setNewElementPosition(slomo);
-        gamePane.getChildren().add(slomo);
+        gamePane.getChildren().add(slomo.getImage());
+        ComponentList.add(slomo);
 
         multiplier = new Multiplier(5,this);
         //coin.setPreserveRatio(true);
