@@ -152,7 +152,7 @@ public class GameViewManager {
         for (int i=0; i<blocks.length; i++) {
 			System.err.println(test++);
         	blocks[i] = new GameRectangle(i,gamePane,colors);
-			System.err.println("this"+test++);
+			System.err.println("this"+test++); }
 		coin = new ImageView(COIN_IMAGE);
 		coin.setFitHeight(25);
 		coin.setFitWidth(25);
@@ -208,7 +208,7 @@ public class GameViewManager {
 
 //			blocks[i].createRectangle("20",gamePane);
 //			gamePane.getChildren().add(blocks[i]);
-		}
+
 
 //		for (int i=0; i<blocks.length; i++) {
 			System.err.println(test++);
