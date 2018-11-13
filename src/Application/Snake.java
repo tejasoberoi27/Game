@@ -14,7 +14,7 @@
         private final static int BALL_RADIUS = 20;
         private ObservableList<Node> snake;
         private Group snakeBody;
-        private ImageView[] balls;
+//        private ImageView[] balls;
 
 
 
@@ -47,42 +47,30 @@
             return BALL_RADIUS;
         }
 
-        public ImageView[] getBalls() {
-            return balls;
-        }
+//        public ImageView[] getBalls() {
+//            return balls;
+//        }
 
-        public void createBalls()
-        {
-            this.balls = new ImageView[4];
 
-            for (int i=0; i<this.balls.length; i++) {
-                this.balls[i] = new ImageView(BALL_IMAGE);
-                game.setNewElementPosition(getBalls()[i]);
-                game.gamePane.getChildren().add(getBalls()[i]);
-            }
-        }
 
-        public void moveSnake()
-        {
-            for (int i=0; i<balls.length; i++) {
-            balls[i].setLayoutY(balls[i].getLayoutY()+7);
-            balls[i].setRotate(balls[i].getRotate()+4);
-        }
-        }
 
-        public void SetNewPosition()
-        {
-            for (int i=0; i<balls.length; i++) {
-            if (balls[i].getLayoutY() > 900) {
-                game.setNewElementPosition(balls[i]);
-            }}
 
-        }
+
+//        public void SetNewPosition()
+//        {
+//            for (int i=0; i<balls.length; i++) {
+//            if (balls[i].getLayoutY() > 900) {
+//                game.setNewElementPosition(balls[i]);
+//            }}
+//
+//        }
 
         public void Grow()
-        {		for (int i=0; i<balls.length; i++) {
-            if (SNAKE_RADIUS + game.BALL_RADIUS > game.calculateDistance(((Circle) snake.get(snake.size()-1)).getCenterX(),balls[i].getLayoutX(),((Circle) snake.get(snake.size()-1)).getCenterY(),balls[i].getLayoutY())) {
-                game.setNewElementPosition(balls[i]);//how?
+        {
+
+            for (int i=0; i<game.balls.length; i++) {
+            if (SNAKE_RADIUS + game.BALL_RADIUS > game.calculateDistance(((Circle) snake.get(snake.size()-1)).getCenterX(),game.balls[i].getImage().getLayoutX(),((Circle) snake.get(snake.size()-1)).getCenterY(),game.balls[i].getImage().getLayoutY())) {
+                game.setNewElementPosition(game.balls[i].getImage());//how?
                 Circle head = new Circle();
                 head.setCenterX(((Circle) snake.get(snake.size()-1)).getCenterX());
                 head.setCenterY(((Circle) snake.get(snake.size()-1)).getCenterY()-15.0);

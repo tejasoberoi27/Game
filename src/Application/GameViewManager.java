@@ -18,6 +18,8 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javafx.animation.AnimationTimer;
 import javafx.collections.ObservableList;
@@ -26,7 +28,7 @@ import javafx.geometry.Pos;
 
 public class GameViewManager {
 
-	private int gameSpeedFactor;
+	private float gameSpeedFactor;
 	AnchorPane gamePane;
 	private Scene gameScene;
 	private Stage gameStage;
@@ -56,6 +58,7 @@ public class GameViewManager {
 	private Rectangle wall;
 	private Palette colors;
 	private Snake player;
+	Ball[] balls;
 
 	private SmallInfoLabel coinLabel;
 	private int coins;
@@ -78,6 +81,7 @@ public class GameViewManager {
 	final static int BALL_RADIUS = 20;
 	private final static int BLOCK_RADIUS = 30;
 	private final static int WALL_RADIUS = 30;
+	private final static int SPEEDUP_RADIUS = 20;
 
 
 	
@@ -136,6 +140,9 @@ public class GameViewManager {
 	}
 	
 	private void createGameElements() {
+        blocks = new GameRectangle[10];
+        for (int i=0; i<blocks.length; i++) {
+            blocks[i] = new GameRectangle(i,gamePane,colors);
 		coin = new ImageView(COIN_IMAGE);
 		coin.setFitHeight(25);
 		coin.setFitWidth(25);
@@ -156,7 +163,14 @@ public class GameViewManager {
 //			gamePane.getChildren().add(player.getBalls()[i]);
 //		}
 
-		player.createBalls();
+
+            this.balls = new Ball[4];
+
+            for (int j=0; j<this.balls.length; j++) {
+                this.balls[j] = new Ball( findNext(5),"BALL", new ImageView(BALL_IMAGE) );
+                setNewElementPosition(balls[j].getImage());
+                gamePane.getChildren().add(balls[j].getImage());
+            }
 		
 //		blocks = new ImageView[10];
 //
@@ -171,10 +185,9 @@ public class GameViewManager {
 //			gamePane.getChildren().add(blocks[i]);
 //		}
 
-		blocks = new GameRectangle[10];
 
-		for (int i=0; i<blocks.length; i++) {
-			blocks[i] = new GameRectangle(i,gamePane,colors);
+
+
 
 //			blocks[i].setHeight(60);
 //			blocks[i].setHeight(60);
@@ -227,6 +240,8 @@ public class GameViewManager {
             setNewElementPosition(speedup);
             gamePane.getChildren().add(speedup);
 
+
+
             slomo = new ImageView(SLOMO_IMAGE);
             slomo.setFitHeight(25);
             slomo.setFitWidth(25);
@@ -267,7 +282,13 @@ public class GameViewManager {
 //			balls[i].setLayoutY(balls[i].getLayoutY()+7);
 //			balls[i].setRotate(balls[i].getRotate()+4);
 //		}
-		player.moveSnake();
+
+//        public void moveSnake()
+//        {
+            for (int i=0; i<balls.length; i++) {
+                balls[i].getImage().setLayoutY(balls[i].getImage().getLayoutY()+gameSpeedFactor*5);
+                balls[i].getImage().setRotate(balls[i].getImage().getRotate()+gameSpeedFactor*5);
+            }
 		
 		for (int i=0; i<blocks.length; i++) {
 //			int a =(int) blocks[i].getLayoutY();
@@ -302,13 +323,21 @@ public class GameViewManager {
 //				setNewElementPosition(balls[i]);
 //			}
 //		}
-		player.SetNewPosition();
+//		player.SetNewPosition();
+
+                    for (int i=0; i<balls.length; i++) {
+            if (balls[i].getImage().getLayoutY() > 900) {
+                setNewElementPosition(balls[i].getImage());
+            }}
 		
 		//Logic for placing blocks begins 
-		int no_of_blocks = randomPositionGenerator.nextInt(10);
+		int no_of_blocks = randomPositionGenerator.nextInt(15);
+
+        if (no_of_blocks >= 10) no_of_blocks = 10;
+
 		
 //		int y_coordinate = randomPositionGenerator.nextInt(400);
-		int y_coordinate = randomPositionGenerator.nextInt(150);
+		int y_coordinate = 0;
 
 		int[] x_coordinates = new int[10];
 		boolean[] occupiedCoordinates = new boolean[10];
@@ -392,8 +421,21 @@ public class GameViewManager {
     }
 	
 	void setNewElementPosition(ImageView image) {
-		image.setLayoutX(randomPositionGenerator.nextInt(450));
-		image.setLayoutY(randomPositionGenerator.nextInt(100));
+//		image.setLayoutX(randomPositionGenerator.nextInt(450));
+
+        int x,y;
+        x = findNextInt(0,450);
+        y = findNextInt(100,150);
+
+        while (Math.abs(image.getLayoutY() - blocks[0].getLayoutY()) < 60) {
+                x = findNextInt(0,450);
+                y = findNextInt(100,150);
+        }
+
+        image.setLayoutX(x);
+        image.setLayoutY(y);
+
+//		image.setLayoutY(randomPositionGenerator.nextInt(100));
 	}
 
 	private boolean findChance(int freq, int high)
@@ -425,6 +467,12 @@ public class GameViewManager {
 	private int findNext(int high) {
         Random r = new Random();
         int low = 0;
+        int num =  (r.nextInt(high - low) + low);
+        return num;
+    }
+
+    private int findNextInt(int low,int high) {
+        Random r = new Random();
         int num =  (r.nextInt(high - low) + low);
         return num;
     }
@@ -497,8 +545,8 @@ public class GameViewManager {
 	}
 	
 	private void moveBackground() {
-		gridPane1.setLayoutY(gridPane1.getLayoutY() + 4.5);
-		gridPane2.setLayoutY(gridPane2.getLayoutY() + 4.5);
+		gridPane1.setLayoutY(gridPane1.getLayoutY() + gameSpeedFactor * 5);
+		gridPane2.setLayoutY(gridPane2.getLayoutY() + gameSpeedFactor * 5);
 		
 		if (gridPane1.getLayoutY() >= 1024) {
 			gridPane1.setLayoutY(-1024);
@@ -510,6 +558,8 @@ public class GameViewManager {
 	}
 	
 	private void checkCollision() {
+
+		SpeedUp speedupToken = new SpeedUp(5,"SPEEDUP", speedup);
 	//	System.out.println(calculateDistance(((Circle) snake.get(snake.size()-1)).getCenterY(),coin.getLayoutX(),((Circle) snake.get(snake.size()-1)).getCenterY(),coin.getLayoutY()));
 		 int SNAKE_RADIUS = player.getSnakeRadius();
 		 ObservableList<Node> snake = player.getSnake();
@@ -551,6 +601,39 @@ public class GameViewManager {
 				
 			}
 		}
+
+		if (SNAKE_RADIUS + SPEEDUP_RADIUS > calculateDistance(((Circle) snake.get(snake.size()-1)).getCenterX(),speedup.getLayoutX(),((Circle) snake.get(snake.size()-1)).getCenterY(),speedup.getLayoutY())) {
+			gameSpeedFactor = 3;
+
+			Timer timer = new Timer();
+            TimerTask task = new TimerTask() {
+                @Override
+                public void run() {
+                    gameSpeedFactor = 1;
+                }
+            };
+
+            timer.schedule(task,speedupToken.getValue()*1000);
+
+
+        }
+
+        if (SNAKE_RADIUS + SPEEDUP_RADIUS > calculateDistance(((Circle) snake.get(snake.size()-1)).getCenterX(),slomo.getLayoutX(),((Circle) snake.get(snake.size()-1)).getCenterY(),slomo.getLayoutY())) {
+            gameSpeedFactor = 0.5f;
+
+            Timer timer = new Timer();
+            TimerTask task = new TimerTask() {
+                @Override
+                public void run() {
+                    gameSpeedFactor = 1;
+                }
+            };
+
+            timer.schedule(task,speedupToken.getValue()*1000);
+
+
+        }
+
 		
 	}
 	

@@ -9,4 +9,8 @@ public class Token extends Component {
         super(value, name);
         this.image = image;
     }
+
+    public ImageView getImage() {
+        return image;
+    }
 }
