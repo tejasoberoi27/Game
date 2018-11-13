@@ -130,24 +130,35 @@ public class GameViewManager {
 		this.menuStage = menuStage;
 		this.menuStage.hide();
 		createBackground();
+		System.err.println("1");
 		createSnake();
+		System.err.println("2");
 		colors = new Palette();
 		createGameElements();
-		translate = new TranslateTransition();
+		System.err.println("3");
+//		translate = new TranslateTransition();
 		createGameLoop();
+		System.err.println("4");
 		gameStage.setTitle("Snakes vs Blocks");
+		System.err.println("5");
 		gameStage.show();
+		System.err.println("6");
 	}
 	
 	private void createGameElements() {
+
+		int test =0;
         blocks = new GameRectangle[10];
         for (int i=0; i<blocks.length; i++) {
-            blocks[i] = new GameRectangle(i,gamePane,colors);
+			System.err.println(test++);
+        	blocks[i] = new GameRectangle(i,gamePane,colors);
+			System.err.println("this"+test++);
 		coin = new ImageView(COIN_IMAGE);
 		coin.setFitHeight(25);
 		coin.setFitWidth(25);
 		//coin.setPreserveRatio(true);
 		setNewElementPosition(coin);
+			System.err.println("this2"+test++);
 		gamePane.getChildren().add(coin);
 		
 		coinLabel = new SmallInfoLabel("POINTS: 00");
@@ -200,6 +211,7 @@ public class GameViewManager {
 		}
 
 //		for (int i=0; i<blocks.length; i++) {
+			System.err.println(test++);
 			wall = new Rectangle();
 
 			wall.setWidth(15);
@@ -207,7 +219,9 @@ public class GameViewManager {
 
 			Random r = new Random();
 			setNewWallPosition(wall);
+			System.err.println(test++);
             setNewWallDimension(wall);
+
 
 			gamePane.getChildren().add(wall);
 //		}
@@ -360,6 +374,7 @@ public class GameViewManager {
 			
 			while (x < no_of_blocks) {
 				int i = randomPositionGenerator.nextInt(10);
+				System.err.println("running");
 				if (occupiedCoordinates[i] == false) {
 					blocks[i].setLayoutX(x_coordinates[i]);
 					blocks[i].setLayoutY(y_coordinate);
@@ -423,19 +438,22 @@ public class GameViewManager {
 	void setNewElementPosition(ImageView image) {
 //		image.setLayoutX(randomPositionGenerator.nextInt(450));
 
-        int x,y;
-        x = findNextInt(0,450);
-        y = findNextInt(100,150);
+		int x, y;
+		x = findNextInt(0, 450);
+		y = findNextInt(100, 150);
+//		int ctr = 0;
+//		while (Math.abs(image.getLayoutY() - blocks[0].getLayoutY()) < 40) {
+//			x = findNextInt(0, 450);
+//			y = findNextInt(100, 150);
+//			if (ctr++ > 10) {
+//				break;
+//			}
 
-        while (Math.abs(image.getLayoutY() - blocks[0].getLayoutY()) < 60) {
-                x = findNextInt(0,450);
-                y = findNextInt(100,150);
-        }
-
-        image.setLayoutX(x);
-        image.setLayoutY(y);
+			image.setLayoutX(x);
+			image.setLayoutY(y);
 
 //		image.setLayoutY(randomPositionGenerator.nextInt(100));
+//		}
 	}
 
 	private boolean findChance(int freq, int high)
