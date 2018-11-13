@@ -275,13 +275,17 @@ Random randomPositionGenerator;
 	
 	private void moveGameElements() {
 
-	    moveToken(coin);
-        moveToken(shield);
-        moveToken(block_destroyer);
-        moveToken(magnet);
-        moveToken(speedup);
-        moveToken(slomo);
-        moveToken(multiplier);
+//	    moveToken(coin);
+//        moveToken(shield);
+//        moveToken(block_destroyer);
+//        moveToken(magnet);
+//        moveToken(speedup);
+//        moveToken(slomo);
+//        moveToken(multiplier);
+		for (int i = 0; i < ComponentList.size(); i++) {
+			Component component = ComponentList.get(i);
+			component.move();
+		}
 
 
 
