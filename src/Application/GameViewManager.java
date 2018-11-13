@@ -1,5 +1,6 @@
 package Application;
 
+import com.sun.org.apache.xpath.internal.operations.Mult;
 import javafx.animation.TranslateTransition;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -65,6 +66,8 @@ Random randomPositionGenerator;
 	BlockDestroyer blockDestroyer;
 	Magnet magnet;
 	SpeedUp speedUp;
+	Multiplier multiplier;
+	SloMo slomo;
 
 	private SmallInfoLabel coinLabel;
 	private int coins;
@@ -228,12 +231,11 @@ Random randomPositionGenerator;
         gamePane.getChildren().add(wall.getRectangle());
 //		}
 
-        shield = new ImageView(SHIELD_IMAGE);
-        shield.setFitHeight(25);
-        shield.setFitWidth(25);
+        shield = new Shield(5,this);
         //coin.setPreserveRatio(true);
        // setNewElementPosition(shield);
-        gamePane.getChildren().add(shield);
+        gamePane.getChildren().add(shield.getImage());
+        ComponentList.add(shield);
 
         block_destroyer = new ImageView(BLOCK_DESTROYER_IMAGE);
         block_destroyer.setFitHeight(25);
@@ -242,12 +244,11 @@ Random randomPositionGenerator;
        // setNewElementPosition(block_destroyer);
         gamePane.getChildren().add(block_destroyer);
 
-        magnet = new ImageView(MAGNET_IMAGE);
-        magnet.setFitHeight(25);
-        magnet.setFitWidth(25);
+        magnet = new Magnet(5,this);
         //coin.setPreserveRatio(true);
     //    setNewElementPosition(magnet);
-        gamePane.getChildren().add(magnet);
+        gamePane.getChildren().add(magnet.getImage());
+        ComponentList.add(magnet);
 
 //        speedup = new ImageView(SPEEDUP_IMAGE);
 //        speedup.setFitHeight(25);
@@ -257,9 +258,6 @@ Random randomPositionGenerator;
 		speedUp = new SpeedUp(5,this);
         gamePane.getChildren().add(speedUp.getImage());
 
-
-
-
         slomo = new ImageView(SLOMO_IMAGE);
         slomo.setFitHeight(25);
         slomo.setFitWidth(25);
@@ -267,16 +265,11 @@ Random randomPositionGenerator;
        // setNewElementPosition(slomo);
         gamePane.getChildren().add(slomo);
 
-        multiplier = new ImageView(MULTIPLIER_IMAGE);
-        multiplier.setFitHeight(25);
-        multiplier.setFitWidth(25);
+        multiplier = new Multiplier(5,this);
         //coin.setPreserveRatio(true);
       //  setNewElementPosition(multiplier);
-        gamePane.getChildren().add(multiplier);
-
-
-
-
+        gamePane.getChildren().add(multiplier.getImage());
+        ComponentList.add(multiplier);
 	}
 	
 	private void moveGameElements() {
