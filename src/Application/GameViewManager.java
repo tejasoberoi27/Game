@@ -58,7 +58,7 @@ public class GameViewManager {
 	private Rectangle wall;
 	private Palette colors;
 	private Snake player;
-	Ball[] balls;
+	Ball ball;
 
 	private SmallInfoLabel coinLabel;
 	private int coins;
@@ -148,147 +148,142 @@ public class GameViewManager {
 	private void createGameElements() {
 
 		int test =0;
+
         blocks = new GameRectangle[10];
         for (int i=0; i<blocks.length; i++) {
 			System.err.println(test++);
         	blocks[i] = new GameRectangle(i,gamePane,colors);
 			System.err.println("this"+test++); }
-		coin = new ImageView(COIN_IMAGE);
-		coin.setFitHeight(25);
-		coin.setFitWidth(25);
-		//coin.setPreserveRatio(true);
-		setNewElementPosition(coin);
-			System.err.println("this2"+test++);
-		gamePane.getChildren().add(coin);
-		
-		coinLabel = new SmallInfoLabel("POINTS: 00");
-		coinLabel.setLayoutX(460);
-		coinLabel.setLayoutY(20);
-		gamePane.getChildren().add(coinLabel);
 
-//		ImageView[] balls = player.getBalls();
-//		player.balls = new ImageView[4];
-//		for (int i=0; i<player.balls.length; i++) {
-//			player.balls[i] = new ImageView(BALL_IMAGE);
-//			setNewElementPosition(player.getBalls()[i]);
-//			gamePane.getChildren().add(player.getBalls()[i]);
-//		}
+        int no_of_blocks = randomPositionGenerator.nextInt(15);
+
+        if (no_of_blocks >= 10) no_of_blocks = 10;
 
 
-            this.balls = new Ball[4];
+//		int y_coordinate = randomPositionGenerator.nextInt(400);
+        int y_coordinate = 0;
 
-            for (int j=0; j<this.balls.length; j++) {
-                this.balls[j] = new Ball( findNext(5),"BALL", new ImageView(BALL_IMAGE) );
-                setNewElementPosition(balls[j].getImage());
-                gamePane.getChildren().add(balls[j].getImage());
+        int[] x_coordinates = new int[10];
+        boolean[] occupiedCoordinates = new boolean[10];
+
+        for (int i=0; i<10; i++) {
+            x_coordinates[i] = 60*i;
+            occupiedCoordinates[i] = false;
+        }
+
+        boolean placeBlock = true;
+
+        for (int i=0; i<blocks.length; i++) {
+            if (blocks[i].getLayoutY() < 900) {
+                placeBlock = false;
             }
-		
-//		blocks = new ImageView[10];
-//
-//		for (int i=0; i<blocks.length; i++) {
-//			blocks[i] = new ImageView(BLOCK_IMAGE);
-//			blocks[i].setFitHeight(60);
-//			blocks[i].setFitWidth(60);
-//
-//			blocks[i].setLayoutY(100);
-//			blocks[i].setLayoutX(60 * i);
-//
-//			gamePane.getChildren().add(blocks[i]);
+        }
+
+        if (placeBlock) {
+            int x = 0;
+
+            while (x < no_of_blocks) {
+                int i = randomPositionGenerator.nextInt(10);
+                System.err.println("running");
+                if (occupiedCoordinates[i] == false) {
+                    blocks[i].setLayoutX(x_coordinates[i]);
+                    blocks[i].setLayoutY(y_coordinate);
+                    x++;
+                    occupiedCoordinates[i] = true;
+                }
+            }
+
+        }
+
+        placeBlock = false;
+        //Logic for placing block ends
+
+
+        ball = new Ball(randomPositionGenerator.nextInt(5),"BALL",new ImageView(BALL_IMAGE));
+        wall = new Rectangle();
+        wall.setWidth(15);
+        wall.setFill(Color.WHITE);
+
+        setNewWallPosition(wall);
+        System.err.println(test++);
+        setNewWallDimension(wall);
+
+
+        gamePane.getChildren().add(wall);
 //		}
 
+        shield = new ImageView(SHIELD_IMAGE);
+        shield.setFitHeight(25);
+        shield.setFitWidth(25);
+        //coin.setPreserveRatio(true);
+       // setNewElementPosition(shield);
+        gamePane.getChildren().add(shield);
+
+        block_destroyer = new ImageView(BLOCK_DESTROYER_IMAGE);
+        block_destroyer.setFitHeight(25);
+        block_destroyer.setFitWidth(25);
+        //coin.setPreserveRatio(true);
+       // setNewElementPosition(block_destroyer);
+        gamePane.getChildren().add(block_destroyer);
+
+        magnet = new ImageView(MAGNET_IMAGE);
+        magnet.setFitHeight(25);
+        magnet.setFitWidth(25);
+        //coin.setPreserveRatio(true);
+    //    setNewElementPosition(magnet);
+        gamePane.getChildren().add(magnet);
+
+        speedup = new ImageView(SPEEDUP_IMAGE);
+        speedup.setFitHeight(25);
+        speedup.setFitWidth(25);
+        //coin.setPreserveRatio(true);
+       // setNewElementPosition(speedup);
+        gamePane.getChildren().add(speedup);
 
 
 
+        slomo = new ImageView(SLOMO_IMAGE);
+        slomo.setFitHeight(25);
+        slomo.setFitWidth(25);
+        //coin.setPreserveRatio(true);
+       // setNewElementPosition(slomo);
+        gamePane.getChildren().add(slomo);
 
-//			blocks[i].setHeight(60);
-//			blocks[i].setHeight(60);
+        multiplier = new ImageView(MULTIPLIER_IMAGE);
+        multiplier.setFitHeight(25);
+        multiplier.setFitWidth(25);
+        //coin.setPreserveRatio(true);
+      //  setNewElementPosition(multiplier);
+        gamePane.getChildren().add(multiplier);
 
-//			blocks[i].setLayoutY(100);
-//			blocks[i].setLayoutX(60 * i);
-
-//			blocks[i].createRectangle("20",gamePane);
-//			gamePane.getChildren().add(blocks[i]);
-
-
-//		for (int i=0; i<blocks.length; i++) {
-			System.err.println(test++);
-			wall = new Rectangle();
-
-			wall.setWidth(15);
-			wall.setFill(Color.WHITE);
-
-			Random r = new Random();
-			setNewWallPosition(wall);
-			System.err.println(test++);
-            setNewWallDimension(wall);
-
-
-			gamePane.getChildren().add(wall);
-//		}
-
-            shield = new ImageView(SHIELD_IMAGE);
-            shield.setFitHeight(25);
-            shield.setFitWidth(25);
-            //coin.setPreserveRatio(true);
-            setNewElementPosition(shield);
-            gamePane.getChildren().add(shield);
-
-            block_destroyer = new ImageView(BLOCK_DESTROYER_IMAGE);
-            block_destroyer.setFitHeight(25);
-            block_destroyer.setFitWidth(25);
-            //coin.setPreserveRatio(true);
-            setNewElementPosition(block_destroyer);
-            gamePane.getChildren().add(block_destroyer);
-
-            magnet = new ImageView(MAGNET_IMAGE);
-            magnet.setFitHeight(25);
-            magnet.setFitWidth(25);
-            //coin.setPreserveRatio(true);
-            setNewElementPosition(magnet);
-            gamePane.getChildren().add(magnet);
-
-            speedup = new ImageView(SPEEDUP_IMAGE);
-            speedup.setFitHeight(25);
-            speedup.setFitWidth(25);
-            //coin.setPreserveRatio(true);
-            setNewElementPosition(speedup);
-            gamePane.getChildren().add(speedup);
-
-
-
-            slomo = new ImageView(SLOMO_IMAGE);
-            slomo.setFitHeight(25);
-            slomo.setFitWidth(25);
-            //coin.setPreserveRatio(true);
-            setNewElementPosition(slomo);
-            gamePane.getChildren().add(slomo);
-
-            multiplier = new ImageView(MULTIPLIER_IMAGE);
-            multiplier.setFitHeight(25);
-            multiplier.setFitWidth(25);
-            //coin.setPreserveRatio(true);
-            setNewElementPosition(multiplier);
-            gamePane.getChildren().add(multiplier);
 
 
 
 	}
 	
 	private void moveGameElements() {
-		
-		coin.setLayoutY(coin.getLayoutY() + gameSpeedFactor * 5);
 
-        shield.setLayoutY(shield.getLayoutY() +  gameSpeedFactor * 5);
+	    moveToken(coin);
+        moveToken(shield);
+        moveToken(block_destroyer);
+        moveToken(magnet);
+        moveToken(speedup);
+        moveToken(slomo);
+        moveToken(multiplier);
 
-        block_destroyer.setLayoutY(block_destroyer.getLayoutY() +  gameSpeedFactor * 5);
 
-        magnet.setLayoutY(magnet.getLayoutY() +  gameSpeedFactor * 5);
 
-        speedup.setLayoutY(speedup.getLayoutY() +  gameSpeedFactor * 5);
-
-        slomo.setLayoutY(slomo.getLayoutY() +  gameSpeedFactor * 5);
-
-        multiplier.setLayoutY(multiplier.getLayoutY() +  gameSpeedFactor * 5);
+//        shield.setLayoutY(shield.getLayoutY() +  gameSpeedFactor * 5);
+//
+//        block_destroyer.setLayoutY(block_destroyer.getLayoutY() +  gameSpeedFactor * 5);
+//
+//        magnet.setLayoutY(magnet.getLayoutY() +  gameSpeedFactor * 5);
+//
+//        speedup.setLayoutY(speedup.getLayoutY() +  gameSpeedFactor * 5);
+//
+//        slomo.setLayoutY(slomo.getLayoutY() +  gameSpeedFactor * 5);
+//
+//        multiplier.setLayoutY(multiplier.getLayoutY() +  gameSpeedFactor * 5);
 
 
 		
@@ -299,10 +294,12 @@ public class GameViewManager {
 
 //        public void moveSnake()
 //        {
-            for (int i=0; i<balls.length; i++) {
-                balls[i].getImage().setLayoutY(balls[i].getImage().getLayoutY()+gameSpeedFactor*5);
-                balls[i].getImage().setRotate(balls[i].getImage().getRotate()+gameSpeedFactor*5);
-            }
+          if (ball.isActive()) {
+              ball.getImage().setLayoutY(ball.getImage().getLayoutY()+gameSpeedFactor*5);
+              ball.getImage().setRotate(ball.getImage().getRotate()+gameSpeedFactor*5);
+          }
+
+
 		
 		for (int i=0; i<blocks.length; i++) {
 //			int a =(int) blocks[i].getLayoutY();
@@ -320,18 +317,79 @@ public class GameViewManager {
 			wall.setLayoutY(wall.getLayoutY()+ gameSpeedFactor * 5);
 //		}
  	}
-	
-	private void elementBelowScreen() {
-		
-		if (coin.getLayoutY() > 1200) {
-			setNewElementPosition(coin);
-		}
 
-		if (wall.getLayoutY() > 1200) {
-			setNewWallPosition(wall);
-			setNewWallDimension(wall);
-		}
-		
+    private void moveToken(ImageView Token) {
+	    if (Token != null) {
+            Token.setLayoutY(Token.getLayoutY() +  gameSpeedFactor * 5);
+        }
+    }
+
+    private void elementBelowScreen() {
+
+
+
+        int no_of_blocks = randomPositionGenerator.nextInt(15);
+
+        if (no_of_blocks >= 10) no_of_blocks = 10;
+
+
+//		int y_coordinate = randomPositionGenerator.nextInt(400);
+        int y_coordinate = 0;
+
+        int[] x_coordinates = new int[10];
+        boolean[] occupiedCoordinates = new boolean[10];
+
+        for (int i = 0; i < 10; i++) {
+            x_coordinates[i] = 60 * i;
+            occupiedCoordinates[i] = false;
+        }
+
+        boolean placeBlock = true;
+
+        for (int i = 0; i < blocks.length; i++) {
+            if (blocks[i].getLayoutY() < 900) {
+                placeBlock = false;
+            }
+        }
+
+        if (placeBlock) {
+            int x = 0;
+
+            while (x < no_of_blocks) {
+                int i = randomPositionGenerator.nextInt(10);
+                System.err.println("running");
+                if (occupiedCoordinates[i] == false) {
+                    blocks[i].setLayoutX(x_coordinates[i]);
+                    blocks[i].setLayoutY(y_coordinate);
+                    x++;
+                    occupiedCoordinates[i] = true;
+                }
+            }
+
+        }
+
+        placeBlock = false;
+        //Logic for placing block ends
+
+        Timer timer = new Timer();
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                generateToken();
+            }
+        };
+
+        timer.schedule(task, 1000);
+
+//		if (coin.getLayoutY() > 1200) {
+//			setNewElementPosition(coin);
+//		}
+
+        if (wall.getLayoutY() > 1200) {
+            setNewWallPosition(wall);
+            setNewWallDimension(wall);
+        }
+
 //		for (int i=0; i<balls.length; i++) {
 //			if (balls[i].getLayoutY() > 900) {
 //				setNewElementPosition(balls[i]);
@@ -339,98 +397,105 @@ public class GameViewManager {
 //		}
 //		player.SetNewPosition();
 
-                    for (int i=0; i<balls.length; i++) {
-            if (balls[i].getImage().getLayoutY() > 900) {
-                setNewElementPosition(balls[i].getImage());
-            }}
-		
-		//Logic for placing blocks begins 
-		int no_of_blocks = randomPositionGenerator.nextInt(15);
+//                    for (int i=0; i<balls.length; i++) {
+//            if (balls[i].getImage().getLayoutY() > 900) {
+//                setNewElementPosition(balls[i].getImage());
+//            }}
 
-        if (no_of_blocks >= 10) no_of_blocks = 10;
+        //Logic for placing blocks begins
 
-		
-//		int y_coordinate = randomPositionGenerator.nextInt(400);
-		int y_coordinate = 0;
-
-		int[] x_coordinates = new int[10];
-		boolean[] occupiedCoordinates = new boolean[10];
-		
-		for (int i=0; i<10; i++) {
-			x_coordinates[i] = 60*i;
-			occupiedCoordinates[i] = false;
-		}
-		
-		boolean placeBlock = true;
-		
-		for (int i=0; i<blocks.length; i++) {
-			if (blocks[i].getLayoutY() < 900) {
-				placeBlock = false;
-			}
-		}
-		
-		if (placeBlock) {
-			int x = 0;
-			
-			while (x < no_of_blocks) {
-				int i = randomPositionGenerator.nextInt(10);
-				System.err.println("running");
-				if (occupiedCoordinates[i] == false) {
-					blocks[i].setLayoutX(x_coordinates[i]);
-					blocks[i].setLayoutY(y_coordinate);
-					x++;
-					occupiedCoordinates[i] = true;
-				}
-			}
-			
-		}
-		
-		placeBlock = false;
-		//Logic for placing block ends
 
         //Logic for placing shield begins
-        if (shield.getLayoutY() > 1200) {
+//        if (shield.getLayoutY() > 1200) {
+//
+//            if(findChance(10,500)) {
+//                setNewElementPosition(shield);
+//            }
 
-            if(findChance(10,500)) {
-                setNewElementPosition(shield);
-            }
 
-        }
         //Logic for placing shield ends
 
-        if (block_destroyer.getLayoutY() > 1200) {
+//        if (block_destroyer.getLayoutY() > 1200) {
+//
+//            if(findChance(10,1000)) {
+//                setNewElementPosition(block_destroyer);
+//            }
+//        }
 
-            if(findChance(10,1000)) {
-                setNewElementPosition(block_destroyer);
-            }
+//        if (magnet.getLayoutY() > 1200) {
+//
+//            if(findChance(10,500)) {
+//                setNewElementPosition(magnet);
+//            }
+//        }
+
+//        if (speedup.getLayoutY() > 1200) {
+//
+//            if(findChance(10,500)) {
+//                setNewElementPosition(speedup);
+//            }
+//        }
+//
+//        if (slomo.getLayoutY() > 1200) {
+//
+//            if(findChance(10,500)) {
+//                setNewElementPosition(slomo);
+//            }
+//        }
+//
+//        if (multiplier.getLayoutY() > 1200) {
+//
+//            if(findChance(10,500)) {
+//                setNewElementPosition(multiplier);
+//            }
+//        }
+
+    }
+
+
+
+    public void generateToken() {
+
+	    int choice = randomPositionGenerator.nextInt(12);
+
+	    if (choice==0)
+        {
+            initializeToken(shield);
+        }
+        else if (choice == 1) {
+            initializeToken(slomo);
+        }
+        else if (choice == 2) {
+            initializeToken(speedup);
+        }
+        else if (choice == 3) {
+            initializeToken(magnet);
+        }
+        else if (choice == 4) {
+            initializeToken(block_destroyer);
+        }
+        else if (choice == 5) {
+            initializeToken(magnet);
+        }
+        else if (choice >=6 && choice <=8) {
+            initializeToken(ball.getImage());
+        }
+        else if (choice >=9 && choice <=10) {
+            initializeToken(coin);
+        }
+        else {
+            //do nothing
         }
 
-        if (magnet.getLayoutY() > 1200) {
 
-            if(findChance(10,500)) {
-                setNewElementPosition(magnet);
-            }
-        }
+    }
 
-        if (speedup.getLayoutY() > 1200) {
-
-            if(findChance(10,500)) {
-                setNewElementPosition(speedup);
-            }
-        }
-
-        if (slomo.getLayoutY() > 1200) {
-
-            if(findChance(10,500)) {
-                setNewElementPosition(slomo);
-            }
-        }
-
-        if (multiplier.getLayoutY() > 1200) {
-
-            if(findChance(10,500)) {
-                setNewElementPosition(multiplier);
-            }
+    public void initializeToken(ImageView i) {
+	    if (i != null) {
+            i.setFitWidth(25);
+            i.setFitHeight(25);
+            i.setLayoutY(0);
+            i.setLayoutX(randomPositionGenerator.nextInt(500));
         }
 
     }
@@ -507,7 +572,7 @@ public class GameViewManager {
 				moveBackground();
 				moveGameElements();
 				elementBelowScreen();
-				checkCollision();
+				//checkCollision();
 				moveSnake();
 			}
 		};
