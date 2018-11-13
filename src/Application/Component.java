@@ -1,12 +1,14 @@
 package Application;
 
-public class Component {
+public abstract class Component {
     int value;
     String name;
+    protected GameViewManager game;
 
-    public Component(int value, String name) {
+    public Component(int value, String name,GameViewManager game) {
         this.value = value;
         this.name = name;
+        this.game = game;
     }
 
     public int getValue() {
@@ -24,5 +26,10 @@ public class Component {
     public void setName(String name) {
         this.name = name;
     }
+
+    public abstract void move();
+
+
+
 
 }

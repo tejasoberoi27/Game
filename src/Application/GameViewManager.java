@@ -17,6 +17,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -50,26 +51,32 @@ public class GameViewManager {
 	private final static String BACKGROUND_IMAGE = "application/gamebg.jpeg";
 //	private StackPane blocksPane;
 	
-	private final static String BALL_IMAGE = "application/ball_bowling2.png";
+
 //	private ImageView[] balls;
-	private Random randomPositionGenerator;
+Random randomPositionGenerator;
 	
 	private ImageView coin,shield,block_destroyer,magnet,speedup,slomo,multiplier;
-	private Rectangle wall;
+//	private Rectangle wall;
+	private Wall wall;
 	private Palette colors;
 	private Snake player;
 	Ball ball;
+	Shield shield;
+	BlockDestroyer blockDestroyer;
+	Magnet magnet;
+	SpeedUp speedUp;
 
 	private SmallInfoLabel coinLabel;
 	private int coins;
 	private final static String COIN_IMAGE 	= "application/coin.png";
-	private final static String SHIELD_IMAGE 	= "application/icons8-shield-48.png";
+
 	private final static String BLOCK_DESTROYER_IMAGE 	= "application/icons8-bulldozer-48.png";
-	private final static String MAGNET_IMAGE 	= "application/icons8-magnetic-48.png";
-	private final static String SPEEDUP_IMAGE 	= "application/icons8-voltage-64.png";
-	private final static String SLOMO_IMAGE 	= "application/icons8-snail-48.png";
-	private final static String MULTIPLIER_IMAGE 	= "application/icons8-diamond-48.png";
+
+
+
+
 	private final static String BLOCK_IMAGE = "application/red_button07.png";
+	private ArrayList<Component> ComponentList = new ArrayList<Component>();
 //	private ImageView[] blocks;
 //	private GameRectangle[] blocks;
 	private GameRectangle[] blocks;
@@ -90,6 +97,10 @@ public class GameViewManager {
 		createKeyListeners();
 		randomPositionGenerator = new Random();
 		gameSpeedFactor = 1;
+	}
+
+	public float getGameSpeedFactor() {
+		return gameSpeedFactor;
 	}
 
 	private void createKeyListeners() {
@@ -147,7 +158,10 @@ public class GameViewManager {
 	
 	private void createGameElements() {
 
+
 		int test =0;
+
+
 
         blocks = new GameRectangle[10];
         for (int i=0; i<blocks.length; i++) {
@@ -199,17 +213,18 @@ public class GameViewManager {
         //Logic for placing block ends
 
 
-        ball = new Ball(randomPositionGenerator.nextInt(5),"BALL",new ImageView(BALL_IMAGE));
-        wall = new Rectangle();
-        wall.setWidth(15);
-        wall.setFill(Color.WHITE);
-
-        setNewWallPosition(wall);
-        System.err.println(test++);
-        setNewWallDimension(wall);
-
-
-        gamePane.getChildren().add(wall);
+        ball = new Ball(randomPositionGenerator.nextInt(5),this);
+        ComponentList.add(ball);
+//        wall.setWidth(15);
+//        wall.setFill(Color.WHITE);
+//
+//
+//        setNewWallPosition(wall);
+//        System.err.println(test++);
+//        setNewWallDimension(wall);
+		wall = new Wall(this);
+		ComponentList.add(wall);
+        gamePane.getChildren().add(wall.getRectangle());
 //		}
 
         shield = new ImageView(SHIELD_IMAGE);
@@ -533,19 +548,19 @@ public class GameViewManager {
         return placeElement;
     }
 
-	private void setNewWallPosition(Rectangle image) {
-		image.setLayoutX(randomPositionGenerator.nextInt(GAME_WIDTH));
-		image.setLayoutY(10);
-//		image.setLayoutY(randomPositionGenerator.nextInt(100));
-	}
+//	private void setNewWallPosition(Rectangle image) {
+//		image.setLayoutX(randomPositionGenerator.nextInt(GAME_WIDTH));
+//		image.setLayoutY(10);
+////		image.setLayoutY(randomPositionGenerator.nextInt(100));
+//	}
 
-	private void setNewWallDimension(Rectangle image) {
-
-		Random r = new Random();
-		int low = 20;
-		int high = GAME_HEIGHT/2;
-		wall.setHeight(r.nextInt(high - low) + low);
-	}
+//	private void setNewWallDimension(Rectangle image) {
+//
+//		Random r = new Random();
+//		int low = 20;
+//		int high = GAME_HEIGHT/2;
+//		wall.setHeight(r.nextInt(high - low) + low);
+//	}
 
 	private int findNext(int high) {
         Random r = new Random();
