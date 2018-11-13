@@ -3,7 +3,8 @@ package Application;
 import javafx.scene.image.ImageView;
 
 public class Coin extends Token{
-    public Coin(int value, String name, ImageView image) {
-        super(value, name, image);
+    private final static String COIN_IMAGE 	= "application/coin.png";
+    public Coin(int value, GameViewManager game) {
+        super(value, "coin", new ImageView(COIN_IMAGE),game);
     }
 }
