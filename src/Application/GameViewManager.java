@@ -1,6 +1,6 @@
 package Application;
 
-import com.sun.org.apache.xpath.internal.operations.Mult;
+//import com.sun.org.apache.xpath.internal.operations.Mult;
 import javafx.animation.TranslateTransition;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -219,7 +219,7 @@ public class GameViewManager {
 			//Logic for placing block ends
 
 		if (flag == 0) {
-			timer.schedule(task, 1000,1000);
+			timer.schedule(task, 1000,2000);
 			flag = 1;
 		}
 
@@ -323,7 +323,7 @@ public class GameViewManager {
 	private void MoveToken()
 	{
 		for (int i = 0; i < activeComponentsList.size(); i++) {
-
+			System.out.println(activeComponentsList.size());
 			Component component = activeComponentsList.get(i);
 
 //			if (component.getName().e)
@@ -334,10 +334,20 @@ public class GameViewManager {
 
     private void elementBelowScreen() {
 
+		System.out.println("below screen size" + activeComponentsList.size());
+
 		for (int i = 0; i < activeComponentsList.size() ; i++) {
-			if (activeComponentsList.get(i).getY() > GAME_HEIGHT) {
-				if(activeComponentsList.get(i).getClass()!=wall.getClass())
-				activeComponentsList.remove(i);
+			Component current = activeComponentsList.get(i);
+//			if (activeComponentsList.get(i).getY() > GAME_HEIGHT) {
+//				if(activeComponentsList.get(i).getClass()!=wall.getClass())
+////				activeComponentsList.remove(i);
+//				activeComponentsList.remove(i);
+//
+//			}
+			if (current.getY() > GAME_HEIGHT) {
+				if(current.getClass()!=wall.getClass())
+//				activeComponentsList.remove(i);
+				activeComponentsList.remove(current);
 
 			}
 		}
