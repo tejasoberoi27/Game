@@ -30,13 +30,12 @@ public class Token extends Component {
     public void move() {
         ImageView Token = this.image;
         System.out.println("Moving");
-//        if (isActive) {
-//            Token.setLayoutY(Token.getLayoutY() +  game.getGameSpeedFactor() * 5);
-//        }
-        if (true) {
-            Token.setLayoutY(Token.getLayoutY() +  game.getGameSpeedFactor() * 5);
-        }
+
+        Token.setLayoutY(Token.getLayoutY() +  game.getGameSpeedFactor() * 5);
     }
 
-
+    @Override
+    public double getY() {
+        return this.getImage().getLayoutY();
+    }
 }

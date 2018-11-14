@@ -18,6 +18,15 @@ public class Wall extends Component{
         setNewWallDimension(wall);
     }
 
+    public void newWall()
+    {
+        wall.setWidth(15);
+        wall.setFill(Color.WHITE);
+
+        setNewWallPosition(wall);
+        setNewWallDimension(wall);
+    }
+
     private void setNewWallPosition(Rectangle image) {
         image.setLayoutX(game.randomPositionGenerator.nextInt(game.GAME_WIDTH));
         image.setLayoutY(10);
@@ -33,12 +42,20 @@ public class Wall extends Component{
     }
 
     public Rectangle getRectangle() {
-        return wall;
+        return this.wall;
     }
 
     @Override
     public void move() {
+        Rectangle Token = this.getRectangle();
+        System.out.println("Moving");
+        Token.setLayoutY(Token.getLayoutY() +  game.getGameSpeedFactor() * 5);
 
+    }
+
+    @Override
+    public double getY() {
+        return this.getRectangle().getLayoutY();
     }
 
 

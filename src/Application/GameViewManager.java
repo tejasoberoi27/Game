@@ -1,6 +1,6 @@
 package Application;
 
-//import com.sun.org.apache.xpath.internal.operations.Mult;
+import com.sun.org.apache.xpath.internal.operations.Mult;
 import javafx.animation.TranslateTransition;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -40,7 +40,7 @@ public class GameViewManager {
 	static final int GAME_HEIGHT = 800;
 
 	private Stage menuStage;
-//	private ObservableList<Node> snake;
+
 
 	private boolean isLeftKeyPressed;
 	private boolean isRightKeyPressed;
@@ -50,11 +50,7 @@ public class GameViewManager {
 	private GridPane gridPane1;
 	private GridPane gridPane2;
 	private final static String BACKGROUND_IMAGE = "application/gamebg.jpeg";
-//	private StackPane blocksPane;
-
-
-//	private ImageView[] balls;
-Random randomPositionGenerator;
+	Random randomPositionGenerator;
 
 //	private ImageView coin,shield,block_destroyer,magnet,speedup,slomo,multiplier;
 //	private Rectangle wall;
@@ -94,6 +90,18 @@ Random randomPositionGenerator;
 	private final static int WALL_RADIUS = 30;
 	private final static int SPEEDUP_RADIUS = 20;
 
+	private ArrayList<Component> activeComponentsList;
+	Timer timer = new Timer();
+	TimerTask task = new TimerTask() {
+		@Override
+		public void run() {
+//			wall.newWall();
+			generateToken();
+
+		}
+	};
+
+
 
 
 	GameViewManager() {
@@ -101,6 +109,7 @@ Random randomPositionGenerator;
 		createKeyListeners();
 		randomPositionGenerator = new Random();
 		gameSpeedFactor = 1;
+		activeComponentsList = new ArrayList<Component>();
 	}
 
 	public float getGameSpeedFactor() {
@@ -150,6 +159,7 @@ Random randomPositionGenerator;
 		System.err.println("2");
 		colors = new Palette();
 		createGameElements();
+		create();
 		System.err.println("3");
 //		translate = new TranslateTransition();
 		createGameLoop();
@@ -160,62 +170,71 @@ Random randomPositionGenerator;
 		System.err.println("6");
 	}
 
-	private void createGameElements() {
-
-
-		int test =0;
+	int flag = 0;
+	private void create() {
 
 
 
-        blocks = new GameRectangle[10];
-        for (int i=0; i<blocks.length; i++) {
-			System.err.println(test++);
-        	blocks[i] = new GameRectangle(i,gamePane,colors);
-			System.err.println("this"+test++); }
+			int no_of_blocks = randomPositionGenerator.nextInt(15);
 
-        int no_of_blocks = randomPositionGenerator.nextInt(15);
-
-        if (no_of_blocks >= 10) no_of_blocks = 10;
+			if (no_of_blocks >= 10) no_of_blocks = 10;
 
 
 //		int y_coordinate = randomPositionGenerator.nextInt(400);
-        int y_coordinate = 0;
+			int y_coordinate = 0;
 
-        int[] x_coordinates = new int[10];
-        boolean[] occupiedCoordinates = new boolean[10];
+			int[] x_coordinates = new int[10];
+			boolean[] occupiedCoordinates = new boolean[10];
 
-        for (int i=0; i<10; i++) {
-            x_coordinates[i] = 60*i;
-            occupiedCoordinates[i] = false;
-        }
+			for (int i = 0; i < 10; i++) {
+				x_coordinates[i] = 60 * i;
+				occupiedCoordinates[i] = false;
+			}
 
-        boolean placeBlock = true;
+			boolean placeBlock = true;
 
-        for (int i=0; i<blocks.length; i++) {
-            if (blocks[i].getLayoutY() < 900) {
-                placeBlock = false;
-            }
-        }
+			for (int i = 0; i < blocks.length; i++) {
+				if (blocks[i].getLayoutY() < 900) {
+					placeBlock = false;
+				}
+			}
 
-        if (placeBlock) {
-            int x = 0;
+			if (placeBlock) {
+				int x = 0;
 
-            while (x < no_of_blocks) {
-                int i = randomPositionGenerator.nextInt(10);
-                System.err.println("running");
-                if (occupiedCoordinates[i] == false) {
-                    blocks[i].setLayoutX(x_coordinates[i]);
-                    blocks[i].setLayoutY(y_coordinate);
-                    x++;
-                    occupiedCoordinates[i] = true;
-                }
-            }
+				while (x < no_of_blocks) {
+					int i = randomPositionGenerator.nextInt(10);
+					System.err.println("running");
+					if (occupiedCoordinates[i] == false) {
+						blocks[i].setLayoutX(x_coordinates[i]);
+						blocks[i].setLayoutY(y_coordinate);
+						x++;
+						occupiedCoordinates[i] = true;
+					}
+				}
 
-        }
+			}
 
-        placeBlock = false;
-        //Logic for placing block ends
+			placeBlock = false;
+			//Logic for placing block ends
 
+		if (flag == 0) {
+			timer.schedule(task, 1000,1000);
+			flag = 1;
+		}
+
+
+
+		}
+
+
+	private void createGameElements() {
+
+
+		blocks = new GameRectangle[10];
+		for (int i = 0; i < blocks.length; i++) {
+
+			blocks[i] = new GameRectangle(i, gamePane, colors); }
 
         ball = new Ball(randomPositionGenerator.nextInt(5),this);
         ComponentList.add(ball);
@@ -230,6 +249,7 @@ Random randomPositionGenerator;
 		wall = new Wall(this);
 		ComponentList.add(wall);
         gamePane.getChildren().add(wall.getRectangle());
+        activeComponentsList.add(wall);
 //		}
 
         shield = new Shield(5,this);
@@ -285,243 +305,90 @@ Random randomPositionGenerator;
 	}
 
 	private void moveGameElements() {
-		MoveToken();
-//	    moveToken(coin);
-//        moveToken(shield);
-//        moveToken(block_destroyer);
-//        moveToken(magnet);
-//        moveToken(speedup);
-//        moveToken(slomo);
-//        moveToken(multiplier);
 
-//		for (int i = 0; i < ComponentList.size(); i++) {
-//			Component component = ComponentList.get(i);
-//			component.move();
-//		}
-
-
-
-//        shield.setLayoutY(shield.getLayoutY() +  gameSpeedFactor * 5);
 //
-//        block_destroyer.setLayoutY(block_destroyer.getLayoutY() +  gameSpeedFactor * 5);
-//
-//        magnet.setLayoutY(magnet.getLayoutY() +  gameSpeedFactor * 5);
-//
-//        speedup.setLayoutY(speedup.getLayoutY() +  gameSpeedFactor * 5);
-//
-//        slomo.setLayoutY(slomo.getLayoutY() +  gameSpeedFactor * 5);
-//
-//        multiplier.setLayoutY(multiplier.getLayoutY() +  gameSpeedFactor * 5);
-
-
-
-//		for (int i=0; i<balls.length; i++) {
-//			balls[i].setLayoutY(balls[i].getLayoutY()+7);
-//			balls[i].setRotate(balls[i].getRotate()+4);
-//		}
-
-//        public void moveSnake()
-//        {
-//          if (ball.isActive()) {
-//              ball.getImage().setLayoutY(ball.getImage().getLayoutY()+gameSpeedFactor*5);
-//              ball.getImage().setRotate(ball.getImage().getRotate()+gameSpeedFactor*5);
-//          }
-
-
 
 		for (int i=0; i<blocks.length; i++) {
 //			int a =(int) blocks[i].getLayoutY();
 //			System.out.println(a);
 
 			blocks[i].setLayoutY(blocks[i].getLayoutY()+ gameSpeedFactor * 5);
-//			blocks[i].setLayoutY(blocks[i].getLayoutY()+20);
-
-//			translate.setNode(blocks[i]);
-//			translate.setByY(7);
-//			blocks[i].setLayoutY(blocks[i].getLayoutY()+7);
+//
 		}
-
-//		for (int i=0; i<blocks.length; i++) {
-//			wall.setLayoutY(wall.getLayoutY()+ gameSpeedFactor * 5);
-//		}
+		MoveToken();
+//
  	}
 
-//    private void moveToken(ImageView Token) {
-//	    if (Token != null) {
-//            Token.setLayoutY(Token.getLayoutY() +  gameSpeedFactor * 5);
-//        }
-//    }
-
+//
 	private void MoveToken()
 	{
-		for (int i = 0; i < ComponentList.size(); i++) {
+		for (int i = 0; i < activeComponentsList.size(); i++) {
 
-			Component component = ComponentList.get(i);
+			Component component = activeComponentsList.get(i);
 
 //			if (component.getName().e)
 			component.move();
+			System.out.println(component);
 		}
 	}
 
     private void elementBelowScreen() {
 
+		for (int i = 0; i < activeComponentsList.size() ; i++) {
+			if (activeComponentsList.get(i).getY() > GAME_HEIGHT) {
+				if(activeComponentsList.get(i).getClass()!=wall.getClass())
+				activeComponentsList.remove(i);
+
+			}
+		}
+
+		if (blocks[0].getLayoutY() > GAME_HEIGHT) {
+			create();
+
+		}
 
 
-        int no_of_blocks = randomPositionGenerator.nextInt(15);
-
-        if (no_of_blocks >= 10) no_of_blocks = 10;
-
-
-//		int y_coordinate = randomPositionGenerator.nextInt(400);
-        int y_coordinate = 0;
-
-        int[] x_coordinates = new int[10];
-        boolean[] occupiedCoordinates = new boolean[10];
-
-        for (int i = 0; i < 10; i++) {
-            x_coordinates[i] = 60 * i;
-            occupiedCoordinates[i] = false;
-        }
-
-        boolean placeBlock = true;
-
-        for (int i = 0; i < blocks.length; i++) {
-            if (blocks[i].getLayoutY() < 900) {
-                placeBlock = false;
-            }
-        }
-
-        if (placeBlock) {
-            int x = 0;
-
-            while (x < no_of_blocks) {
-                int i = randomPositionGenerator.nextInt(10);
-                System.err.println("running");
-                if (occupiedCoordinates[i] == false) {
-                    blocks[i].setLayoutX(x_coordinates[i]);
-                    blocks[i].setLayoutY(y_coordinate);
-                    x++;
-                    occupiedCoordinates[i] = true;
-                }
-            }
-
-        }
-
-        placeBlock = false;
-        //Logic for placing block ends
-
-        Timer timer = new Timer();
-        TimerTask task = new TimerTask() {
-            @Override
-            public void run() {
-                generateToken();
-				MoveToken();
-            }
-        };
-
-        timer.schedule(task, 1000);
-
-//		if (coin.getLayoutY() > 1200) {
-//			setNewElementPosition(coin);
-//		}
-
-//        if (wall.getLayoutY() > 1200) {
-//            setNewWallPosition(wall);
-//            setNewWallDimension(wall);
-//        }
-
-//		for (int i=0; i<balls.length; i++) {
-//			if (balls[i].getLayoutY() > 900) {
-//				setNewElementPosition(balls[i]);
-//			}
-//		}
-//		player.SetNewPosition();
-
-//                    for (int i=0; i<balls.length; i++) {
-//            if (balls[i].getImage().getLayoutY() > 900) {
-//                setNewElementPosition(balls[i].getImage());
-//            }}
-
-        //Logic for placing blocks begins
-
-
-        //Logic for placing shield begins
-//        if (shield.getLayoutY() > 1200) {
 //
-//            if(findChance(10,500)) {
-//                setNewElementPosition(shield);
-//            }
-
-
-        //Logic for placing shield ends
-
-//        if (block_destroyer.getLayoutY() > 1200) {
-//
-//            if(findChance(10,1000)) {
-//                setNewElementPosition(block_destroyer);
-//            }
-//        }
-
-//        if (magnet.getLayoutY() > 1200) {
-//
-//            if(findChance(10,500)) {
-//                setNewElementPosition(magnet);
-//            }
-//        }
-
-//        if (speedup.getLayoutY() > 1200) {
-//
-//            if(findChance(10,500)) {
-//                setNewElementPosition(speedup);
-//            }
-//        }
-//
-//        if (slomo.getLayoutY() > 1200) {
-//
-//            if(findChance(10,500)) {
-//                setNewElementPosition(slomo);
-//            }
-//        }
-//
-//        if (multiplier.getLayoutY() > 1200) {
-//
-//            if(findChance(10,500)) {
-//                setNewElementPosition(multiplier);
-//            }
-//        }
-
     }
 
 
 
     public void generateToken() {
-
+		System.out.println("TOKEN CREATED");
 	    int choice = randomPositionGenerator.nextInt(12);
 
 	    if (choice==0)
         {
             initializeToken(shield);
+            activeComponentsList.add(shield);
         }
         else if (choice == 1) {
             initializeToken(slomo);
+			activeComponentsList.add(slomo);
         }
         else if (choice == 2) {
             initializeToken(speedUp);
+			activeComponentsList.add(speedUp);
         }
         else if (choice == 3) {
             initializeToken(magnet);
+			activeComponentsList.add(magnet);
         }
         else if (choice == 4) {
             initializeToken(blockDestroyer);
+			activeComponentsList.add(blockDestroyer);
         }
         else if (choice == 5) {
-            initializeToken(magnet);
+            initializeToken(multiplier);
+			activeComponentsList.add(multiplier);
         }
         else if (choice >=6 && choice <=8) {
             initializeToken(ball);
+			activeComponentsList.add(ball);
         }
         else if (choice >=9 && choice <=10) {
             initializeToken(coin);
+			activeComponentsList.add(coin);
         }
         else {
             //do nothing
@@ -573,19 +440,7 @@ Random randomPositionGenerator;
         return placeElement;
     }
 
-//	private void setNewWallPosition(Rectangle image) {
-//		image.setLayoutX(randomPositionGenerator.nextInt(GAME_WIDTH));
-//		image.setLayoutY(10);
-////		image.setLayoutY(randomPositionGenerator.nextInt(100));
-//	}
 
-//	private void setNewWallDimension(Rectangle image) {
-//
-//		Random r = new Random();
-//		int low = 20;
-//		int high = GAME_HEIGHT/2;
-//		wall.setHeight(r.nextInt(high - low) + low);
-//	}
 
 	private int findNext(int high) {
         Random r = new Random();

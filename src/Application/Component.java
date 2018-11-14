@@ -29,7 +29,14 @@ public abstract class Component {
 
     public abstract void move();
 
+    public abstract double getY();
 
-
-
+    @Override
+    public String toString() {
+        return "Component{" +
+                "value=" + value +
+                ", name='" + name + '\'' +
+                ", game=" + game +
+                '}';
+    }
 }
