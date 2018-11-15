@@ -1,6 +1,7 @@
 package Application;
 
 //import com.sun.org.apache.xpath.internal.operations.Mult;
+import com.sun.org.apache.xpath.internal.operations.Mult;
 import javafx.animation.TranslateTransition;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -30,7 +31,10 @@ import javafx.geometry.Pos;
 
 public class GameViewManager {
 
+	private double[] discretePositions = {50.0,100.0,150.0,200.0,250.0,300.0,350.0,400.0,450.0,500.0};
 	private float gameSpeedFactor;
+	private boolean roknaHai;
+	private double currentTime;
 	AnchorPane gamePane;
 	private Scene gameScene;
 	private Stage gameStage;
@@ -91,12 +95,13 @@ public class GameViewManager {
 	private final static int SPEEDUP_RADIUS = 20;
 
 	private ArrayList<Component> activeComponentsList;
+
 	Timer timer = new Timer();
 	TimerTask task = new TimerTask() {
 		@Override
 		public void run() {
-//			wall.newWall();
-			generateToken();
+			//wall.newWall();
+			roknaHai = false;
 
 		}
 	};
@@ -107,8 +112,10 @@ public class GameViewManager {
 	GameViewManager() {
 		initializeStage();
 		createKeyListeners();
+		roknaHai = false;
 		randomPositionGenerator = new Random();
 		gameSpeedFactor = 1;
+		currentTime = System.currentTimeMillis();
 		activeComponentsList = new ArrayList<Component>();
 	}
 
@@ -170,7 +177,7 @@ public class GameViewManager {
 		System.err.println("6");
 	}
 
-	int flag = 0;
+	//int flag = 0;
 	private void create() {
 
 
@@ -181,7 +188,7 @@ public class GameViewManager {
 
 
 //		int y_coordinate = randomPositionGenerator.nextInt(400);
-			int y_coordinate = 0;
+			int y_coordinate = 60;
 
 			int[] x_coordinates = new int[10];
 			boolean[] occupiedCoordinates = new boolean[10];
@@ -204,7 +211,7 @@ public class GameViewManager {
 
 				while (x < no_of_blocks) {
 					int i = randomPositionGenerator.nextInt(10);
-					System.err.println("running");
+				//	System.err.println("running");
 					if (occupiedCoordinates[i] == false) {
 						blocks[i].setLayoutX(x_coordinates[i]);
 						blocks[i].setLayoutY(y_coordinate);
@@ -216,12 +223,13 @@ public class GameViewManager {
 			}
 
 			placeBlock = false;
+
 			//Logic for placing block ends
 
-		if (flag == 0) {
-			timer.schedule(task, 1000,2000);
-			flag = 1;
-		}
+//		if (flag == 0) {
+//			timer.schedule(task, 1000,2000);
+//			flag = 1;
+//		}
 
 
 
@@ -236,9 +244,9 @@ public class GameViewManager {
 
 			blocks[i] = new GameRectangle(i, gamePane, colors); }
 
-        ball = new Ball(randomPositionGenerator.nextInt(5),this);
-        ComponentList.add(ball);
-        gamePane.getChildren().add(ball.getImage());
+//        ball = new Ball(randomPositionGenerator.nextInt(5),this);
+//        ComponentList.add(ball);
+//        gamePane.getChildren().add(ball.getImage());
 //        wall.setWidth(15);
 //        wall.setFill(Color.WHITE);
 //
@@ -246,62 +254,62 @@ public class GameViewManager {
 //        setNewWallPosition(wall);
 //        System.err.println(test++);
 //        setNewWallDimension(wall);
-		wall = new Wall(this);
-		ComponentList.add(wall);
-        gamePane.getChildren().add(wall.getRectangle());
-        activeComponentsList.add(wall);
-//		}
+//		wall = new Wall(this);
+//		ComponentList.add(wall);
+//        gamePane.getChildren().add(wall.getRectangle());
+//        activeComponentsList.add(wall);
+////		}
 
-        shield = new Shield(5,this);
-        //coin.setPreserveRatio(true);
-       // setNewElementPosition(shield);
-        gamePane.getChildren().add(shield.getImage());
-        ComponentList.add(shield);
+//        shield = new Shield(5,this);
+//        //coin.setPreserveRatio(true);
+//       // setNewElementPosition(shield);
+//        gamePane.getChildren().add(shield.getImage());
+//        ComponentList.add(shield);
 
-		blockDestroyer = new BlockDestroyer(5,this);
-//        block_destroyer.setFitHeight(25);
-//        block_destroyer.setFitWidth(25);
-		//coin.setPreserveRatio(true);
-		// setNewElementPosition(block_destroyer);
-
-		gamePane.getChildren().add(blockDestroyer.getImage());
-//		Token i = blockDestroyer;
-//		i.getImage().setLayoutY(0);
-//		i.getImage().setLayoutX(randomPositionGenerator.nextInt(500));
-//		generateToken();
-		ComponentList.add(blockDestroyer);
-
-        magnet = new Magnet(5,this);
-        //coin.setPreserveRatio(true);
-    //    setNewElementPosition(magnet);
-        gamePane.getChildren().add(magnet.getImage());
-        ComponentList.add(magnet);
+//		blockDestroyer = new BlockDestroyer(5,this);
+////        block_destroyer.setFitHeight(25);
+////        block_destroyer.setFitWidth(25);
+//		//coin.setPreserveRatio(true);
+//		// setNewElementPosition(block_destroyer);
+//
+//		gamePane.getChildren().add(blockDestroyer.getImage());
+////		Token i = blockDestroyer;
+////		i.getImage().setLayoutY(0);
+////		i.getImage().setLayoutX(randomPositionGenerator.nextInt(500));
+////		generateToken();
+//		ComponentList.add(blockDestroyer);
+//
+//        magnet = new Magnet(5,this);
+//        //coin.setPreserveRatio(true);
+//    //    setNewElementPosition(magnet);
+//        gamePane.getChildren().add(magnet.getImage());
+//        ComponentList.add(magnet);
 
 //        speedup = new ImageView(SPEEDUP_IMAGE);
 //        speedup.setFitHeight(25);
 //        speedup.setFitWidth(25);
         //coin.setPreserveRatio(true);
        // setNewElementPosition(speedup);
-		speedUp = new SpeedUp(5,this);
-        gamePane.getChildren().add(speedUp.getImage());
+//		speedUp = new SpeedUp(5,this);
+//        gamePane.getChildren().add(speedUp.getImage());
+//
+//        slomo = new SloMo(5,this);
+//        //coin.setPreserveRatio(true);
+//       // setNewElementPosition(slomo);
+//        gamePane.getChildren().add(slomo.getImage());
+//        ComponentList.add(slomo);
+//
+//        multiplier = new Multiplier(5,this);
+//        //coin.setPreserveRatio(true);
+//      //  setNewElementPosition(multiplier);
+//        gamePane.getChildren().add(multiplier.getImage());
+//        ComponentList.add(multiplier);
 
-        slomo = new SloMo(5,this);
-        //coin.setPreserveRatio(true);
-       // setNewElementPosition(slomo);
-        gamePane.getChildren().add(slomo.getImage());
-        ComponentList.add(slomo);
-
-        multiplier = new Multiplier(5,this);
-        //coin.setPreserveRatio(true);
-      //  setNewElementPosition(multiplier);
-        gamePane.getChildren().add(multiplier.getImage());
-        ComponentList.add(multiplier);
-
-		coin = new Coin(5,this);
-		//coin.setPreserveRatio(true);
-		//  setNewElementPosition(multiplier);
-		gamePane.getChildren().add(coin.getImage());
-		ComponentList.add(coin);
+//		coin = new Coin(5,this);
+//		//coin.setPreserveRatio(true);
+//		//  setNewElementPosition(multiplier);
+//		gamePane.getChildren().add(coin.getImage());
+//		ComponentList.add(coin);
 	}
 
 	private void moveGameElements() {
@@ -332,9 +340,15 @@ public class GameViewManager {
 		}
 	}
 
+
+	int second = 0;
+	double timeElapsedSinceBlock = 0;
+
     private void elementBelowScreen() {
 
-		System.out.println("below screen size" + activeComponentsList.size());
+
+
+		//System.out.println("below screen size" + activeComponentsList.size());
 
 		for (int i = 0; i < activeComponentsList.size() ; i++) {
 			Component current = activeComponentsList.get(i);
@@ -344,8 +358,8 @@ public class GameViewManager {
 //				activeComponentsList.remove(i);
 //
 //			}
-			if (current.getY() > GAME_HEIGHT) {
-				if(current.getClass()!=wall.getClass())
+			if (current.getY() > GAME_HEIGHT && current != null && wall != null) {
+				if(current.getClass()!= wall.getClass())
 //				activeComponentsList.remove(i);
 				activeComponentsList.remove(current);
 
@@ -354,9 +368,25 @@ public class GameViewManager {
 
 		if (blocks[0].getLayoutY() > GAME_HEIGHT) {
 			create();
-
 		}
 
+		if (blocks[0].getLayoutY() > GAME_HEIGHT - 50) {
+			roknaHai = true;
+			timeElapsedSinceBlock = System.currentTimeMillis();
+		}
+
+		double time = System.currentTimeMillis() - currentTime;
+		time = time/1000;
+
+		if (second != (int)time && !roknaHai) {
+			generateToken();
+			second = (int)time;
+		}
+		else if (roknaHai) {
+			if (System.currentTimeMillis() - timeElapsedSinceBlock > 250) {
+				roknaHai = false;
+			}
+		}
 
 //
     }
@@ -369,34 +399,55 @@ public class GameViewManager {
 
 	    if (choice==0)
         {
+        	Shield shield = new Shield(5,this);
+        	gamePane.getChildren().add(shield.getImage());
             initializeToken(shield);
             activeComponentsList.add(shield);
         }
         else if (choice == 1) {
+        	SloMo slomo = new SloMo(5,this);
+        	gamePane.getChildren().add(slomo.getImage());
             initializeToken(slomo);
 			activeComponentsList.add(slomo);
         }
         else if (choice == 2) {
+        	SpeedUp speedUp = new SpeedUp(5,this);
+        	gamePane.getChildren().add(speedUp.getImage());
             initializeToken(speedUp);
 			activeComponentsList.add(speedUp);
         }
         else if (choice == 3) {
+        	Magnet magnet = new Magnet(5,this);
+        	gamePane.getChildren().add(magnet.getImage());
             initializeToken(magnet);
 			activeComponentsList.add(magnet);
         }
         else if (choice == 4) {
+        	BlockDestroyer blockDestroyer = new BlockDestroyer(5,this);
+        	gamePane.getChildren().add(blockDestroyer.getImage());
             initializeToken(blockDestroyer);
 			activeComponentsList.add(blockDestroyer);
         }
         else if (choice == 5) {
+			Multiplier multiplier = new Multiplier(5,this);
+			gamePane.getChildren().add(multiplier.getImage());
             initializeToken(multiplier);
 			activeComponentsList.add(multiplier);
         }
         else if (choice >=6 && choice <=8) {
-            initializeToken(ball);
-			activeComponentsList.add(ball);
+        	int i = randomPositionGenerator.nextInt(3);
+
+        	for (int x =0; x<i; x++) {
+				Ball ball = new Ball(5,this);
+				gamePane.getChildren().add(ball.getImage());
+				initializeToken(ball);
+				activeComponentsList.add(ball);
+			}
+
         }
         else if (choice >=9 && choice <=10) {
+        	Coin coin = new Coin(5,this);
+        	gamePane.getChildren().add(coin.getImage());
             initializeToken(coin);
 			activeComponentsList.add(coin);
         }
@@ -412,7 +463,8 @@ public class GameViewManager {
 //            i.setFitWidth(25);
 //            i.setFitHeight(25);
             i.getImage().setLayoutY(0);
-            i.getImage().setLayoutX(randomPositionGenerator.nextInt(500));
+            i.getImage().setLayoutX(discretePositions[randomPositionGenerator.nextInt(discretePositions.length)]);
+
 //			if(i.isActive())
 //				i.toggle();
     }
