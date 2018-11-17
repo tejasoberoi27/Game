@@ -68,8 +68,8 @@
         public void Grow()
         {
 
-
-            if (SNAKE_RADIUS + game.BALL_RADIUS > game.calculateDistance(((Circle) snake.get(snake.size()-1)).getCenterX(),game.ball.getImage().getLayoutX(),((Circle) snake.get(snake.size()-1)).getCenterY(),game.ball.getImage().getLayoutY())) {
+            int BALL_RADIUS = Ball.getRadius();
+            if (SNAKE_RADIUS + BALL_RADIUS > game.calculateDistance(((Circle) snake.get(snake.size()-1)).getCenterX(),game.ball.getImage().getLayoutX(),((Circle) snake.get(snake.size()-1)).getCenterY(),game.ball.getImage().getLayoutY())) {
               //  game.setNewElementPosition(game.ball.getImage());//how?
                 Circle head = new Circle();
                 head.setCenterX(((Circle) snake.get(snake.size()-1)).getCenterX());

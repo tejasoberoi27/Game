@@ -4,11 +4,13 @@ public abstract class Component {
     int value;
     String name;
     protected GameViewManager game;
+    protected static int Radius;
 
-    public Component(int value, String name,GameViewManager game) {
+    public Component(int value, String name,GameViewManager game,int Radius) {
         this.value = value;
         this.name = name;
         this.game = game;
+        this.Radius = Radius;
     }
 
     public int getValue() {
@@ -38,5 +40,9 @@ public abstract class Component {
                 ", name='" + name + '\'' +
                 ", game=" + game +
                 '}';
+    }
+
+    public static int getRadius() {
+        return Radius;
     }
 }

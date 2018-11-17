@@ -9,7 +9,7 @@ public class Token extends Component {
 
     public Token(int value, String name, ImageView image,GameViewManager game) {
 
-        super(value, name,game);
+        super(value, name,game,30);
         this.image = image;
         isActive = false;
     }

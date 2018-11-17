@@ -1,7 +1,7 @@
 package Application;
 
 //import com.sun.org.apache.xpath.internal.operations.Mult;
-import com.sun.org.apache.xpath.internal.operations.Mult;
+//import com.sun.org.apache.xpath.internal.operations.Mult;
 import javafx.animation.TranslateTransition;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -31,7 +31,7 @@ import javafx.geometry.Pos;
 
 public class GameViewManager {
 
-	private double[] discretePositions = {50.0,100.0,150.0,200.0,250.0,300.0,350.0,400.0,450.0,500.0};
+	private double[] discretePositions = {50.0, 100.0, 150.0, 200.0, 250.0, 300.0, 350.0, 400.0, 450.0, 500.0};
 	private float gameSpeedFactor;
 	private boolean roknaHai;
 	private double currentTime;
@@ -56,7 +56,7 @@ public class GameViewManager {
 	private final static String BACKGROUND_IMAGE = "application/gamebg.jpeg";
 	Random randomPositionGenerator;
 
-//	private ImageView coin,shield,block_destroyer,magnet,speedup,slomo,multiplier;
+	//	private ImageView coin,shield,block_destroyer,magnet,speedup,slomo,multiplier;
 //	private Rectangle wall;
 	private Wall wall;
 	private Palette colors;
@@ -77,22 +77,20 @@ public class GameViewManager {
 //	private final static String BLOCK_DESTROYER_IMAGE 	= "application/icons8-bulldozer-48.png";
 
 
-
-
 	private final static String BLOCK_IMAGE = "application/red_button07.png";
 	private ArrayList<Component> ComponentList = new ArrayList<Component>();
-//	private ImageView[] blocks;
+	//	private ImageView[] blocks;
 //	private GameRectangle[] blocks;
 	private GameRectangle[] blocks;
 
 	//private StackPane[] blocksPane;
 
-	final static int COIN_RADIUS = 12;
+//	final static int COIN_RADIUS = 12;
 //	private final static int SNAKE_RADIUS = 10;
-	final static int BALL_RADIUS = 20;
-	private final static int BLOCK_RADIUS = 30;
-	private final static int WALL_RADIUS = 30;
-	private final static int SPEEDUP_RADIUS = 20;
+//	final static int BALL_RADIUS = 20;
+//	private final static int BLOCK_RADIUS = 30;
+//	private final static int WALL_RADIUS = 30;
+//	private final static int SPEEDUP_RADIUS = 20;
 
 	private ArrayList<Component> activeComponentsList;
 
@@ -105,8 +103,6 @@ public class GameViewManager {
 
 		}
 	};
-
-
 
 
 	GameViewManager() {
@@ -127,10 +123,9 @@ public class GameViewManager {
 		gameScene.setOnKeyPressed(new EventHandler<KeyEvent>() {
 			@Override
 			public void handle(KeyEvent event) {
-				if(event.getCode() == KeyCode.LEFT) {
+				if (event.getCode() == KeyCode.LEFT) {
 					isLeftKeyPressed = true;
-				}
-				else if (event.getCode() == KeyCode.RIGHT) {
+				} else if (event.getCode() == KeyCode.RIGHT) {
 					isRightKeyPressed = true;
 				}
 			}
@@ -139,10 +134,9 @@ public class GameViewManager {
 		gameScene.setOnKeyReleased(new EventHandler<KeyEvent>() {
 			@Override
 			public void handle(KeyEvent event) {
-				if(event.getCode() == KeyCode.LEFT) {
+				if (event.getCode() == KeyCode.LEFT) {
 					isLeftKeyPressed = false;
-				}
-				else if (event.getCode() == KeyCode.RIGHT) {
+				} else if (event.getCode() == KeyCode.RIGHT) {
 					isRightKeyPressed = false;
 				}
 			}
@@ -154,7 +148,6 @@ public class GameViewManager {
 		gameScene = new Scene(gamePane, GAME_WIDTH, GAME_HEIGHT);
 		gameStage = new Stage();
 		gameStage.setScene(gameScene);
-
 	}
 
 	public void createNewGame(Stage menuStage) {
@@ -181,50 +174,49 @@ public class GameViewManager {
 	private void create() {
 
 
+		int no_of_blocks = randomPositionGenerator.nextInt(15);
 
-			int no_of_blocks = randomPositionGenerator.nextInt(15);
-
-			if (no_of_blocks >= 10) no_of_blocks = 10;
+		if (no_of_blocks >= 10) no_of_blocks = 10;
 
 
 //		int y_coordinate = randomPositionGenerator.nextInt(400);
-			int y_coordinate = 60;
+		int y_coordinate = 20;
 
-			int[] x_coordinates = new int[10];
-			boolean[] occupiedCoordinates = new boolean[10];
+		int[] x_coordinates = new int[10];
+		boolean[] occupiedCoordinates = new boolean[10];
 
-			for (int i = 0; i < 10; i++) {
-				x_coordinates[i] = 60 * i;
-				occupiedCoordinates[i] = false;
+		for (int i = 0; i < 10; i++) {
+			x_coordinates[i] = 60 * i;
+			occupiedCoordinates[i] = false;
+		}
+
+		boolean placeBlock = true;
+
+		for (int i = 0; i < blocks.length; i++) {
+			if (blocks[i].getLayoutY() < 900) {
+				placeBlock = false;
 			}
+		}
 
-			boolean placeBlock = true;
+		if (placeBlock) {
+			int x = 0;
 
-			for (int i = 0; i < blocks.length; i++) {
-				if (blocks[i].getLayoutY() < 900) {
-					placeBlock = false;
-				}
-			}
-
-			if (placeBlock) {
-				int x = 0;
-
-				while (x < no_of_blocks) {
-					int i = randomPositionGenerator.nextInt(10);
+			while (x < no_of_blocks) {
+				int i = randomPositionGenerator.nextInt(10);
 				//	System.err.println("running");
-					if (occupiedCoordinates[i] == false) {
-						blocks[i].setLayoutX(x_coordinates[i]);
-						blocks[i].setLayoutY(y_coordinate);
-						x++;
-						occupiedCoordinates[i] = true;
-					}
+				if (occupiedCoordinates[i] == false) {
+					blocks[i].setLayoutX(x_coordinates[i]);
+					blocks[i].setLayoutY(y_coordinate);
+					x++;
+					occupiedCoordinates[i] = true;
 				}
-
 			}
 
-			placeBlock = false;
+		}
 
-			//Logic for placing block ends
+		placeBlock = false;
+
+		//Logic for placing block ends
 
 //		if (flag == 0) {
 //			timer.schedule(task, 1000,2000);
@@ -232,8 +224,7 @@ public class GameViewManager {
 //		}
 
 
-
-		}
+	}
 
 
 	private void createGameElements() {
@@ -242,7 +233,8 @@ public class GameViewManager {
 		blocks = new GameRectangle[10];
 		for (int i = 0; i < blocks.length; i++) {
 
-			blocks[i] = new GameRectangle(i, gamePane, colors); }
+			blocks[i] = new GameRectangle(i, gamePane, colors);
+		}
 
 //        ball = new Ball(randomPositionGenerator.nextInt(5),this);
 //        ComponentList.add(ball);
@@ -288,8 +280,8 @@ public class GameViewManager {
 //        speedup = new ImageView(SPEEDUP_IMAGE);
 //        speedup.setFitHeight(25);
 //        speedup.setFitWidth(25);
-        //coin.setPreserveRatio(true);
-       // setNewElementPosition(speedup);
+		//coin.setPreserveRatio(true);
+		// setNewElementPosition(speedup);
 //		speedUp = new SpeedUp(5,this);
 //        gamePane.getChildren().add(speedUp.getImage());
 //
@@ -316,20 +308,19 @@ public class GameViewManager {
 
 //
 
-		for (int i=0; i<blocks.length; i++) {
+		for (int i = 0; i < blocks.length; i++) {
 //			int a =(int) blocks[i].getLayoutY();
 //			System.out.println(a);
 
-			blocks[i].setLayoutY(blocks[i].getLayoutY()+ gameSpeedFactor * 5);
+			blocks[i].setLayoutY(blocks[i].getLayoutY() + gameSpeedFactor * 5);
 //
 		}
 		MoveToken();
 //
- 	}
+	}
 
-//
-	private void MoveToken()
-	{
+	//
+	private void MoveToken() {
 		for (int i = 0; i < activeComponentsList.size(); i++) {
 			System.out.println(activeComponentsList.size());
 			Component component = activeComponentsList.get(i);
@@ -344,13 +335,12 @@ public class GameViewManager {
 	int second = 0;
 	double timeElapsedSinceBlock = 0;
 
-    private void elementBelowScreen() {
-
+	private void elementBelowScreen() {
 
 
 		//System.out.println("below screen size" + activeComponentsList.size());
 
-		for (int i = 0; i < activeComponentsList.size() ; i++) {
+		for (int i = 0; i < activeComponentsList.size(); i++) {
 			Component current = activeComponentsList.get(i);
 //			if (activeComponentsList.get(i).getY() > GAME_HEIGHT) {
 //				if(activeComponentsList.get(i).getClass()!=wall.getClass())
@@ -359,10 +349,9 @@ public class GameViewManager {
 //
 //			}
 			if (current.getY() > GAME_HEIGHT && current != null && wall != null) {
-				if(current.getClass()!= wall.getClass())
+				if (current.getClass() != wall.getClass())
 //				activeComponentsList.remove(i);
-				activeComponentsList.remove(current);
-
+					activeComponentsList.remove(current);
 			}
 		}
 
@@ -376,98 +365,87 @@ public class GameViewManager {
 		}
 
 		double time = System.currentTimeMillis() - currentTime;
-		time = time/1000;
+		time = time / 1000;
 
-		if (second != (int)time && !roknaHai) {
+		if (second != (int) time && !roknaHai) {
 			generateToken();
-			second = (int)time;
-		}
-		else if (roknaHai) {
+			second = (int) time;
+		} else if (roknaHai) {
 			if (System.currentTimeMillis() - timeElapsedSinceBlock > 250) {
 				roknaHai = false;
 			}
 		}
 
 //
-    }
+	}
 
 
-
-    public void generateToken() {
+	public void generateToken() {
 		System.out.println("TOKEN CREATED");
-	    int choice = randomPositionGenerator.nextInt(12);
+		int choice = randomPositionGenerator.nextInt(12);
 
-	    if (choice==0)
-        {
-        	Shield shield = new Shield(5,this);
-        	gamePane.getChildren().add(shield.getImage());
-            initializeToken(shield);
-            activeComponentsList.add(shield);
-        }
-        else if (choice == 1) {
-        	SloMo slomo = new SloMo(5,this);
-        	gamePane.getChildren().add(slomo.getImage());
-            initializeToken(slomo);
+		if (choice == 0) {
+			Shield shield = new Shield(5, this);
+			gamePane.getChildren().add(shield.getImage());
+			initializeToken(shield);
+			activeComponentsList.add(shield);
+		} else if (choice == 1) {
+			SloMo slomo = new SloMo(5, this);
+			gamePane.getChildren().add(slomo.getImage());
+			initializeToken(slomo);
 			activeComponentsList.add(slomo);
-        }
-        else if (choice == 2) {
-        	SpeedUp speedUp = new SpeedUp(5,this);
-        	gamePane.getChildren().add(speedUp.getImage());
-            initializeToken(speedUp);
+		} else if (choice == 2) {
+			SpeedUp speedUp = new SpeedUp(5, this);
+			gamePane.getChildren().add(speedUp.getImage());
+			initializeToken(speedUp);
 			activeComponentsList.add(speedUp);
-        }
-        else if (choice == 3) {
-        	Magnet magnet = new Magnet(5,this);
-        	gamePane.getChildren().add(magnet.getImage());
-            initializeToken(magnet);
+		} else if (choice == 3) {
+			Magnet magnet = new Magnet(5, this);
+			gamePane.getChildren().add(magnet.getImage());
+			initializeToken(magnet);
 			activeComponentsList.add(magnet);
-        }
-        else if (choice == 4) {
-        	BlockDestroyer blockDestroyer = new BlockDestroyer(5,this);
-        	gamePane.getChildren().add(blockDestroyer.getImage());
-            initializeToken(blockDestroyer);
+		} else if (choice == 4) {
+			BlockDestroyer blockDestroyer = new BlockDestroyer(5, this);
+			gamePane.getChildren().add(blockDestroyer.getImage());
+			initializeToken(blockDestroyer);
 			activeComponentsList.add(blockDestroyer);
-        }
-        else if (choice == 5) {
-			Multiplier multiplier = new Multiplier(5,this);
+		} else if (choice == 5) {
+			Multiplier multiplier = new Multiplier(5, this);
 			gamePane.getChildren().add(multiplier.getImage());
-            initializeToken(multiplier);
+			initializeToken(multiplier);
 			activeComponentsList.add(multiplier);
-        }
-        else if (choice >=6 && choice <=8) {
-        	int i = randomPositionGenerator.nextInt(3);
+		} else if (choice >= 6 && choice <= 8) {
+			int i = randomPositionGenerator.nextInt(3);
 
-        	for (int x =0; x<i; x++) {
-				Ball ball = new Ball(5,this);
+			for (int x = 0; x < i; x++) {
+				Ball ball = new Ball(5, this);
 				gamePane.getChildren().add(ball.getImage());
 				initializeToken(ball);
 				activeComponentsList.add(ball);
 			}
 
-        }
-        else if (choice >=9 && choice <=10) {
-        	Coin coin = new Coin(5,this);
-        	gamePane.getChildren().add(coin.getImage());
-            initializeToken(coin);
+		} else if (choice >= 9 && choice <= 10) {
+			Coin coin = new Coin(5, this);
+			gamePane.getChildren().add(coin.getImage());
+			initializeToken(coin);
 			activeComponentsList.add(coin);
-        }
-        else {
-            //do nothing
-        }
+		} else {
+			//do nothing
+		}
 
 
-    }
+	}
 
-    public void initializeToken(Token i) {
+	public void initializeToken(Token i) {
 
 //            i.setFitWidth(25);
 //            i.setFitHeight(25);
-            i.getImage().setLayoutY(0);
-            i.getImage().setLayoutX(discretePositions[randomPositionGenerator.nextInt(discretePositions.length)]);
+		i.getImage().setLayoutY(0);
+		i.getImage().setLayoutX(discretePositions[randomPositionGenerator.nextInt(discretePositions.length)]);
 
 //			if(i.isActive())
 //				i.toggle();
-    }
+	}
 
 	void setNewElementPosition(ImageView image) {
 //		image.setLayoutX(randomPositionGenerator.nextInt(450));
@@ -483,39 +461,36 @@ public class GameViewManager {
 //				break;
 //			}
 
-			image.setLayoutX(x);
-			image.setLayoutY(y);
+		image.setLayoutX(x);
+		image.setLayoutY(y);
 
 //		image.setLayoutY(randomPositionGenerator.nextInt(100));
 //		}
 	}
 
-	private boolean findChance(int freq, int high)
-    {
-        boolean placeElement = false;
-        int chance = findNext(high);
-        if(chance>0 && chance<freq)
-        {
-            placeElement = true;
-        }
+	private boolean findChance(int freq, int high) {
+		boolean placeElement = false;
+		int chance = findNext(high);
+		if (chance > 0 && chance < freq) {
+			placeElement = true;
+		}
 
-        return placeElement;
-    }
-
+		return placeElement;
+	}
 
 
 	private int findNext(int high) {
-        Random r = new Random();
-        int low = 0;
-        int num =  (r.nextInt(high - low) + low);
-        return num;
-    }
+		Random r = new Random();
+		int low = 0;
+		int num = (r.nextInt(high - low) + low);
+		return num;
+	}
 
-    private int findNextInt(int low,int high) {
-        Random r = new Random();
-        int num =  (r.nextInt(high - low) + low);
-        return num;
-    }
+	private int findNextInt(int low, int high) {
+		Random r = new Random();
+		int num = (r.nextInt(high - low) + low);
+		return num;
+	}
 
 	private void createSnake() {
 		player = new Snake(this);
@@ -529,7 +504,7 @@ public class GameViewManager {
 				moveBackground();
 				moveGameElements();
 				elementBelowScreen();
-				//checkCollision();
+				checkCollision();
 				moveSnake();
 			}
 		};
@@ -540,8 +515,8 @@ public class GameViewManager {
 	private void moveSnake() {
 //			ObservableList<Node> snake = player.getSnake();
 		if (isLeftKeyPressed && !isRightKeyPressed) {
-			if (((Circle) player.getSnake().get(player.getSnake().size()-1)).getCenterX() > 20) {
-				for (int i=0; i<player.getSnake().size(); i++) {
+			if (((Circle) player.getSnake().get(player.getSnake().size() - 1)).getCenterX() > 20) {
+				for (int i = 0; i < player.getSnake().size(); i++) {
 					((Circle) player.getSnake().get(i)).setCenterX(((Circle) player.getSnake().get(i)).getCenterX() - gameSpeedFactor * 6);
 				}
 
@@ -549,8 +524,8 @@ public class GameViewManager {
 		}
 
 		if (!isLeftKeyPressed && isRightKeyPressed) {
-			if (((Circle) player.getSnake().get(player.getSnake().size()-1)).getCenterX() < 580) {
-				for (int i=0; i<player.getSnake().size(); i++) {
+			if (((Circle) player.getSnake().get(player.getSnake().size() - 1)).getCenterX() < 580) {
+				for (int i = 0; i < player.getSnake().size(); i++) {
 					((Circle) player.getSnake().get(i)).setCenterX(((Circle) player.getSnake().get(i)).getCenterX() + gameSpeedFactor * 6);
 				}
 			}
@@ -571,17 +546,17 @@ public class GameViewManager {
 		gridPane1 = new GridPane();
 		gridPane2 = new GridPane();
 
-		for (int i=0; i<12; i++) {
+		for (int i = 0; i < 12; i++) {
 			ImageView backgroundImage1 = new ImageView(BACKGROUND_IMAGE);
 			ImageView backgroundImage2 = new ImageView(BACKGROUND_IMAGE);
-			GridPane.setConstraints(backgroundImage1,i%3,i/3);
-			GridPane.setConstraints(backgroundImage2,i%3,i/3);
+			GridPane.setConstraints(backgroundImage1, i % 3, i / 3);
+			GridPane.setConstraints(backgroundImage2, i % 3, i / 3);
 			gridPane1.getChildren().add(backgroundImage1);
 			gridPane2.getChildren().add(backgroundImage2);
 		}
 
 		gridPane2.setLayoutY(-1024);
-		gamePane.getChildren().addAll(gridPane1,gridPane2);
+		gamePane.getChildren().addAll(gridPane1, gridPane2);
 	}
 
 	private void moveBackground() {
@@ -597,12 +572,13 @@ public class GameViewManager {
 		}
 	}
 
-//	private void checkCollision() {
+	private void checkCollision() {
 //
-//		SpeedUp speedupToken = new SpeedUp(5,"SPEEDUP", speedup);
+////		SpeedUp speedupToken = new SpeedUp(5,"SPEEDUP", speedup);
 //	//	System.out.println(calculateDistance(((Circle) snake.get(snake.size()-1)).getCenterY(),coin.getLayoutX(),((Circle) snake.get(snake.size()-1)).getCenterY(),coin.getLayoutY()));
-//		 int SNAKE_RADIUS = player.getSnakeRadius();
+		int SNAKE_RADIUS = player.getSnakeRadius();
 //		 ObservableList<Node> snake = player.getSnake();
+//		 ImageView coin = coin.getImage();
 //		if (SNAKE_RADIUS + COIN_RADIUS > calculateDistance(((Circle) snake.get(snake.size()-1)).getCenterX(),coin.getLayoutX(),((Circle) snake.get(snake.size()-1)).getCenterY(),coin.getLayoutY())) {
 //			setNewElementPosition(coin);
 //
@@ -614,23 +590,11 @@ public class GameViewManager {
 //			coinLabel.setText(textToSet + coins);
 //
 //		}
-
-
-//		for (int i=0; i<balls.length; i++) {
-//			if (SNAKE_RADIUS + COIN_RADIUS > calculateDistance(((Circle) snake.get(snake.size()-1)).getCenterX(),balls[i].getLayoutX(),((Circle) snake.get(snake.size()-1)).getCenterY(),balls[i].getLayoutY())) {
-//				setNewElementPosition(balls[i]);
-//				Circle head = new Circle();
-//				head.setCenterX(((Circle) snake.get(snake.size()-1)).getCenterX());
-//				head.setCenterY(((Circle) snake.get(snake.size()-1)).getCenterY()-15.0);
-//				head.setRadius(10.0);
-//				head.setFill(Color.YELLOW);
-//				snake.add(head);
 //
-//			}
-//		}
-
+//
+//
 //		player.Grow();
-
+//
 //		for (int i=0; i<blocks.length; i++) {
 //			if (SNAKE_RADIUS + BLOCK_RADIUS > calculateDistance(((Circle) snake.get(snake.size()-1)).getCenterX(),blocks[i].getLayoutX(),((Circle) snake.get(snake.size()-1)).getCenterY(),blocks[i].getLayoutY())) {
 //				//code elided
@@ -666,15 +630,105 @@ public class GameViewManager {
 //            };
 //
 //            timer.schedule(task,speedupToken.getValue()*1000);
-//
-//
 //        }
 //
 //
+
+		for (Component element : activeComponentsList
+				) {
+
+			int radius = element.getRadius();
+			ImageView icon;
+			ObservableList<Node> snake = player.getSnake();
+			if (element instanceof Token) {
+
+				icon = ((Token) element).getImage();
+
+				if (SNAKE_RADIUS + radius > calculateDistance(((Circle) snake.get(snake.size() - 1)).getCenterX(), icon.getLayoutX(), ((Circle) snake.get(snake.size() - 1)).getCenterY(), icon.getLayoutY())) {
+					((Token) element).getImage().setVisible(false);
+					if (element instanceof SloMo) {
+						setGameSpeedFactor(0.5f);
+						Timer timer = new Timer();
+						TimerTask task = new TimerTask() {
+							@Override
+							public void run() {
+								setGameSpeedFactor(1);
+							}
+						};
+						timer.schedule(task, element.getValue() * 1000);
+
+					}
+					if (element instanceof SpeedUp) {
+						setGameSpeedFactor(2.0f);
+
+						Timer timer = new Timer();
+						TimerTask task = new TimerTask() {
+							@Override
+							public void run() {
+								gameSpeedFactor = 1;
+							}
+						};
+
+						timer.schedule(task, element.getValue() * 1000);
+					}
+
+					if (element instanceof Ball) {
+
+						for (int i = 0; i < element.getValue(); i++) {
+							Circle head = new Circle();
+							head.setCenterX(((Circle) snake.get(snake.size() - 1)).getCenterX());
+							head.setCenterY(((Circle) snake.get(snake.size() - 1)).getCenterY() - 15.0);
+							head.setRadius(10.0);
+							head.setFill(Color.YELLOW);
+							snake.add(head);
+						}
+					}
+
+					if(element instanceof Coin)
+					{
+						coins++;
+						String textToSet = "POINTS: ";
+						if (coins <10) {
+							textToSet = textToSet + "0";
+						}
+						coinLabel.setText(textToSet + coins);
+					}
+				}
+			}
+
+		}
+
+//			if (element instanceof SpeedUp) {
+//				ImageView speedup = ((SloMo) element).getImage();
+//				if (SNAKE_RADIUS + radius > calculateDistance(((Circle) snake.get(snake.size() - 1)).getCenterX(), speedup.getLayoutX(), ((Circle) snake.get(snake.size() - 1)).getCenterY(), speedup.getLayoutY())) {
+//					setGameSpeedFactor(3);
+//
+//					Timer timer = new Timer();
+//					TimerTask task = new TimerTask() {
+//						@Override
+//						public void run() {
+//							gameSpeedFactor = 1;
+//						}
+//					};
+//
+//					timer.schedule(task, element.getValue() * 1000);
+//
+//
+//				}
+
+
+
+	}
+//	private void checkCollision() {
+//
 //	}
 
-	double calculateDistance(double x1, double x2, double y1, double y2) {
-		return Math.sqrt(Math.pow(x1-x2,2)+Math.pow(y1-y2, 2));
+		double calculateDistance ( double x1, double x2, double y1, double y2){
+			return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
+		}
+
+	public void setGameSpeedFactor(float gameSpeedFactor) {
+		this.gameSpeedFactor = gameSpeedFactor;
 	}
 }
 

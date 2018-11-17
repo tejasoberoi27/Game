@@ -9,11 +9,10 @@ public class Wall extends Component{
     private Rectangle wall;
 
     public Wall(GameViewManager game) {
-        super(0, "WALL",game);
+        super(0, "WALL",game,20);
         this.wall = new Rectangle();
         wall.setWidth(15);
         wall.setFill(Color.WHITE);
-
         setNewWallPosition(wall);
         setNewWallDimension(wall);
     }
