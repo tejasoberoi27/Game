@@ -10,4 +10,15 @@ public class Ball extends Token{
         ball.setFitHeight(25);
         ball.setFitWidth(25);
     }
+
+//    @Override
+//    public int getNextTime() {
+//
+//            return game.getRandomPositionGenerator().nextInt(3)+1;
+//    }
+
+    @Override
+    public int computeValue() {
+            return game.getRandomPositionGenerator().nextInt(3)+1;
+    }
 }

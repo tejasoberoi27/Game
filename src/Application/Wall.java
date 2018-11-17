@@ -27,7 +27,7 @@ public class Wall extends Component{
     }
 
     private void setNewWallPosition(Rectangle image) {
-        image.setLayoutX(game.randomPositionGenerator.nextInt(game.GAME_WIDTH));
+        image.setLayoutX(game.getRandomPositionGenerator().nextInt(game.GAME_WIDTH));
         image.setLayoutY(10);
 //		image.setLayoutY(randomPositionGenerator.nextInt(100));
     }

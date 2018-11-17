@@ -11,4 +11,9 @@ public class Multiplier extends Token{
         multiplier.setFitHeight(25);
         multiplier.setFitWidth(25);
     }
+
+    @Override
+    public int computeValue() {
+        return 0;
+    }
 }

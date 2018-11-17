@@ -1,5 +1,7 @@
 package Application;
 
+import javafx.scene.control.Label;
+
 public abstract class Component {
     int value;
     String name;
@@ -13,11 +15,11 @@ public abstract class Component {
         this.Radius = Radius;
     }
 
-    public int getValue() {
+    public int getValueInt() {
         return value;
     }
 
-    public void setValue(int value) {
+    public void setValueInt(int value) {
         this.value = value;
     }
 
@@ -45,4 +47,6 @@ public abstract class Component {
     public static int getRadius() {
         return Radius;
     }
+
+
 }

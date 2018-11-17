@@ -12,4 +12,9 @@ public class BlockDestroyer extends Token{
         block_destroyer.setFitHeight(25);
         block_destroyer.setFitWidth(25);
     }
+
+    @Override
+    public int computeValue() {
+        return 0;
+    }
 }

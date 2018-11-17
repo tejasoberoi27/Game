@@ -10,4 +10,9 @@ public class SloMo extends Token {
         slomo.setFitHeight(25);
         slomo.setFitWidth(25);
     }
+
+    @Override
+    public int computeValue() {
+        return 0;
+    }
 }

@@ -3,6 +3,7 @@ package Application;
 //import com.sun.org.apache.xpath.internal.operations.Mult;
 //import com.sun.org.apache.xpath.internal.operations.Mult;
 import javafx.animation.TranslateTransition;
+import javafx.application.Platform;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -54,21 +55,22 @@ public class GameViewManager {
 	private GridPane gridPane1;
 	private GridPane gridPane2;
 	private final static String BACKGROUND_IMAGE = "application/gamebg.jpeg";
-	Random randomPositionGenerator;
+	private Random randomPositionGenerator;
 
 	//	private ImageView coin,shield,block_destroyer,magnet,speedup,slomo,multiplier;
 //	private Rectangle wall;
 	private Wall wall;
 	private Palette colors;
 	private Snake player;
-	Ball ball;
-	Shield shield;
-	BlockDestroyer blockDestroyer;
-	Magnet magnet;
-	SpeedUp speedUp;
-	Multiplier multiplier;
-	SloMo slomo;
-	Coin coin;
+	private Ball ball;
+	private Shield shield;
+	private BlockDestroyer blockDestroyer;
+	private Magnet magnet;
+	private SpeedUp speedUp;
+	private Multiplier multiplier;
+	private SloMo slomo;
+	private Coin coin;
+
 
 	private SmallInfoLabel coinLabel;
 	private int coins;
@@ -80,8 +82,8 @@ public class GameViewManager {
 	private final static String BLOCK_IMAGE = "application/red_button07.png";
 	private ArrayList<Component> ComponentList = new ArrayList<Component>();
 	//	private ImageView[] blocks;
-//	private GameRectangle[] blocks;
-	private GameRectangle[] blocks;
+//	private Block[] blocks;
+	private Block[] blocks;
 
 	//private StackPane[] blocksPane;
 
@@ -153,28 +155,31 @@ public class GameViewManager {
 	public void createNewGame(Stage menuStage) {
 		this.menuStage = menuStage;
 		this.menuStage.hide();
+		coins=0;
 		createBackground();
-		System.err.println("1");
+//		System.err.println("1");
 		createSnake();
-		System.err.println("2");
+//		System.err.println("2");
 		colors = new Palette();
 		createGameElements();
 		create();
-		System.err.println("3");
+//		System.err.println("3");
 //		translate = new TranslateTransition();
 		createGameLoop();
-		System.err.println("4");
+//		System.err.println("4");
 		gameStage.setTitle("Snakes vs Blocks");
-		System.err.println("5");
+//		System.err.println("5");
 		gameStage.show();
-		System.err.println("6");
+//		System.err.println("6");
 	}
 
 	//int flag = 0;
+
+
 	private void create() {
 
 
-		int no_of_blocks = randomPositionGenerator.nextInt(15);
+		int no_of_blocks = randomPositionGenerator.nextInt(20);
 
 		if (no_of_blocks >= 10) no_of_blocks = 10;
 
@@ -205,6 +210,7 @@ public class GameViewManager {
 				int i = randomPositionGenerator.nextInt(10);
 				//	System.err.println("running");
 				if (occupiedCoordinates[i] == false) {
+					blocks[i].updateValue();
 					blocks[i].setLayoutX(x_coordinates[i]);
 					blocks[i].setLayoutY(y_coordinate);
 					x++;
@@ -230,11 +236,16 @@ public class GameViewManager {
 	private void createGameElements() {
 
 
-		blocks = new GameRectangle[10];
+		blocks = new Block[10];
 		for (int i = 0; i < blocks.length; i++) {
 
-			blocks[i] = new GameRectangle(i, gamePane, colors);
+			blocks[i] = new Block(i, gamePane, colors,this,player);
 		}
+
+		coinLabel = new SmallInfoLabel("POINTS: 0");
+		coinLabel.setLayoutX(460);
+		coinLabel.setLayoutY(20);
+		gamePane.getChildren().add(coinLabel);
 
 //        ball = new Ball(randomPositionGenerator.nextInt(5),this);
 //        ComponentList.add(ball);
@@ -268,7 +279,7 @@ public class GameViewManager {
 ////		Token i = blockDestroyer;
 ////		i.getImage().setLayoutY(0);
 ////		i.getImage().setLayoutX(randomPositionGenerator.nextInt(500));
-////		generateToken();
+//		generateToken();
 //		ComponentList.add(blockDestroyer);
 //
 //        magnet = new Magnet(5,this);
@@ -322,12 +333,12 @@ public class GameViewManager {
 	//
 	private void MoveToken() {
 		for (int i = 0; i < activeComponentsList.size(); i++) {
-			System.out.println(activeComponentsList.size());
+//			System.out.println(activeComponentsList.size());
 			Component component = activeComponentsList.get(i);
 
 //			if (component.getName().e)
 			component.move();
-			System.out.println(component);
+//			System.out.println(component);
 		}
 	}
 
@@ -381,8 +392,8 @@ public class GameViewManager {
 
 
 	public void generateToken() {
-		System.out.println("TOKEN CREATED");
-		int choice = randomPositionGenerator.nextInt(12);
+//		System.out.println("TOKEN CREATED");
+		int choice = randomPositionGenerator.nextInt(50);
 
 		if (choice == 0) {
 			Shield shield = new Shield(5, this);
@@ -414,18 +425,20 @@ public class GameViewManager {
 			gamePane.getChildren().add(multiplier.getImage());
 			initializeToken(multiplier);
 			activeComponentsList.add(multiplier);
-		} else if (choice >= 6 && choice <= 8) {
+		} else if (choice >= 6 && choice <= 35) {
 			int i = randomPositionGenerator.nextInt(3);
 
 			for (int x = 0; x < i; x++) {
 				Ball ball = new Ball(5, this);
+				ball.setNextValue();
 				gamePane.getChildren().add(ball.getImage());
+				gamePane.getChildren().add(ball.getValue());
 				initializeToken(ball);
 				activeComponentsList.add(ball);
 			}
 
-		} else if (choice >= 9 && choice <= 10) {
-			Coin coin = new Coin(5, this);
+		} else if (choice >= 35 && choice <= 48) {
+			Coin coin = new Coin(1, this);
 			gamePane.getChildren().add(coin.getImage());
 			initializeToken(coin);
 			activeComponentsList.add(coin);
@@ -442,31 +455,34 @@ public class GameViewManager {
 //            i.setFitHeight(25);
 		i.getImage().setLayoutY(0);
 		i.getImage().setLayoutX(discretePositions[randomPositionGenerator.nextInt(discretePositions.length)]);
+		i.getValue().setLayoutX(i.getImage().getLayoutX()+i.getRadius()/2);
+		i.getValue().setLayoutY(i.getImage().getLayoutY()+i.getRadius()/2);
+
 
 //			if(i.isActive())
 //				i.toggle();
 	}
 
-	void setNewElementPosition(ImageView image) {
-//		image.setLayoutX(randomPositionGenerator.nextInt(450));
-
-		int x, y;
-		x = findNextInt(0, 450);
-		y = findNextInt(100, 150);
-//		int ctr = 0;
-//		while (Math.abs(image.getLayoutY() - blocks[0].getLayoutY()) < 40) {
-//			x = findNextInt(0, 450);
-//			y = findNextInt(100, 150);
-//			if (ctr++ > 10) {
-//				break;
-//			}
-
-		image.setLayoutX(x);
-		image.setLayoutY(y);
-
-//		image.setLayoutY(randomPositionGenerator.nextInt(100));
-//		}
-	}
+//	void setNewElementPosition(ImageView image) {
+////		image.setLayoutX(randomPositionGenerator.nextInt(450));
+//
+//		int x, y;
+//		x = findNextInt(0, 450);
+//		y = findNextInt(100, 150);
+////		int ctr = 0;
+////		while (Math.abs(image.getLayoutY() - blocks[0].getLayoutY()) < 40) {
+////			x = findNextInt(0, 450);
+////			y = findNextInt(100, 150);
+////			if (ctr++ > 10) {
+////				break;
+////			}
+//
+//		image.setLayoutX(x);
+//		image.setLayoutY(y);
+//
+////		image.setLayoutY(randomPositionGenerator.nextInt(100));
+////		}
+//	}
 
 	private boolean findChance(int freq, int high) {
 		boolean placeElement = false;
@@ -486,7 +502,7 @@ public class GameViewManager {
 		return num;
 	}
 
-	private int findNextInt(int low, int high) {
+	public int findNextInt(int low, int high) {
 		Random r = new Random();
 		int num = (r.nextInt(high - low) + low);
 		return num;
@@ -646,6 +662,8 @@ public class GameViewManager {
 
 				if (SNAKE_RADIUS + radius > calculateDistance(((Circle) snake.get(snake.size() - 1)).getCenterX(), icon.getLayoutX(), ((Circle) snake.get(snake.size() - 1)).getCenterY(), icon.getLayoutY())) {
 					((Token) element).getImage().setVisible(false);
+					((Token) element).getValue().setVisible(false);
+					activeComponentsList.remove(element);
 					if (element instanceof SloMo) {
 						setGameSpeedFactor(0.5f);
 						Timer timer = new Timer();
@@ -655,7 +673,7 @@ public class GameViewManager {
 								setGameSpeedFactor(1);
 							}
 						};
-						timer.schedule(task, element.getValue() * 1000);
+						timer.schedule(task, element.getValueInt() * 1000);
 
 					}
 					if (element instanceof SpeedUp) {
@@ -669,12 +687,12 @@ public class GameViewManager {
 							}
 						};
 
-						timer.schedule(task, element.getValue() * 1000);
+						timer.schedule(task, element.getValueInt() * 1000);
 					}
 
 					if (element instanceof Ball) {
 
-						for (int i = 0; i < element.getValue(); i++) {
+						for (int i = 0; i < element.getValueInt(); i++) {
 							Circle head = new Circle();
 							head.setCenterX(((Circle) snake.get(snake.size() - 1)).getCenterX());
 							head.setCenterY(((Circle) snake.get(snake.size() - 1)).getCenterY() - 15.0);
@@ -687,11 +705,15 @@ public class GameViewManager {
 					if(element instanceof Coin)
 					{
 						coins++;
+						System.out.println(coins);
 						String textToSet = "POINTS: ";
-						if (coins <10) {
-							textToSet = textToSet + "0";
-						}
-						coinLabel.setText(textToSet + coins);
+//						if (coins <10) {
+//							textToSet = textToSet + "0";
+//
+//						}
+						textToSet = textToSet + (Integer.toString(coins));
+						coinLabel.setText(textToSet);
+						System.out.println(textToSet);
 					}
 				}
 			}
@@ -730,5 +752,20 @@ public class GameViewManager {
 	public void setGameSpeedFactor(float gameSpeedFactor) {
 		this.gameSpeedFactor = gameSpeedFactor;
 	}
+
+	public int getCoins() {
+		return coins;
+	}
+
+	public ImageView getBallImage()
+	{
+		return ball.getImage();
+	}
+
+	public Random getRandomPositionGenerator() {
+		return randomPositionGenerator;
+	}
 }
+
+
 

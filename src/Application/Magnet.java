@@ -10,4 +10,9 @@ public class Magnet extends Token{
         magnet.setFitHeight(25);
         magnet.setFitWidth(25);
     }
+
+    @Override
+    public int computeValue() {
+        return game.findNextInt(5,7);
+    }
 }

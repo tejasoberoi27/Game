@@ -12,5 +12,10 @@ public class SpeedUp extends Token {
         speedup.setFitWidth(25);
 //        this.image = speedup;
     }
+
+    @Override
+    public int computeValue() {
+        return 0;
+    }
 }
 

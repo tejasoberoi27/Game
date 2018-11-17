@@ -14,4 +14,9 @@ public class Shield extends Token {
         shield.setFitHeight(25);
         shield.setFitWidth(25);
     }
+
+    @Override
+    public int computeValue() {
+        return 0;
+    }
 }

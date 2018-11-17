@@ -1,17 +1,21 @@
 package Application;
 
+import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 
-public class Token extends Component {
+public abstract class Token extends Component {
     protected ImageView image;
     private boolean isActive;
-
+    private Label Value;
 
     public Token(int value, String name, ImageView image,GameViewManager game) {
 
         super(value, name,game,30);
         this.image = image;
         isActive = false;
+        this.Value = new Label("3");
     }
 
     public boolean isActive() {
@@ -29,13 +33,47 @@ public class Token extends Component {
     @Override
     public void move() {
         ImageView Token = this.image;
-        System.out.println("Moving");
-
+//        System.out.println("Moving");
         Token.setLayoutY(Token.getLayoutY() +  game.getGameSpeedFactor() * 5);
+        this.Value.setLayoutY(Value.getLayoutY()+ game.getGameSpeedFactor()*5);
     }
 
     @Override
     public double getY() {
         return this.getImage().getLayoutY();
     }
+
+    public void setValue(Label time) {
+        this.Value = time;
+    }
+
+    public Label getValue() {
+        return Value;
+    }
+
+    public int getTime()
+    {
+        return Integer.parseInt(Value.getText());
+    }
+
+    public abstract int computeValue();
+
+    public void setNextValue()
+    {
+        /* Sets value of label*/
+        Label text;
+        text = new Label(Integer.toString(computeValue()));
+        text.setTextFill(Color.WHITE);
+//        text.setMinWidth(100);
+//        text.setMinHeight(100);
+        text.setFont(new Font("Cambria", 16));
+        text.setStyle("-fx-font-weight: bold");
+        setValue(text);
+    }
+
+//    public void setTimeValue(Label timeValue) {
+//        this. = timeValue;
+//    }
 }
+
+
