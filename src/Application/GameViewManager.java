@@ -20,10 +20,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
-import java.util.ArrayList;
-import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 import javafx.animation.AnimationTimer;
 import javafx.collections.ObservableList;
@@ -520,7 +517,15 @@ public class GameViewManager {
 				moveBackground();
 				moveGameElements();
 				elementBelowScreen();
-				checkCollision();
+//				try {
+//					checkCollision();
+//				}catch (ConcurrentModificationException e)
+//				{
+//					System.out.println("caught "+currentTime);
+//				}
+
+					checkCollision();
+
 				moveSnake();
 			}
 		};
