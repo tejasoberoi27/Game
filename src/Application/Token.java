@@ -7,24 +7,21 @@ import javafx.scene.text.Font;
 
 public abstract class Token extends Component {
     protected ImageView image;
-    private boolean isActive;
+
     private Label Value;
+
 
     public Token(int value, String name, ImageView image,GameViewManager game) {
 
         super(value, name,game,30);
         this.image = image;
-        isActive = false;
-        this.Value = new Label("3");
+
     }
 
-    public boolean isActive() {
-        return isActive;
-    }
 
-    public void toggle() {
-        isActive = !(isActive);
-    }
+
+
+
 
     public ImageView getImage() {
         return image;
@@ -35,6 +32,7 @@ public abstract class Token extends Component {
         ImageView Token = this.image;
 //        System.out.println("Moving");
         Token.setLayoutY(Token.getLayoutY() +  game.getGameSpeedFactor() * 5);
+        if (Value!=null)
         this.Value.setLayoutY(Value.getLayoutY()+ game.getGameSpeedFactor()*5);
     }
 
@@ -43,8 +41,8 @@ public abstract class Token extends Component {
         return this.getImage().getLayoutY();
     }
 
-    public void setValue(Label time) {
-        this.Value = time;
+    public void setValue(Label label) {
+        this.Value = label;
     }
 
     public Label getValue() {

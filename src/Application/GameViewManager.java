@@ -26,6 +26,7 @@ import javafx.animation.AnimationTimer;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
+import java.io.*;
 
 public class GameViewManager {
 
@@ -33,7 +34,7 @@ public class GameViewManager {
 	private float gameSpeedFactor;
 	private boolean roknaHai;
 	private double currentTime;
-	AnchorPane gamePane;
+	private AnchorPane gamePane;
 	private Scene gameScene;
 	private Stage gameStage;
 
@@ -172,6 +173,10 @@ public class GameViewManager {
 
 	//int flag = 0;
 
+
+	public AnchorPane getGamePane() {
+		return gamePane;
+	}
 
 	private void create() {
 
@@ -350,6 +355,7 @@ public class GameViewManager {
 
 		for (int i = 0; i < activeComponentsList.size(); i++) {
 			Component current = activeComponentsList.get(i);
+//			System.out.println(current.getClass());
 //			if (activeComponentsList.get(i).getY() > GAME_HEIGHT) {
 //				if(activeComponentsList.get(i).getClass()!=wall.getClass())
 ////				activeComponentsList.remove(i);
@@ -359,7 +365,11 @@ public class GameViewManager {
 			if (current.getY() > GAME_HEIGHT && current != null && wall != null) {
 				if (current.getClass() != wall.getClass())
 //				activeComponentsList.remove(i);
+					if(current.getClass()==Coin.class||current.getClass()==Coin.class )
+						gamePane.getChildren().remove(((Token) current).getValue());
 					activeComponentsList.remove(current);
+
+
 			}
 		}
 
@@ -390,7 +400,7 @@ public class GameViewManager {
 
 	public void generateToken() {
 //		System.out.println("TOKEN CREATED");
-		int choice = randomPositionGenerator.nextInt(50);
+		int choice = randomPositionGenerator.nextInt(100);
 
 		if (choice == 0) {
 			Shield shield = new Shield(5, this);
@@ -407,7 +417,7 @@ public class GameViewManager {
 			gamePane.getChildren().add(speedUp.getImage());
 			initializeToken(speedUp);
 			activeComponentsList.add(speedUp);
-		} else if (choice == 3) {
+		} else if (choice >49 && choice<60) {
 			Magnet magnet = new Magnet(5, this);
 			gamePane.getChildren().add(magnet.getImage());
 			initializeToken(magnet);
@@ -422,7 +432,7 @@ public class GameViewManager {
 			gamePane.getChildren().add(multiplier.getImage());
 			initializeToken(multiplier);
 			activeComponentsList.add(multiplier);
-		} else if (choice >= 6 && choice <= 35) {
+		} else if (choice >= 60 && choice <= 80) {
 			int i = randomPositionGenerator.nextInt(3);
 
 			for (int x = 0; x < i; x++) {
@@ -434,9 +444,11 @@ public class GameViewManager {
 				activeComponentsList.add(ball);
 			}
 
-		} else if (choice >= 35 && choice <= 48) {
-			Coin coin = new Coin(1, this);
+		} else if (choice >= 81 && choice <= 100) {
+			Coin coin = new Coin(findNextInt(1,3), this);
+			coin.setNextValue();
 			gamePane.getChildren().add(coin.getImage());
+			gamePane.getChildren().add(coin.getValue());
 			initializeToken(coin);
 			activeComponentsList.add(coin);
 		} else {
@@ -450,11 +462,19 @@ public class GameViewManager {
 
 //            i.setFitWidth(25);
 //            i.setFitHeight(25);
+		if(i.getClass()!= Ball.class&& i.getClass()!=Coin.class)
+		{
+			System.out.println("FOUND");
+		}
 		i.getImage().setLayoutY(0);
 		i.getImage().setLayoutX(discretePositions[randomPositionGenerator.nextInt(discretePositions.length)]);
-		i.getValue().setLayoutX(i.getImage().getLayoutX()+i.getRadius()/2);
-		i.getValue().setLayoutY(i.getImage().getLayoutY()+i.getRadius()/2);
+		Label increment = i.getValue();
+		if(increment!=null) {
+			System.out.println("text" + increment.getText());
 
+			increment.setLayoutX(i.getImage().getLayoutX() + i.getRadius() / 2);
+			increment.setLayoutY(i.getImage().getLayoutY() + i.getRadius() / 2);
+		}
 
 //			if(i.isActive())
 //				i.toggle();
@@ -517,14 +537,15 @@ public class GameViewManager {
 				moveBackground();
 				moveGameElements();
 				elementBelowScreen();
-//				try {
-//					checkCollision();
-//				}catch (ConcurrentModificationException e)
-//				{
-//					System.out.println("caught "+currentTime);
-//				}
-
+				try {
 					checkCollision();
+				}catch (ConcurrentModificationException e)
+				{
+
+//					System.out.println("caught "+currentTime);
+				}
+
+//					checkCollision();
 
 				moveSnake();
 			}
@@ -598,6 +619,7 @@ public class GameViewManager {
 ////		SpeedUp speedupToken = new SpeedUp(5,"SPEEDUP", speedup);
 //	//	System.out.println(calculateDistance(((Circle) snake.get(snake.size()-1)).getCenterY(),coin.getLayoutX(),((Circle) snake.get(snake.size()-1)).getCenterY(),coin.getLayoutY()));
 		int SNAKE_RADIUS = player.getSnakeRadius();
+
 //		 ObservableList<Node> snake = player.getSnake();
 //		 ImageView coin = coin.getImage();
 //		if (SNAKE_RADIUS + COIN_RADIUS > calculateDistance(((Circle) snake.get(snake.size()-1)).getCenterX(),coin.getLayoutX(),((Circle) snake.get(snake.size()-1)).getCenterY(),coin.getLayoutY())) {
@@ -659,16 +681,34 @@ public class GameViewManager {
 				) {
 
 			int radius = element.getRadius();
+
 			ImageView icon;
 			ObservableList<Node> snake = player.getSnake();
 			if (element instanceof Token) {
 
 				icon = ((Token) element).getImage();
+				System.out.println("STATUS = "+(Magnet.isActive()));
+				if (element instanceof Coin && Magnet.isActive())
+				{
+					System.out.println("radius increased");
+					radius = 300;
+				}
+//				if (Magnet.isActive())
+//				{
+//					System.out.println("RADIUS INCREASED");
+//					radius = 10*radius;
+//				}
 
-				if (SNAKE_RADIUS + radius > calculateDistance(((Circle) snake.get(snake.size() - 1)).getCenterX(), icon.getLayoutX(), ((Circle) snake.get(snake.size() - 1)).getCenterY(), icon.getLayoutY())) {
+				System.out.println("rad = "+element.getClass()+" "+radius);
+
+				if (SNAKE_RADIUS + radius > calculateDistance(((Circle) snake.get(snake.size() - 1)).getCenterX(),
+						icon.getLayoutX(), ((Circle) snake.get(snake.size() - 1)).getCenterY(), icon.getLayoutY())) {
+
 					((Token) element).getImage().setVisible(false);
+					if(((Token) element).getValue()!=null)
 					((Token) element).getValue().setVisible(false);
 					activeComponentsList.remove(element);
+
 					if (element instanceof SloMo) {
 						setGameSpeedFactor(0.5f);
 						Timer timer = new Timer();
@@ -697,20 +737,31 @@ public class GameViewManager {
 
 					if (element instanceof Ball) {
 
-						for (int i = 0; i < element.getValueInt(); i++) {
+						int increment = Integer.parseInt( ((Ball) element).getValue().getText() );
+						((Circle) snake.get(snake.size()-1)).setFill(Color.YELLOW);
+						for (int i = 0; i < increment ; i++) {
 							Circle head = new Circle();
+							head.setFill(Color.YELLOW);
 							head.setCenterX(((Circle) snake.get(snake.size() - 1)).getCenterX());
 							head.setCenterY(((Circle) snake.get(snake.size() - 1)).getCenterY() - 15.0);
 							head.setRadius(10.0);
-							head.setFill(Color.YELLOW);
+							if(i==increment-1)
+								head.setFill(Color.RED);
 							snake.add(head);
 						}
 					}
 
 					if(element instanceof Coin)
 					{
-						coins++;
-						System.out.println(coins);
+						System.out.println("It's a coin");
+						if(Multiplier.isActive())
+						{
+							coins+=2;
+						}
+						else {
+							coins++;
+						}
+//						System.out.println(coins);
 						String textToSet = "POINTS: ";
 //						if (coins <10) {
 //							textToSet = textToSet + "0";
@@ -718,8 +769,40 @@ public class GameViewManager {
 //						}
 						textToSet = textToSet + (Integer.toString(coins));
 						coinLabel.setText(textToSet);
-						System.out.println(textToSet);
+//						System.out.println(textToSet);
 					}
+
+					if (element instanceof Magnet)
+					{
+
+						Magnet.setIsActiveTrue();
+						Timer timer = new Timer();
+						TimerTask task1 = new TimerTask() {
+							@Override
+							public void run() {
+								System.out.println("inside"+Magnet.isActive());
+								Magnet.setIsActiveFalse();
+//								timer.cancel();
+							}
+						};
+
+						timer.schedule(task1, element.getValueInt()*1000);
+					}
+
+					if (element instanceof Multiplier)
+					{
+						Timer timer = new Timer();
+						TimerTask task1 = new TimerTask() {
+							@Override
+							public void run() {
+								System.out.println(Multiplier.isActive());
+//								Multiplier.setIsActiveFalse();
+							}
+						};
+						Multiplier.setIsActiveTrue();
+						timer.schedule(task1, element.getValueInt() * 1000);
+					}
+
 				}
 			}
 

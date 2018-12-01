@@ -7,6 +7,10 @@ public class Magnet extends Token{
     public Magnet(int value, GameViewManager game) {
         super(value, "magnet", new ImageView(MAGNET_IMAGE),game);
         ImageView magnet = this.image;
+        if (isActive())
+        {
+            isActive = true;
+        }
         magnet.setFitHeight(25);
         magnet.setFitWidth(25);
     }
@@ -15,4 +19,19 @@ public class Magnet extends Token{
     public int computeValue() {
         return game.findNextInt(5,7);
     }
+
+    private static boolean isActive;
+
+    public static void setIsActiveTrue() {
+        isActive = true;
+    }
+
+    public static void setIsActiveFalse() {
+        isActive = false;
+    }
+
+    public static boolean isActive() {
+        return isActive;
+    }
+
 }

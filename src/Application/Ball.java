@@ -9,6 +9,7 @@ public class Ball extends Token{
         ImageView ball = this.image;
         ball.setFitHeight(25);
         ball.setFitWidth(25);
+//        game.getGamePane().getChildren().add(getValue());
     }
 
 //    @Override
@@ -19,6 +20,6 @@ public class Ball extends Token{
 
     @Override
     public int computeValue() {
-            return game.getRandomPositionGenerator().nextInt(3)+1;
+            return game.findNextInt(1,3);
     }
 }

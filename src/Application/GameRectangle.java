@@ -16,6 +16,7 @@ public class GameRectangle extends StackPane{
 
     private AnchorPane gamePane;
     private Palette colors;
+    private static boolean isActive;
 //    private GameViewManager game;
 //    private GameRectangle(AnchorPane gamePane) {
 //        this.gamePane = gamePane;

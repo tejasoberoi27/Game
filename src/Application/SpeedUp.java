@@ -17,5 +17,20 @@ public class SpeedUp extends Token {
     public int computeValue() {
         return 0;
     }
+
+    private static boolean isActive;
+
+    public static void setIsActiveTrue() {
+        isActive = true;
+    }
+
+    public static void setIsActiveFalse() {
+        isActive = false;
+    }
+
+    public static boolean isActive() {
+        return isActive;
+    }
+
 }
 

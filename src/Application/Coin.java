@@ -12,10 +12,11 @@ public class Coin extends Token{
 //        coin.setFitWidth(25);
         coin.setFitHeight(25);
         coin.setFitWidth(25);
+//        game.getGamePane().getChildren().add(getValue());
     }
 
     @Override
     public int computeValue() {
-        return 0;
+        return game.findNextInt(1,3);
     }
 }
