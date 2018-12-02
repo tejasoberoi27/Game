@@ -35,6 +35,8 @@ import javafx.util.Duration;
 
 import java.io.*;
 
+import static java.lang.Math.abs;
+
 public class GameViewManager {
 
 	private double[] discretePositions = {50.0, 100.0, 150.0, 200.0, 250.0, 300.0, 350.0, 400.0, 450.0, 500.0};
@@ -47,6 +49,11 @@ public class GameViewManager {
 	private AnchorPane gamePane;
 	private Scene gameScene;
 	private Stage gameStage;
+
+	private boolean isWall_left;
+	private boolean isWall_right;
+	private ArrayList<Wall> walls_Present = new ArrayList<Wall>() ;
+
 
 
 	static final int GAME_WIDTH = 600;
@@ -263,6 +270,7 @@ public class GameViewManager {
 					gamePane.getChildren().add(wall.getRectangle());
 					activeComponentsList.add(wall);
 					wallGroupHeight = wall.getRectangle().getHeight();
+					this.walls_Present.add(wall);
 				}
 				else {
 					Wall wall = new Wall(this);
@@ -270,6 +278,7 @@ public class GameViewManager {
 					wall.getRectangle().setLayoutX(blockPositions.get(index) + 30.0);
 					gamePane.getChildren().add(wall.getRectangle());
 					activeComponentsList.add(wall);
+					this.walls_Present.add(wall);
 				}
 
 			}
@@ -295,72 +304,6 @@ public class GameViewManager {
 		coinLabel.setLayoutY(20);
 		gamePane.getChildren().add(coinLabel);
 
-//        ball = new Ball(randomPositionGenerator.nextInt(5),this);
-//        ComponentList.add(ball);
-//        gamePane.getChildren().add(ball.getImage());
-//        wall.setWidth(15);
-//        wall.setFill(Color.WHITE);
-//
-//
-//        setNewWallPosition(wall);
-//        System.err.println(test++);
-//        setNewWallDimension(wall);
-//		wall = new Wall(this);
-//		ComponentList.add(wall);
-//        gamePane.getChildren().add(wall.getRectangle());
-//        activeComponentsList.add(wall);
-////		}
-
-//        shield = new Shield(5,this);
-//        //coin.setPreserveRatio(true);
-//       // setNewElementPosition(shield);
-//        gamePane.getChildren().add(shield.getImage());
-//        ComponentList.add(shield);
-
-//		blockDestroyer = new BlockDestroyer(5,this);
-////        block_destroyer.setFitHeight(25);
-////        block_destroyer.setFitWidth(25);
-//		//coin.setPreserveRatio(true);
-//		// setNewElementPosition(block_destroyer);
-//
-//		gamePane.getChildren().add(blockDestroyer.getImage());
-////		Token i = blockDestroyer;
-////		i.getImage().setLayoutY(0);
-////		i.getImage().setLayoutX(randomPositionGenerator.nextInt(500));
-//		generateToken();
-//		ComponentList.add(blockDestroyer);
-//
-//        magnet = new Magnet(5,this);
-//        //coin.setPreserveRatio(true);
-//    //    setNewElementPosition(magnet);
-//        gamePane.getChildren().add(magnet.getImage());
-//        ComponentList.add(magnet);
-
-//        speedup = new ImageView(SPEEDUP_IMAGE);
-//        speedup.setFitHeight(25);
-//        speedup.setFitWidth(25);
-		//coin.setPreserveRatio(true);
-		// setNewElementPosition(speedup);
-//		speedUp = new SpeedUp(5,this);
-//        gamePane.getChildren().add(speedUp.getImage());
-//
-//        slomo = new SloMo(5,this);
-//        //coin.setPreserveRatio(true);
-//       // setNewElementPosition(slomo);
-//        gamePane.getChildren().add(slomo.getImage());
-//        ComponentList.add(slomo);
-//
-//        multiplier = new Multiplier(5,this);
-//        //coin.setPreserveRatio(true);
-//      //  setNewElementPosition(multiplier);
-//        gamePane.getChildren().add(multiplier.getImage());
-//        ComponentList.add(multiplier);
-
-//		coin = new Coin(5,this);
-//		//coin.setPreserveRatio(true);
-//		//  setNewElementPosition(multiplier);
-//		gamePane.getChildren().add(coin.getImage());
-//		ComponentList.add(coin);
 	}
 
 	private void moveGameElements() {
@@ -412,8 +355,12 @@ public class GameViewManager {
 			if (current.getY() > GAME_HEIGHT) {
 //				activeComponentsList.remove(i);
 					if(current.getClass()==Coin.class||current.getClass()==Ball.class )
-						gamePane.getChildren().remove(((Token) current).getValue());
+					{gamePane.getChildren().remove(((Token) current).getValue());}
 					activeComponentsList.remove(current);
+				if(current.getClass() == Wall.class)
+				{
+					walls_Present.remove(current);
+				}
 
 
 			}
@@ -649,24 +596,59 @@ public class GameViewManager {
 	}
 
 	private void moveSnake() {
-//			ObservableList<Node> snake = player.getSnake();
-		if (isLeftKeyPressed && !isRightKeyPressed) {
-			if (((Circle) player.getSnake().get(player.getSnake().size() - 1)).getCenterX() > 20) {
-				for (int i = 0; i < player.getSnake().size(); i++) {
-					((Circle) player.getSnake().get(i)).setCenterX(((Circle) player.getSnake().get(i)).getCenterX() - gameSpeedFactor * 6);
+		ObservableList<Node> snake = player.getSnake();
+
+		isWall_left = false;
+		isWall_right = false;
+
+		int j=0;
+		for (Wall element:walls_Present) {
+			System.out.println(j++);
+
+			double upperbound = element.getY();
+			double lowerbound = upperbound + ((Wall) element).getHeight();
+			Circle snake_head = (Circle) snake.get(snake.size() - 1);
+
+//			double posY = snake_head.getLayoutY();
+//			double posY = GAME_HEIGHT - 90;
+			double posY = snake_head.getCenterY();
+
+
+
+			double Wall_X = element.getX();
+			double centreX = snake_head.getCenterX();
+
+			System.out.println("lb "+lowerbound);
+			System.out.println("ub "+ upperbound);
+			System.out.println("snh "+ posY);
+			System.out.println("Centre "+centreX );
+			System.out.println("Wall X "+ Wall_X);
+//			System.out.println("posX"+ posX);
+
+			if (posY <= lowerbound && posY >= upperbound) {
+				System.out.println("inside");
+				if ((abs(Wall_X - centreX) < 20)) {
+					if (Wall_X <= centreX) {
+						isWall_left = true;
+						isWall_right = false;
+						System.out.println("wall left");
+					}
+					else
+					{
+						isWall_right = true;
+						isWall_left = false;
+						System.out.println("wall right");
+					}
 				}
-				player.getValue().setLayoutX(player.getValue().getLayoutX()-gameSpeedFactor*6);
-			}
+
 		}
 
-		if (!isLeftKeyPressed && isRightKeyPressed) {
-			if (((Circle) player.getSnake().get(player.getSnake().size() - 1)).getCenterX() < 580) {
-				for (int i = 0; i < player.getSnake().size(); i++) {
-					((Circle) player.getSnake().get(i)).setCenterX(((Circle) player.getSnake().get(i)).getCenterX() + gameSpeedFactor * 6);
-				}
-				player.getValue().setLayoutX(player.getValue().getLayoutX()+gameSpeedFactor*6);
-			}
-		}
+			System.out.println("Size = "+j);
+
+
+
+
+
 
 	/*	if (!isLeftKeyPressed && !isRightKeyPressed) {
 
@@ -677,6 +659,26 @@ public class GameViewManager {
 		}  */
 
 
+		}
+
+		if (isLeftKeyPressed && !isRightKeyPressed && !isWall_left) {
+//			if(isWall)
+			if (((Circle) player.getSnake().get(player.getSnake().size() - 1)).getCenterX() > 20) {
+				for (int i = 0; i < player.getSnake().size(); i++) {
+					((Circle) player.getSnake().get(i)).setCenterX(((Circle) player.getSnake().get(i)).getCenterX() - gameSpeedFactor * 4);
+				}
+				player.getValue().setLayoutX(player.getValue().getLayoutX() - gameSpeedFactor * 4);
+			}
+		}
+
+		if (!isLeftKeyPressed && isRightKeyPressed && !isWall_right) {
+			if (((Circle) player.getSnake().get(player.getSnake().size() - 1)).getCenterX() < 580) {
+				for (int i = 0; i < player.getSnake().size(); i++) {
+					((Circle) player.getSnake().get(i)).setCenterX(((Circle) player.getSnake().get(i)).getCenterX() + gameSpeedFactor * 4);
+				}
+				player.getValue().setLayoutX(player.getValue().getLayoutX() + gameSpeedFactor * 4);
+			}
+		}
 	}
 
 	private void createBackground() {
@@ -718,6 +720,7 @@ public class GameViewManager {
 		//	icon = ((Token) element).getImage();
 
 		//	if (SNAKE_RADIUS + radius > calculateDistance(((Circle) snake.get(snake.size() - 1)).getCenterX(), icon.getLayoutX(), ((Circle) snake.get(snake.size() - 1)).getCenterY(), icon.getLayoutY())) {
+
 
 
 		for (int i = 0; i < blocks.length; i++) {
@@ -807,13 +810,15 @@ public class GameViewManager {
 			int radius = element.getRadius();
 
 			ImageView icon;
+
+
 			//ObservableList<Node> snake = player.getSnake();
 			if (element instanceof Token) {
 
 				icon = ((Token) element).getImage();
-				System.out.println("STATUS = " + (Magnet.isActive()));
+//				System.out.println("STATUS = " + (Magnet.isActive()));
 				if (element instanceof Coin && Magnet.isActive()) {
-					System.out.println("radius increased");
+//					System.out.println("radius increased");
 					radius = 300;
 				}
 //				if (Magnet.isActive())
@@ -822,7 +827,7 @@ public class GameViewManager {
 //					radius = 10*radius;
 //				}
 
-				System.out.println("rad = " + element.getClass() + " " + radius);
+//				System.out.println("rad = " + element.getClass() + " " + radius);
 
 				if (SNAKE_RADIUS + radius > calculateDistance(((Circle) snake.get(snake.size() - 1)).getCenterX(),
 						icon.getLayoutX(), ((Circle) snake.get(snake.size() - 1)).getCenterY(), icon.getLayoutY())) {
@@ -876,7 +881,7 @@ public class GameViewManager {
 					}
 
 					if (element instanceof Coin) {
-						System.out.println("It's a coin");
+//						System.out.println("It's a coin");
 						if (Multiplier.isActive()) {
 							coins += 2;
 						} else {
@@ -890,7 +895,7 @@ public class GameViewManager {
 //						}
 						textToSet = textToSet + (Integer.toString(coins));
 						coinLabel.setText(textToSet);
-						System.out.println(textToSet);
+//						System.out.println(textToSet);
 					}
 
 					if (element instanceof Magnet) {
@@ -900,7 +905,7 @@ public class GameViewManager {
 						TimerTask task1 = new TimerTask() {
 							@Override
 							public void run() {
-								System.out.println("inside" + Magnet.isActive());
+//								System.out.println("inside" + Magnet.isActive());
 								Magnet.setIsActiveFalse();
 //								timer.cancel();
 							}
@@ -914,13 +919,15 @@ public class GameViewManager {
 						TimerTask task1 = new TimerTask() {
 							@Override
 							public void run() {
-								System.out.println(Multiplier.isActive());
+/*								sSystem.out.println(Multiplier.isActive());*/
 //								Multiplier.setIsActiveFalse();
 							}
 						};
 						Multiplier.setIsActiveTrue();
 						timer.schedule(task1, element.getValueInt() * 1000);
 					}
+
+
 
 				}
 

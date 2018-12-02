@@ -8,6 +8,7 @@ import java.util.Random;
 public class Wall extends Component{
     private Rectangle wall;
     private double[] discretePositions = {30.0,90.0,150.0,210.0,270.0,330.0,390.0,450.0,510.0,570.0};
+    private boolean isWall;
 
     public Wall(GameViewManager game) {
         super(0, "WALL",game,20);
@@ -58,6 +59,18 @@ public class Wall extends Component{
     public double getY() {
         return this.getRectangle().getLayoutY();
     }
+
+    public double getX() {
+        return this.getRectangle().getLayoutX();
+    }
+
+
+
+    public double getHeight()
+    {
+        return wall.getHeight();
+    }
+
 
 
 }
