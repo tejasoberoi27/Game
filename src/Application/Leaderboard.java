@@ -11,12 +11,13 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-public class Leaderboard {
+public class Leaderboard implements Serializable{
     private AnchorPane lbPane;
     private Scene lbScene;
     private Stage lbStage;
@@ -133,6 +134,27 @@ public class Leaderboard {
                 leaderboardList.sort(Comparator.comparing(DatedScore::getScore));
             }
 
+        }
+    }
+
+    public void serialize() throws IOException {
+        ObjectOutputStream out = null;
+        try {
+            out = new ObjectOutputStream(
+                    new FileOutputStream("out.txt"));
+            out.writeObject(this);
+        } finally {
+            out.close();
+        }
+    }
+
+    public static void deserialize() throws IOException, ClassNotFoundException {
+        ObjectInputStream in = null;
+        try {
+            in = new ObjectInputStream(new FileInputStream("out.txt"));
+            Leaderboard l1 = (Leaderboard) in.readObject();
+        } finally {
+            in.close();
         }
     }
 

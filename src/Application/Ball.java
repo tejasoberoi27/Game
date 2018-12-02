@@ -2,7 +2,9 @@ package Application;
 
 import javafx.scene.image.ImageView;
 
-public class Ball extends Token{
+import java.io.Serializable;
+
+public class Ball extends Token {
 
     private static int image_height =40;
     private static int image_width = 40;

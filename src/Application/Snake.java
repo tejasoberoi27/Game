@@ -40,13 +40,13 @@
 
             snake.add(Head);
 
-            for (int i = 0; i <3; i++) {
+            for (int i = 0; i <10; i++) {
                 Circle head = new Circle();
                 head.setFill(Color.YELLOW);
                 head.setCenterX(((Circle) snake.get(i)).getCenterX());
                 head.setCenterY(((Circle) snake.get(i)).getCenterY() - 15.0);
                 head.setRadius(10.0);
-                if (i == 2)
+                if (i == 9)
                     head.setFill(Color.RED);
                 snake.add(head);
 
@@ -56,7 +56,7 @@
 
             this.setNextValue();
             this.AlignLabel();
-            Value.setText(Integer.toString(4));
+            Value.setText(Integer.toString(10));
 //            game.getGamePane().getChildren().add(Value);
 
         }

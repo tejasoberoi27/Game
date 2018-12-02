@@ -2,7 +2,9 @@ package Application;
 
 import javafx.scene.control.Label;
 
-public abstract class Component {
+import java.io.Serializable;
+
+public abstract class Component implements Serializable{
     int value;
     String name;
     protected GameViewManager game;

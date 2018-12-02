@@ -2,15 +2,20 @@ package Application;
 
 //import com.sun.org.apache.xpath.internal.operations.Mult;
 //import com.sun.org.apache.xpath.internal.operations.Mult;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -39,72 +44,74 @@ import java.util.Timer;
 
 import static java.lang.Math.abs;
 
-public class GameViewManager {
+public class GameViewManager implements Serializable {
 
-	private double[] discretePositions = {50.0, 100.0, 150.0, 200.0, 250.0, 300.0, 350.0, 400.0, 450.0, 500.0};
-	private Color[] blockColors = {Color.RED, Color.ORANGERED, Color.YELLOW, Color.ORANGE, Color.DARKORANGE};
-	private ArrayList<Double> blockPositions;
-	private float gameSpeedFactor;
-	private boolean roknaHai;
-	private int wallFlag;
-	private double currentTime;
-	private AnchorPane gamePane;
-	private Scene gameScene;
-	private Stage gameStage;
+    private double[] discretePositions = {50.0, 100.0, 150.0, 200.0, 250.0, 300.0, 350.0, 400.0, 450.0, 500.0};
+    private Color[] blockColors = {Color.RED, Color.ORANGERED, Color.YELLOW, Color.ORANGE, Color.DARKORANGE};
+    private ArrayList<Double> blockPositions;
+    private float gameSpeedFactor;
+    private boolean roknaHai;
+    private int wallFlag;
+    private double currentTime;
+    private AnchorPane gamePane;
+    private Scene gameScene;
+    private Stage gameStage;
 
-	private boolean isWall_left;
-	private boolean isWall_right;
-	private boolean bursted;
-	private ArrayList<Wall> walls_Present = new ArrayList<Wall>() ;
-
-
-
-	static final int GAME_WIDTH = 600;
-	static final int GAME_HEIGHT = 800;
-
-	private Stage menuStage;
+    private boolean isWall_left;
+    private boolean isWall_right;
+    private boolean bursted;
+    private ArrayList<Wall> walls_Present = new ArrayList<Wall>();
 
 
-	private boolean isLeftKeyPressed;
-	private boolean isRightKeyPressed;
-	private AnimationTimer gameTimer;
-	private TranslateTransition translate;
+    static final int GAME_WIDTH = 600;
+    static final int GAME_HEIGHT = 800;
 
-	private GridPane gridPane1;
-	private GridPane gridPane2;
-	private final static String BACKGROUND_IMAGE = "application/gamebg.jpeg";
-	private Random randomPositionGenerator;
+    private Stage menuStage;
 
-	//	private ImageView coin,shield,block_destroyer,magnet,speedup,slomo,multiplier;
+
+    private boolean isLeftKeyPressed;
+    private boolean isRightKeyPressed;
+    private AnimationTimer gameTimer;
+    private TranslateTransition translate;
+
+    private GridPane gridPane1;
+    private GridPane gridPane2;
+    private final static String BACKGROUND_IMAGE = "application/gamebg.jpeg";
+    private Random randomPositionGenerator;
+
+    //	private ImageView coin,shield,block_destroyer,magnet,speedup,slomo,multiplier;
 //	private Rectangle wall;
-	private Wall wall;
-	private Palette colors;
-	private Snake player;
-	private Ball ball;
-	private Shield shield;
-	private BlockDestroyer blockDestroyer;
-	private Magnet magnet;
-	private SpeedUp speedUp;
-	private Multiplier multiplier;
-	private SloMo slomo;
-	private Coin coin;
+    private Wall wall;
+    private Palette colors;
+    private Snake player;
+    private Ball ball;
+    private Shield shield;
+    private BlockDestroyer blockDestroyer;
+    private Magnet magnet;
+    private SpeedUp speedUp;
+    private Multiplier multiplier;
+    private SloMo slomo;
+    private Coin coin;
 
 
-	private SmallInfoLabel coinLabel;
-	private int coins;
+    private SmallInfoLabel coinLabel;
+    private int coins;
+    private Label userSelectionMsgLbl;
 //	private final static String COIN_IMAGE 	= "application/coin.png";
 
 //	private final static String BLOCK_DESTROYER_IMAGE 	= "application/icons8-bulldozer-48.png";
 
 
-	private final static String BLOCK_IMAGE = "application/red_button07.png";
-	private ArrayList<Component> ComponentList = new ArrayList<Component>();
-	//	private ImageView[] blocks;
+    private final static String BLOCK_IMAGE = "application/red_button07.png";
+    private ArrayList<Component> ComponentList = new ArrayList<Component>();
+    //	private ImageView[] blocks;
 //	private Block[] blocks;
-	private Block[] blocks;
-	private final double BLOCK_RADIUS = 30;
+    private Block[] blocks;
+    private final double BLOCK_RADIUS = 30;
 
-	//private StackPane[] blocksPane;
+    final ComboBox comboBox;
+
+    //private StackPane[] blocksPane;
 
 //	final static int COIN_RADIUS = 12;
 //	private final static int SNAKE_RADIUS = 10;
@@ -113,145 +120,154 @@ public class GameViewManager {
 //	private final static int WALL_RADIUS = 30;
 //	private final static int SPEEDUP_RADIUS = 20;
 
-	private ArrayList<Component> activeComponentsList;
+    private ArrayList<Component> activeComponentsList;
 
-	Timer timer = new Timer();
-	TimerTask task = new TimerTask() {
-		@Override
-		public void run() {
-			//wall.newWall();
-			roknaHai = false;
+    Timer timer = new Timer();
+    TimerTask task = new TimerTask() {
+        @Override
+        public void run() {
+            //wall.newWall();
+            roknaHai = false;
 
-		}
-	};
+        }
+    };
+
+    ObservableList<String> options =
+            FXCollections.observableArrayList(
+                    "Restart",
+                    "Exit and go to Main Page"
+            );
 
 
-	GameViewManager() {
-		initializeStage();
-		createKeyListeners();
-		roknaHai = false;
-		bursted = false;
-		randomPositionGenerator = new Random();
-		blockPositions = new ArrayList<>();
-		gameSpeedFactor = 1;
-		wallFlag = 0;
-		currentTime = System.currentTimeMillis();
-		activeComponentsList = new ArrayList<Component>();
-	}
 
-	public float getGameSpeedFactor() {
-		return gameSpeedFactor;
-	}
+    GameViewManager() {
+        initializeStage();
+        createKeyListeners();
+        roknaHai = false;
+        bursted = false;
+        randomPositionGenerator = new Random();
+        blockPositions = new ArrayList<>();
+        gameSpeedFactor = 1;
+        wallFlag = 0;
+        currentTime = System.currentTimeMillis();
+        activeComponentsList = new ArrayList<Component>();
+        Label userSelectionMsgLbl = new Label("Your selection: ");
+        comboBox = new ComboBox(options);;
+    }
 
-	private void createKeyListeners() {
-		gameScene.setOnKeyPressed(new EventHandler<KeyEvent>() {
-			@Override
-			public void handle(KeyEvent event) {
-				if (event.getCode() == KeyCode.LEFT) {
-					isLeftKeyPressed = true;
-				} else if (event.getCode() == KeyCode.RIGHT) {
-					isRightKeyPressed = true;
-				}
-			}
-		});
+    public float getGameSpeedFactor() {
+        return gameSpeedFactor;
+    }
 
-		gameScene.setOnKeyReleased(new EventHandler<KeyEvent>() {
-			@Override
-			public void handle(KeyEvent event) {
-				if (event.getCode() == KeyCode.LEFT) {
-					isLeftKeyPressed = false;
-				} else if (event.getCode() == KeyCode.RIGHT) {
-					isRightKeyPressed = false;
-				}
-			}
-		});
-	}
+    private void createKeyListeners() {
+        gameScene.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                if (event.getCode() == KeyCode.LEFT) {
+                    isLeftKeyPressed = true;
+                } else if (event.getCode() == KeyCode.RIGHT) {
+                    isRightKeyPressed = true;
+                }
+            }
+        });
 
-	private void initializeStage() {
-		gamePane = new AnchorPane();
-		gameScene = new Scene(gamePane, GAME_WIDTH, GAME_HEIGHT);
-		gameStage = new Stage();
-		gameStage.setScene(gameScene);
-	}
+        gameScene.setOnKeyReleased(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                if (event.getCode() == KeyCode.LEFT) {
+                    isLeftKeyPressed = false;
+                } else if (event.getCode() == KeyCode.RIGHT) {
+                    isRightKeyPressed = false;
+                }
+            }
+        });
+    }
 
-	public void createNewGame(Stage menuStage) {
-		this.menuStage = menuStage;
-		this.menuStage.hide();
-		coins=0;
-		createBackground();
+    private void initializeStage() {
+        gamePane = new AnchorPane();
+        gameScene = new Scene(gamePane, GAME_WIDTH, GAME_HEIGHT);
+        gameStage = new Stage();
+        gameStage.setScene(gameScene);
+    }
+
+    public void createNewGame(Stage menuStage) {
+        this.menuStage = menuStage;
+        this.menuStage.hide();
+        coins = 0;
+        createBackground();
 //		System.err.println("1");
-		createSnake();
+        createSnake();
 //		System.err.println("2");
-		colors = new Palette();
-		createGameElements();
-		create();
+        colors = new Palette();
+        createGameElements();
+        create();
 //		System.err.println("3");
 //		translate = new TranslateTransition();
-		createGameLoop();
+        createGameLoop();
 //		System.err.println("4");
-		gameStage.setTitle("Snakes vs Blocks");
+        gameStage.setTitle("Snakes vs Blocks");
 //		System.err.println("5");
-		gameStage.show();
+        gameStage.show();
 //		System.err.println("6");
-	}
+    }
 
-	//int flag = 0;
-
-
-	public AnchorPane getGamePane() {
-		return gamePane;
-	}
-
-	private void create() {
+    //int flag = 0;
 
 
-		int no_of_blocks = randomPositionGenerator.nextInt(20);
+    public AnchorPane getGamePane() {
+        return gamePane;
+    }
 
-		if (no_of_blocks >= 10) no_of_blocks = 10;
+    private void create() {
+
+
+        int no_of_blocks = randomPositionGenerator.nextInt(20);
+
+        if (no_of_blocks >= 10) no_of_blocks = 10;
 
 
 //		int y_coordinate = randomPositionGenerator.nextInt(400);
-		int y_coordinate = 20;
+        int y_coordinate = 20;
 
-		int[] x_coordinates = new int[10];
-		boolean[] occupiedCoordinates = new boolean[10];
+        int[] x_coordinates = new int[10];
+        boolean[] occupiedCoordinates = new boolean[10];
 
-		for (int i = 0; i < 10; i++) {
-			x_coordinates[i] = 60 * i;
-			occupiedCoordinates[i] = false;
-		}
+        for (int i = 0; i < 10; i++) {
+            x_coordinates[i] = 60 * i;
+            occupiedCoordinates[i] = false;
+        }
 
-		boolean placeBlock = true;
+        boolean placeBlock = true;
 
-		for (int i = 0; i < blocks.length; i++) {
-			if (blocks[i].getLayoutY() < 900) {
-				placeBlock = false;
-			}
-		}
+        for (int i = 0; i < blocks.length; i++) {
+            if (blocks[i].getLayoutY() < 900) {
+                placeBlock = false;
+            }
+        }
 
-		if (placeBlock) {
-			int x = 0;
+        if (placeBlock) {
+            int x = 0;
 
-			while (x < no_of_blocks) {
-				int i = randomPositionGenerator.nextInt(10);
-				//	System.err.println("running");
-				if (occupiedCoordinates[i] == false) {
-					blocks[i].updateValue();
-					blocks[i].setLayoutX(x_coordinates[i]);
-					blocks[i].setLayoutY(y_coordinate);
-					blockPositions.add((double) x_coordinates[i]);
-					x++;
-					occupiedCoordinates[i] = true;
-				}
-			}
+            while (x < no_of_blocks) {
+                int i = randomPositionGenerator.nextInt(10);
+                //	System.err.println("running");
+                if (occupiedCoordinates[i] == false) {
+                    blocks[i].updateValue();
+                    blocks[i].setLayoutX(x_coordinates[i]);
+                    blocks[i].setLayoutY(y_coordinate);
+                    blockPositions.add((double) x_coordinates[i]);
+                    x++;
+                    occupiedCoordinates[i] = true;
+                }
+            }
 
-			wallFlag = 0;
+            wallFlag = 0;
 
-		}
+        }
 
-		placeBlock = false;
+        placeBlock = false;
 
-		//Logic for placing block ends
+        //Logic for placing block ends
 
 //		if (flag == 0) {
 //			timer.schedule(task, 1000,2000);
@@ -259,151 +275,170 @@ public class GameViewManager {
 //		}
 
 
-	}
+    }
 
-	private void createWalls() {
+    public void serialize() throws IOException {
+        ObjectOutputStream out = null;
+        try {
+            out = new ObjectOutputStream(
+                    new FileOutputStream("out.txt"));
+            out.writeObject(this);
+        } finally {
+            out.close();
+        }
+    }
 
-		double wallGroupHeight = 0.0;
+    public static void deserialize() throws IOException, ClassNotFoundException {
+        ObjectInputStream in = null;
+        try {
+            in = new ObjectInputStream(new FileInputStream("out.txt"));
+            GameViewManager g1 = (GameViewManager) in.readObject();
+        } finally {
+            in.close();
+        }
+    }
 
-		if (blockPositions.size() > 0) {
-			for (int i=0; i<randomPositionGenerator.nextInt(blockPositions.size()); i++) {
-				int index = randomPositionGenerator.nextInt(blockPositions.size());
-				if (i==0) {
-					Wall wall = new Wall(this);
-					wall.getRectangle().setLayoutX(blockPositions.get(index) + 30.0);
-					gamePane.getChildren().add(wall.getRectangle());
-					activeComponentsList.add(wall);
-					wallGroupHeight = wall.getRectangle().getHeight();
-					this.walls_Present.add(wall);
-				}
-				else {
-					Wall wall = new Wall(this);
-					wall.getRectangle().setHeight(wallGroupHeight);
-					wall.getRectangle().setLayoutX(blockPositions.get(index) + 30.0);
-					gamePane.getChildren().add(wall.getRectangle());
-					activeComponentsList.add(wall);
-					this.walls_Present.add(wall);
-				}
+    private void createWalls() {
 
-			}
+        double wallGroupHeight = 0.0;
 
-		}
+        if (blockPositions.size() > 0) {
+            for (int i = 0; i < randomPositionGenerator.nextInt(blockPositions.size()); i++) {
+                int index = randomPositionGenerator.nextInt(blockPositions.size());
+                if (i == 0) {
+                    Wall wall = new Wall(this);
+                    wall.getRectangle().setLayoutX(blockPositions.get(index) + 30.0);
+                    gamePane.getChildren().add(wall.getRectangle());
+                    activeComponentsList.add(wall);
+                    wallGroupHeight = wall.getRectangle().getHeight();
+                    this.walls_Present.add(wall);
+                } else {
+                    Wall wall = new Wall(this);
+                    wall.getRectangle().setHeight(wallGroupHeight);
+                    wall.getRectangle().setLayoutX(blockPositions.get(index) + 30.0);
+                    gamePane.getChildren().add(wall.getRectangle());
+                    activeComponentsList.add(wall);
+                    this.walls_Present.add(wall);
+                }
 
+            }
 
-
-
-	}
-
-	private void createGameElements() {
+        }
 
 
-		blocks = new Block[10];
-		for (int i = 0; i < blocks.length; i++) {
+    }
 
-			blocks[i] = new Block(i, gamePane, colors,this,player);
-		}
+    private void createGameElements() {
 
-		coinLabel = new SmallInfoLabel("POINTS: 0");
-		coinLabel.setLayoutX(460);
-		coinLabel.setLayoutY(20);
-		gamePane.getChildren().add(coinLabel);
+        gamePane.getChildren().add(comboBox);
+        comboBox.setLayoutX(0);
+        comboBox.setLayoutY(0);
+        blocks = new Block[10];
+        for (int i = 0; i < blocks.length; i++) {
 
-	}
+            blocks[i] = new Block(i, gamePane, colors, this, player);
+        }
 
-	private void moveGameElements() {
+        coinLabel = new SmallInfoLabel("POINTS: 0");
+        coinLabel.setLayoutX(460);
+        coinLabel.setLayoutY(20);
+        gamePane.getChildren().add(coinLabel);
+        this.userSelectionMsgLbl = new Label("");
+
+    }
+
+    private void moveGameElements() {
 
 //
 
-		for (int i = 0; i < blocks.length; i++) {
+        for (int i = 0; i < blocks.length; i++) {
 //			int a =(int) blocks[i].getLayoutY();
 //			System.out.println(a);
 
-			blocks[i].setLayoutY(blocks[i].getLayoutY() + gameSpeedFactor * 5);
+            blocks[i].setLayoutY(blocks[i].getLayoutY() + gameSpeedFactor * 5);
 //
-		}
-		MoveToken();
-//
-	}
+        }
+        MoveToken();
+        
 
-	//
-	private void MoveToken() {
-		for (int i = 0; i < activeComponentsList.size(); i++) {
+
+//
+    }
+
+    //
+    private void MoveToken() {
+        for (int i = 0; i < activeComponentsList.size(); i++) {
 //			System.out.println(activeComponentsList.size());
-			Component component = activeComponentsList.get(i);
+            Component component = activeComponentsList.get(i);
 
 //			if (component.getName().e)
-			component.move();
+            component.move();
 //			System.out.println(component);
-		}
-	}
+        }
+    }
 
 
-	int second = 0;
-	double timeElapsedSinceBlock = 0;
+    int second = 0;
+    double timeElapsedSinceBlock = 0;
 
-	private void elementBelowScreen() {
+    private void elementBelowScreen() {
 
-		boolean allBlocksBelowScreen = true;
-		int repBlock = 0;
+        boolean allBlocksBelowScreen = true;
+        int repBlock = 0;
 
-		//System.out.println("below screen size" + activeComponentsList.size());
+        //System.out.println("below screen size" + activeComponentsList.size());
 
-		for (int i = 0; i < activeComponentsList.size() ; i++) {
-			Component current = activeComponentsList.get(i);
+        for (int i = 0; i < activeComponentsList.size(); i++) {
+            Component current = activeComponentsList.get(i);
 //			if (activeComponentsList.get(i).getY() > GAME_HEIGHT) {
 //				if(activeComponentsList.get(i).getClass()!=wall.getClass())
 ////				activeComponentsList.remove(i);
 //				activeComponentsList.remove(i);
 //
 //			}
-			if (current.getY() > GAME_HEIGHT) {
+            if (current.getY() > GAME_HEIGHT) {
 //				activeComponentsList.remove(i);
-					if(current.getClass()==Coin.class||current.getClass()==Ball.class )
-					{gamePane.getChildren().remove(((Token) current).getValue());}
-					activeComponentsList.remove(current);
-				if(current.getClass() == Wall.class)
-				{
-					walls_Present.remove(current);
-				}
+                if (current.getClass() == Coin.class || current.getClass() == Ball.class) {
+                    gamePane.getChildren().remove(((Token) current).getValue());
+                }
+                activeComponentsList.remove(current);
+                if (current.getClass() == Wall.class) {
+                    walls_Present.remove(current);
+                }
 
 
-			}
-		}
+            }
+        }
 
-		for (int i=0; i<blocks.length; i++) {
-			if (blocks[i].getLayoutY() < GAME_HEIGHT) {
-				allBlocksBelowScreen = false;
-				repBlock = i;
-				break;
-			}
+        for (int i = 0; i < blocks.length; i++) {
+            if (blocks[i].getLayoutY() < GAME_HEIGHT) {
+                allBlocksBelowScreen = false;
+                repBlock = i;
+                break;
+            } else {
+                if (!blocks[i].isVisible()) {
+                    blocks[i].setVisible(true);
+                }
+                for (int j = 0; j < blockPositions.size(); j++) {
+                    if (blocks[i].getLayoutX() == blockPositions.get(j)) {
+                        blockPositions.remove(j);
+                    }
+                }
+            }
 
-			else {
-				if (!blocks[i].isVisible()) {
-					blocks[i].setVisible(true);
-				}
-				for (int j=0; j<blockPositions.size(); j++) {
-					if (blocks[i].getLayoutX() == blockPositions.get(j)) {
-						blockPositions.remove(j);
-					}
-				}
-			}
+        }
 
-		}
+        if (allBlocksBelowScreen) {
+            create();
 
-		if (allBlocksBelowScreen) {
-			create();
-
-			if (wallFlag == 0) {
-				createWalls();
-				wallFlag = 1;
-			}
-
-		}
-
-		else if (blocks[repBlock].getLayoutY() > GAME_HEIGHT - 20) {
-			roknaHai = true;
-			timeElapsedSinceBlock = System.currentTimeMillis();
-		}
+            if (wallFlag == 0) {
+                createWalls();
+                wallFlag = 1;
+            }
+        } else if (blocks[repBlock].getLayoutY() > GAME_HEIGHT - 20) {
+            roknaHai = true;
+            timeElapsedSinceBlock = System.currentTimeMillis();
+        }
 
 //		if (blocks[0].getLayoutY() > GAME_HEIGHT) {
 //			create();
@@ -415,113 +450,110 @@ public class GameViewManager {
 //			timeElapsedSinceBlock = System.currentTimeMillis();
 //		}
 
-		double time = System.currentTimeMillis() - currentTime;
-		time = time/1000;
+        double time = System.currentTimeMillis() - currentTime;
+        time = time / 1000;
 
-		if (second != (int)time && !roknaHai) {
-			generateToken();
-			second = (int)time;
-		}
-		else if (roknaHai) {
-			if (System.currentTimeMillis() - timeElapsedSinceBlock > 450) {
-				roknaHai = false;
-			}
-		}
+        if (second != (int) time && !roknaHai) {
+            generateToken();
+            second = (int) time;
+        } else if (roknaHai) {
+            if (System.currentTimeMillis() - timeElapsedSinceBlock > 450) {
+                roknaHai = false;
+            }
+        }
 
 //
-	}
+    }
 
 
-
-	public void generateToken() {
+    public void generateToken() {
 //		System.out.println("TOKEN CREATED");
-		int choice = randomPositionGenerator.nextInt(300);
+        int choice = randomPositionGenerator.nextInt(17);
 
-		if (choice > 100 && choice < 150) {
-			Shield shield = new Shield(5, this);
-			gamePane.getChildren().add(shield.getImage());
-			initializeToken(shield);
-			activeComponentsList.add(shield);
-		} else if (choice == 1) {
-			SloMo slomo = new SloMo(5, this);
-			gamePane.getChildren().add(slomo.getImage());
-			initializeToken(slomo);
-			activeComponentsList.add(slomo);
-		} else if (choice == 2) {
-			SpeedUp speedUp = new SpeedUp(5, this);
-			gamePane.getChildren().add(speedUp.getImage());
-			initializeToken(speedUp);
-			activeComponentsList.add(speedUp);
-		} else if (choice >49 && choice<60) {
-			Magnet magnet = new Magnet(5, this);
-			gamePane.getChildren().add(magnet.getImage());
-			initializeToken(magnet);
-			activeComponentsList.add(magnet);
-		} else if (choice >= 150 && choice <=300) {
-			BlockDestroyer blockDestroyer = new BlockDestroyer(5, this);
-			gamePane.getChildren().add(blockDestroyer.getImage());
-			initializeToken(blockDestroyer);
-			activeComponentsList.add(blockDestroyer);
-		} else if (choice == 5) {
-			Multiplier multiplier = new Multiplier(5, this);
-			gamePane.getChildren().add(multiplier.getImage());
-			initializeToken(multiplier);
-			activeComponentsList.add(multiplier);
-		} else if (choice >= 5 && choice <= 80) {
-			int i = randomPositionGenerator.nextInt(3);
+        if (choice == 1) {
+            Shield shield = new Shield(5, this);
+            gamePane.getChildren().add(shield.getImage());
+            initializeToken(shield);
+            activeComponentsList.add(shield);
+        } else if (choice == 2) {
+            SloMo slomo = new SloMo(5, this);
+            gamePane.getChildren().add(slomo.getImage());
+            initializeToken(slomo);
+            activeComponentsList.add(slomo);
+        } else if (choice == 3) {
+            SpeedUp speedUp = new SpeedUp(5, this);
+            gamePane.getChildren().add(speedUp.getImage());
+            initializeToken(speedUp);
+            activeComponentsList.add(speedUp);
+        } else if (choice == 4) {
+            Magnet magnet = new Magnet(5, this);
+            gamePane.getChildren().add(magnet.getImage());
+            initializeToken(magnet);
+            activeComponentsList.add(magnet);
+        } else if (choice == 5) {
+            BlockDestroyer blockDestroyer = new BlockDestroyer(5, this);
+            gamePane.getChildren().add(blockDestroyer.getImage());
+            initializeToken(blockDestroyer);
+            activeComponentsList.add(blockDestroyer);
+        } else if (choice == 6) {
+            Multiplier multiplier = new Multiplier(5, this);
+            gamePane.getChildren().add(multiplier.getImage());
+            initializeToken(multiplier);
+            activeComponentsList.add(multiplier);
+        } else if (choice >= 7 && choice <= 13) {
+            int i = randomPositionGenerator.nextInt(3);
 
-			for (int x = 0; x < i; x++) {
-				Ball ball = new Ball(5, this);
-				ball.setNextValue();
-				gamePane.getChildren().add(ball.getImage());
-				gamePane.getChildren().add(ball.getValue());
-				initializeToken(ball);
-				activeComponentsList.add(ball);
-			}
+            for (int x = 0; x < i; x++) {
+                Ball ball = new Ball(5, this);
+                ball.setNextValue();
+                gamePane.getChildren().add(ball.getImage());
+                gamePane.getChildren().add(ball.getValue());
+                initializeToken(ball);
+                activeComponentsList.add(ball);
+            }
 
-		} else if (choice >= 81 && choice <= 100) {
-			Coin coin = new Coin(findNextInt(1,3), this);
-			coin.setNextValue();
-			gamePane.getChildren().add(coin.getImage());
-			gamePane.getChildren().add(coin.getValue());
-			initializeToken(coin);
-			activeComponentsList.add(coin);
-		} else {
-			//do nothing
-		}
+        } else if (choice >= 15 && choice <= 16) {
+            Coin coin = new Coin(findNextInt(1, 3), this);
+            coin.setNextValue();
+            gamePane.getChildren().add(coin.getImage());
+            gamePane.getChildren().add(coin.getValue());
+            initializeToken(coin);
+            activeComponentsList.add(coin);
+        } else {
+            //do nothing
+        }
 
 
-	}
+    }
 
-	public void initializeToken(Token i) {
+    public void initializeToken(Token i) {
 
 //            i.setFitWidth(25);
 //            i.setFitHeight(25);
-		if(i.getClass()!= Ball.class&& i.getClass()!=Coin.class)
-		{
-			System.out.println("FOUND");
-		}
+        if (i.getClass() != Ball.class && i.getClass() != Coin.class) {
+            System.out.println("FOUND");
+        }
 
-		ImageView icon = i.getImage();
-		icon.setLayoutY(0);
-		icon.setLayoutX(discretePositions[randomPositionGenerator.nextInt(discretePositions.length)]);
-		Label increment = i.getValue();
-		if(increment!=null) {
-			System.out.println("text" + increment.getText());
+        ImageView icon = i.getImage();
+        icon.setLayoutY(0);
+        icon.setLayoutX(discretePositions[randomPositionGenerator.nextInt(discretePositions.length)]);
+        Label increment = i.getValue();
+        if (increment != null) {
+            System.out.println("text" + increment.getText());
 
 
 //			increment.setLayoutX(i.getImage().getLayoutX() + i.getRadius() / 2);
 //			increment.setLayoutY(i.getImage().getLayoutY() + i.getRadius() / 2);
 
-			increment.setLayoutX(icon.getLayoutX() + icon.getFitWidth()/2 -5);
-			increment.setLayoutY(icon.getLayoutY() - 0.8*Ball.getImage_height());
+            increment.setLayoutX(icon.getLayoutX() + icon.getFitWidth() / 2 - 5);
+            increment.setLayoutY(icon.getLayoutY() - 0.8 * Ball.getImage_height());
 
 
-		}
+        }
 
 //			if(i.isActive())
 //				i.toggle();
-	}
+    }
 
 //	void setNewElementPosition(ImageView image) {
 ////		image.setLayoutX(randomPositionGenerator.nextInt(450));
@@ -544,110 +576,149 @@ public class GameViewManager {
 ////		}
 //	}
 
-	private boolean findChance(int freq, int high) {
-		boolean placeElement = false;
-		int chance = findNext(high);
-		if (chance > 0 && chance < freq) {
-			placeElement = true;
-		}
+    private boolean findChance(int freq, int high) {
+        boolean placeElement = false;
+        int chance = findNext(high);
+        if (chance > 0 && chance < freq) {
+            placeElement = true;
+        }
 
-		return placeElement;
-	}
+        return placeElement;
+    }
 
 
-	private int findNext(int high) {
-		Random r = new Random();
-		int low = 0;
-		int num = (r.nextInt(high - low) + low);
-		return num;
-	}
+    private int findNext(int high) {
+        Random r = new Random();
+        int low = 0;
+        int num = (r.nextInt(high - low) + low);
+        return num;
+    }
 
-	public int findNextInt(int low, int high) {
-		Random r = new Random();
-		int num = (r.nextInt(high - low) + low);
-		return num;
-	}
+    public int findNextInt(int low, int high) {
+        Random r = new Random();
+        int num = (r.nextInt(high - low) + low);
+        return num;
+    }
 
-	private void createSnake() {
-		player = new Snake(this);
-		gamePane.getChildren().add(player.getSnakeBody());
-		gamePane.getChildren().add(player.getValue());
+    private void createSnake() {
+        player = new Snake(this);
+        gamePane.getChildren().add(player.getSnakeBody());
+        gamePane.getChildren().add(player.getValue());
 
-	}
+    }
 
-	private void createGameLoop() {
-		gameTimer = new AnimationTimer() {
-			@Override
-			public void handle(long now) {
-				moveBackground();
-				moveGameElements();
-				elementBelowScreen();
-				try {
-					checkCollision();
-				}catch (ConcurrentModificationException e)
-				{
+    // Method to display the Data, which has been changed
+    public void optionChanged(ObservableValue<? extends String> observable,String oldValue,String newValue)
+    {
+        String oldText = oldValue == null ? "null" : oldValue.toString();
+        String newText = newValue == null ? "null" : newValue.toString();
+        this.userSelectionMsgLbl.setText("Itemchanged: old = " + oldText + ", new = " + newText + "\n");
+        if(newText.equalsIgnoreCase(options.get(0)))
+        {
+//            System.out.println("in");
+            gameStage.close();
+            initializeStage();
+            gamePane.getChildren().clear();
+            createNewGame(menuStage);
+            comboBox.setValue("");
+        }
+        else if(newText.equalsIgnoreCase(options.get(1)))
+        {
+
+        }
+        System.out.println(newText);
+    }
+
+    private void createGameLoop() {
+        gameTimer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+
+                comboBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>()
+                {
+                    @Override
+                    public void changed(ObservableValue<? extends String> ov, String oldValue, String newValue) {
+                        optionChanged(ov, oldValue, newValue);
+                    }
+
+
+                });
+
+
+
+                comboBox.setOnAction(new EventHandler<ActionEvent>()
+                {
+                    @Override public void handle(ActionEvent e)
+                    {
+
+                    }
+                });
+
+                moveBackground();
+                moveGameElements();
+                elementBelowScreen();
+                try {
+                    checkCollision();
+                } catch (ConcurrentModificationException e) {
 
 //					System.out.println("caught "+currentTime);
-				}
+                }
 
 //					checkCollision();
 
-				moveSnake();
-			}
-		};
+                moveSnake();
+            }
+        };
 
-		gameTimer.start();
-	}
+        gameTimer.start();
+    }
 
-	private void moveSnake() {
-		ObservableList<Node> snake = player.getSnake();
+    private void moveSnake() {
+        ObservableList<Node> snake = player.getSnake();
 
-		isWall_left = false;
-		isWall_right = false;
+        isWall_left = false;
+        isWall_right = false;
 
-		int j=0;
-		for (Wall element:walls_Present) {
-			System.out.println(j++);
+        int j = 0;
+        for (Wall element : walls_Present) {
+            System.out.println(j++);
 
-			double upperbound = element.getY();
-			double lowerbound = upperbound + ((Wall) element).getHeight();
-			Circle snake_head = (Circle) snake.get(snake.size() - 1);
+            double upperbound = element.getY();
+            double lowerbound = upperbound + ((Wall) element).getHeight();
+            Circle snake_head = (Circle) snake.get(snake.size() - 1);
 
 //			double posY = snake_head.getLayoutY();
 //			double posY = GAME_HEIGHT - 90;
-			double posY = snake_head.getCenterY();
+            double posY = snake_head.getCenterY();
 
 
+            double Wall_X = element.getX();
+            double centreX = snake_head.getCenterX();
 
-			double Wall_X = element.getX();
-			double centreX = snake_head.getCenterX();
-
-			System.out.println("lb "+lowerbound);
-			System.out.println("ub "+ upperbound);
-			System.out.println("snh "+ posY);
-			System.out.println("Centre "+centreX );
-			System.out.println("Wall X "+ Wall_X);
+            System.out.println("lb " + lowerbound);
+            System.out.println("ub " + upperbound);
+            System.out.println("snh " + posY);
+            System.out.println("Centre " + centreX);
+            System.out.println("Wall X " + Wall_X);
 //			System.out.println("posX"+ posX);
 
-			if (posY <= lowerbound && posY >= upperbound) {
-				System.out.println("inside");
-				if ((abs(Wall_X - centreX) < 20)) {
-					if (Wall_X <= centreX) {
-						isWall_left = true;
-						isWall_right = false;
-						System.out.println("wall left");
-					}
-					else
-					{
-						isWall_right = true;
-						isWall_left = false;
-						System.out.println("wall right");
-					}
-				}
+            if (posY <= lowerbound && posY >= upperbound) {
+                System.out.println("inside");
+                if ((abs(Wall_X - centreX) < 20)) {
+                    if (Wall_X <= centreX) {
+                        isWall_left = true;
+                        isWall_right = false;
+                        System.out.println("wall left");
+                    } else {
+                        isWall_right = true;
+                        isWall_left = false;
+                        System.out.println("wall right");
+                    }
+                }
 
-		}
+            }
 
-			System.out.println("Size = "+j);
+            System.out.println("Size = " + j);
 
 
 
@@ -663,124 +734,143 @@ public class GameViewManager {
 		}  */
 
 
-		}
+        }
 
-		if (isLeftKeyPressed && !isRightKeyPressed && !isWall_left) {
+        if (isLeftKeyPressed && !isRightKeyPressed && !isWall_left) {
 //			if(isWall)
-			if (((Circle) player.getSnake().get(player.getSnake().size() - 1)).getCenterX() > 20) {
-				for (int i = 0; i < player.getSnake().size(); i++) {
-					((Circle) player.getSnake().get(i)).setCenterX(((Circle) player.getSnake().get(i)).getCenterX() - gameSpeedFactor * 4);
-				}
-				player.getValue().setLayoutX(player.getValue().getLayoutX() - gameSpeedFactor * 4);
-			}
-		}
+            if (((Circle) player.getSnake().get(player.getSnake().size() - 1)).getCenterX() > 20) {
+                for (int i = 0; i < player.getSnake().size(); i++) {
+                    ((Circle) player.getSnake().get(i)).setCenterX(((Circle) player.getSnake().get(i)).getCenterX() - gameSpeedFactor * 4);
+                }
+                player.getValue().setLayoutX(player.getValue().getLayoutX() - gameSpeedFactor * 4);
+            }
+        }
 
-		if (!isLeftKeyPressed && isRightKeyPressed && !isWall_right) {
-			if (((Circle) player.getSnake().get(player.getSnake().size() - 1)).getCenterX() < 580) {
-				for (int i = 0; i < player.getSnake().size(); i++) {
-					((Circle) player.getSnake().get(i)).setCenterX(((Circle) player.getSnake().get(i)).getCenterX() + gameSpeedFactor * 4);
-				}
-				player.getValue().setLayoutX(player.getValue().getLayoutX() + gameSpeedFactor * 4);
-			}
-		}
-	}
+        if (!isLeftKeyPressed && isRightKeyPressed && !isWall_right) {
+            if (((Circle) player.getSnake().get(player.getSnake().size() - 1)).getCenterX() < 580) {
+                for (int i = 0; i < player.getSnake().size(); i++) {
+                    ((Circle) player.getSnake().get(i)).setCenterX(((Circle) player.getSnake().get(i)).getCenterX() + gameSpeedFactor * 4);
+                }
+                player.getValue().setLayoutX(player.getValue().getLayoutX() + gameSpeedFactor * 4);
+            }
+        }
+    }
 
-	private void createBackground() {
-		gridPane1 = new GridPane();
-		gridPane2 = new GridPane();
+    private void createBackground() {
+        gridPane1 = new GridPane();
+        gridPane2 = new GridPane();
 
-		for (int i = 0; i < 12; i++) {
-			ImageView backgroundImage1 = new ImageView(BACKGROUND_IMAGE);
-			ImageView backgroundImage2 = new ImageView(BACKGROUND_IMAGE);
-			GridPane.setConstraints(backgroundImage1, i % 3, i / 3);
-			GridPane.setConstraints(backgroundImage2, i % 3, i / 3);
-			gridPane1.getChildren().add(backgroundImage1);
-			gridPane2.getChildren().add(backgroundImage2);
-		}
+        for (int i = 0; i < 12; i++) {
+            ImageView backgroundImage1 = new ImageView(BACKGROUND_IMAGE);
+            ImageView backgroundImage2 = new ImageView(BACKGROUND_IMAGE);
+            GridPane.setConstraints(backgroundImage1, i % 3, i / 3);
+            GridPane.setConstraints(backgroundImage2, i % 3, i / 3);
+            gridPane1.getChildren().add(backgroundImage1);
+            gridPane2.getChildren().add(backgroundImage2);
+        }
 
-		gridPane2.setLayoutY(-1024);
-		gamePane.getChildren().addAll(gridPane1, gridPane2);
-	}
+        gridPane2.setLayoutY(-1024);
+        gamePane.getChildren().addAll(gridPane1, gridPane2);
+    }
 
-	private void moveBackground() {
-		gridPane1.setLayoutY(gridPane1.getLayoutY() + gameSpeedFactor * 0.5);
-		gridPane2.setLayoutY(gridPane2.getLayoutY() + gameSpeedFactor * 0.5);
+    private void moveBackground() {
+        gridPane1.setLayoutY(gridPane1.getLayoutY() + gameSpeedFactor * 0.5);
+        gridPane2.setLayoutY(gridPane2.getLayoutY() + gameSpeedFactor * 0.5);
 
-		if (gridPane1.getLayoutY() >= 1024) {
-			gridPane1.setLayoutY(-1024);
-		}
+        if (gridPane1.getLayoutY() >= 1024) {
+            gridPane1.setLayoutY(-1024);
+        }
 
-		if (gridPane2.getLayoutY() >= 1024) {
-			gridPane2.setLayoutY(-1024);
-		}
-	}
+        if (gridPane2.getLayoutY() >= 1024) {
+            gridPane2.setLayoutY(-1024);
+        }
+    }
 
-	private void checkCollision() {
+    private void checkCollision() {
 //
 ////		SpeedUp speedupToken = new SpeedUp(5,"SPEEDUP", speedup);
 //	//	System.out.println(calculateDistance(((Circle) snake.get(snake.size()-1)).getCenterY(),coin.getLayoutX(),((Circle) snake.get(snake.size()-1)).getCenterY(),coin.getLayoutY()));
-		int SNAKE_RADIUS = player.getSnakeRadius();
-		ObservableList<Node> snake = player.getSnake();
-		//	icon = ((Token) element).getImage();
+        int SNAKE_RADIUS = player.getSnakeRadius();
+        ObservableList<Node> snake = player.getSnake();
+        //	icon = ((Token) element).getImage();
 
-		//	if (SNAKE_RADIUS + radius > calculateDistance(((Circle) snake.get(snake.size() - 1)).getCenterX(), icon.getLayoutX(), ((Circle) snake.get(snake.size() - 1)).getCenterY(), icon.getLayoutY())) {
+        //	if (SNAKE_RADIUS + radius > calculateDistance(((Circle) snake.get(snake.size() - 1)).getCenterX(), icon.getLayoutX(), ((Circle) snake.get(snake.size() - 1)).getCenterY(), icon.getLayoutY())) {
 
 
-
-		for (int i = 0; i < blocks.length; i++) {
+        for (int i = 0; i < blocks.length; i++) {
 
 //			System.out.println(Shield.isActive());
 
-			if(blocks[i].isVisible())
-			{
+            if (blocks[i].isVisible()) {
 
-			}
+            }
 
-			if (BLOCK_RADIUS + SNAKE_RADIUS > calculateDistance(((Circle) snake.get(snake.size() - 1)).getCenterX(), blocks[i].getLayoutX(), ((Circle) snake.get(snake.size() - 1)).getCenterY(), blocks[i].getLayoutY()) && blocks[i].isVisible() && !bursted) {
-				bursted = true;
+            if (BLOCK_RADIUS + SNAKE_RADIUS > calculateDistance(((Circle) snake.get(snake.size() - 1)).getCenterX(), blocks[i].getLayoutX(), ((Circle) snake.get(snake.size() - 1)).getCenterY(), blocks[i].getLayoutY()) && blocks[i].isVisible() && !bursted) {
+                bursted = true;
 
-				Timer timer = new Timer();
-				TimerTask task1 = new TimerTask() {
-					@Override
-					public void run() {
-						/*								sSystem.out.println(Multiplier.isActive());*/
-						bursted = false;
-					}
-				};
-				timer.schedule(task1, 1000);
+                Timer timer = new Timer();
+                TimerTask task1 = new TimerTask() {
+                    @Override
+                    public void run() {
+                        /*								sSystem.out.println(Multiplier.isActive());*/
+                        bursted = false;
+                    }
+                };
+                timer.schedule(task1, 1000);
 
-				blocks[i].setVisible(false);
-				PlayBurst(blocks[i].getBoundsInParent());
-				int block_value = Integer.valueOf(blocks[i].getText().getText());
+                blocks[i].setVisible(false);
+                PlayBurst(blocks[i].getBoundsInParent());
+                int block_value = Integer.valueOf(blocks[i].getText().getText());
 
-				if (snake.size() > block_value && block_value <= 5) {
-					for (int j = 0; j < block_value; j++) {
-						if (!Shield.isActive()) {
-							snake.remove(snake.size()-1);
-							((Circle) snake.get(snake.size()-1)).setFill(Color.RED);
-							player.AlignLabel();
-						}
+                if (snake.size() > block_value && block_value <= 5) {
+                    for (int j = 0; j < block_value; j++) {
+                        if (!Shield.isActive()) {
+                            snake.remove(snake.size() - 1);
+                            setGameSpeedFactor((float) (getGameSpeedFactor() + .02));
+                            ((Circle) snake.get(snake.size() - 1)).setFill(Color.RED);
+                            player.AlignLabel();
+                        } else {
+                            PlayBurst(blocks[i].getBoundsInParent());
+                            String textToSet = "POINTS: ";
+                            coins += Integer.valueOf(blocks[i].getText().getText());
+                            textToSet = textToSet + (Integer.toString(coins));
+                            coinLabel.setText(textToSet);
+                            blocks[i].setVisible(false);
+                            activeComponentsList.remove(blocks[i]);
+                        }
 
-					}
-				}
-
-				else if (snake.size() > block_value && block_value > 5 && !Shield.isActive()) {
-					gameTimer.stop();
-					KeyFrame kf = new KeyFrame(Duration.millis(25*snake.size()), new BlockBurstAnimationHandler(block_value, snake));
-					Timeline timeline = new Timeline(kf);
-					timeline.setCycleCount(1);
-					timeline.play();
+                    }
+                } else if (snake.size() > block_value && block_value > 5 && !Shield.isActive()) {
+                    gameTimer.stop();
+                    KeyFrame kf = new KeyFrame(Duration.millis(25 * snake.size()), new BlockBurstAnimationHandler(block_value, snake));
+                    Timeline timeline = new Timeline(kf);
+                    timeline.setCycleCount(1);
+                    timeline.play();
 
 
-				}
-
-				else if (snake.size() <= block_value && !Shield.isActive()) {
-					gameTimer.stop();
-					KeyFrame kf = new KeyFrame(Duration.millis(25*snake.size()), new BlockBurstAnimationHandler(block_value, snake));
-					Timeline timeline = new Timeline(kf);
-					timeline.setCycleCount(1);
-					timeline.play();
-				}
+                } else if (snake.size() > block_value && block_value > 5 && Shield.isActive()) {
+                    PlayBurst(blocks[i].getBoundsInParent());
+                    String textToSet = "POINTS: ";
+                    coins += Integer.valueOf(blocks[i].getText().getText());
+                    textToSet = textToSet + (Integer.toString(coins));
+                    coinLabel.setText(textToSet);
+                    blocks[i].setVisible(false);
+                    activeComponentsList.remove(blocks[i]);
+                } else if (snake.size() <= block_value && !Shield.isActive()) {
+                    gameTimer.stop();
+                    KeyFrame kf = new KeyFrame(Duration.millis(25 * snake.size()), new BlockBurstAnimationHandler(block_value, snake));
+                    Timeline timeline = new Timeline(kf);
+                    timeline.setCycleCount(1);
+                    timeline.play();
+                } else if (snake.size() <= block_value && Shield.isActive()) {
+                    PlayBurst(blocks[i].getBoundsInParent());
+                    String textToSet = "POINTS: ";
+                    coins += Integer.valueOf(blocks[i].getText().getText());
+                    textToSet = textToSet + (Integer.toString(coins));
+                    coinLabel.setText(textToSet);
+                    blocks[i].setVisible(false);
+                    activeComponentsList.remove(blocks[i]);
+                }
 
 
 //					ImageView explosion = new ImageView("Application/explosion.gif");
@@ -790,8 +880,8 @@ public class GameViewManager {
 //					explosion.setLayoutX(blocks[i].getLayoutX());
 //					gamePane.getChildren().add(explosion);
 //					gamePane.getChildren().remove(explosion);
-			}
-		}
+            }
+        }
 
 //		 ObservableList<Node> snake = player.getSnake();
 //		 ImageView coin = coin.getImage();
@@ -850,23 +940,23 @@ public class GameViewManager {
 //
 //
 
-		for (Component element : activeComponentsList
-				) {
+        for (Component element : activeComponentsList
+                ) {
 
-			int radius = element.getRadius();
+            int radius = element.getRadius();
 
-			ImageView icon;
+            ImageView icon;
 
 
-			//ObservableList<Node> snake = player.getSnake();
-			if (element instanceof Token) {
+            //ObservableList<Node> snake = player.getSnake();
+            if (element instanceof Token) {
 
-				icon = ((Token) element).getImage();
+                icon = ((Token) element).getImage();
 //				System.out.println("STATUS = " + (Magnet.isActive()));
-				if (element instanceof Coin && Magnet.isActive()) {
+                if (element instanceof Coin && Magnet.isActive()) {
 //					System.out.println("radius increased");
-					radius = 300;
-				}
+                    radius = 300;
+                }
 //				if (Magnet.isActive())
 //				{
 //					System.out.println("RADIUS INCREASED");
@@ -875,135 +965,143 @@ public class GameViewManager {
 
 //				System.out.println("rad = " + element.getClass() + " " + radius);
 
-				if (SNAKE_RADIUS + radius > calculateDistance(((Circle) snake.get(snake.size() - 1)).getCenterX(),
-						icon.getLayoutX(), ((Circle) snake.get(snake.size() - 1)).getCenterY(), icon.getLayoutY())) {
+                if (SNAKE_RADIUS + radius > calculateDistance(((Circle) snake.get(snake.size() - 1)).getCenterX(),
+                        icon.getLayoutX(), ((Circle) snake.get(snake.size() - 1)).getCenterY(), icon.getLayoutY())) {
 
-					((Token) element).getImage().setVisible(false);
-					if (((Token) element).getValue() != null)
-						((Token) element).getValue().setVisible(false);
-					activeComponentsList.remove(element);
+                    ((Token) element).getImage().setVisible(false);
+                    if (((Token) element).getValue() != null)
+                        ((Token) element).getValue().setVisible(false);
+                    activeComponentsList.remove(element);
 
-					if (element instanceof SloMo) {
-						setGameSpeedFactor(0.5f);
-						Timer timer = new Timer();
-						TimerTask task = new TimerTask() {
-							@Override
-							public void run() {
-								setGameSpeedFactor(1);
-							}
-						};
-						timer.schedule(task, element.getValueInt() * 1000);
+                    if (element instanceof SloMo) {
+                        float speed = gameSpeedFactor;
 
-					}
-					if (element instanceof SpeedUp) {
-						setGameSpeedFactor(2.0f);
+                        setGameSpeedFactor(0.5f);
+                        Timer timer = new Timer();
+                        TimerTask task = new TimerTask() {
+                            @Override
+                            public void run() {
+                                setGameSpeedFactor(speed);
+                            }
+                        };
+                        timer.schedule(task, element.getValueInt() * 1000);
 
-						Timer timer = new Timer();
-						TimerTask task = new TimerTask() {
-							@Override
-							public void run() {
-								gameSpeedFactor = 1;
-							}
-						};
+                    }
+                    if (element instanceof SpeedUp) {
+                        float speed = gameSpeedFactor;
 
-						timer.schedule(task, element.getValueInt() * 1000);
-					}
+                        setGameSpeedFactor(2.0f);
 
-					if (element instanceof Ball) {
+                        Timer timer = new Timer();
+                        TimerTask task = new TimerTask() {
+                            @Override
+                            public void run() {
+                                gameSpeedFactor = speed;
+                            }
+                        };
 
-						int increment = Integer.parseInt(((Ball) element).getValue().getText());
-						((Circle) snake.get(snake.size() - 1)).setFill(Color.YELLOW);
-						for (int i = 0; i < increment; i++) {
-							Circle head = new Circle();
-							head.setFill(Color.YELLOW);
-							head.setCenterX(((Circle) snake.get(snake.size() - 1)).getCenterX());
-							head.setCenterY(((Circle) snake.get(snake.size() - 1)).getCenterY() - 15.0);
-							head.setRadius(10.0);
-							if (i == increment - 1)
-								head.setFill(Color.RED);
-							snake.add(head);
-							player.AlignLabel();
-						}
-					}
+                        timer.schedule(task, element.getValueInt() * 1000);
+                    }
 
-					if (element instanceof Coin) {
+                    if (element instanceof Ball) {
+
+                        int increment = Integer.parseInt(((Ball) element).getValue().getText());
+                        ((Circle) snake.get(snake.size() - 1)).setFill(Color.YELLOW);
+                        for (int i = 0; i < increment; i++) {
+                            Circle head = new Circle();
+                            head.setFill(Color.YELLOW);
+                            head.setCenterX(((Circle) snake.get(snake.size() - 1)).getCenterX());
+                            head.setCenterY(((Circle) snake.get(snake.size() - 1)).getCenterY() - 15.0);
+                            head.setRadius(10.0);
+                            if (i == increment - 1)
+                                head.setFill(Color.RED);
+                            snake.add(head);
+                            setGameSpeedFactor((float) (getGameSpeedFactor() + .02));
+                            player.AlignLabel();
+                        }
+                    }
+
+                    if (element instanceof Coin) {
 //						System.out.println("It's a coin");
-						if (Multiplier.isActive()) {
-							coins += 2;
-						} else {
-							coins++;
-						}
+                        if (Multiplier.isActive()) {
+                            coins += 2;
+                        } else {
+                            coins++;
+                        }
 //						System.out.println(coins);
-						String textToSet = "POINTS: ";
+                        String textToSet = "POINTS: ";
 //						if (coins <10) {
 //							textToSet = textToSet + "0";
 //
 //						}
-						textToSet = textToSet + (Integer.toString(coins));
-						coinLabel.setText(textToSet);
+                        textToSet = textToSet + (Integer.toString(coins));
+                        coinLabel.setText(textToSet);
 //						System.out.println(textToSet);
-					}
+                    }
 
-					if (element instanceof Magnet) {
+                    if (element instanceof Magnet) {
 
-						Magnet.setIsActiveTrue();
-						Timer timer = new Timer();
-						TimerTask task1 = new TimerTask() {
-							@Override
-							public void run() {
+                        Magnet.setIsActiveTrue();
+                        Timer timer = new Timer();
+                        TimerTask task1 = new TimerTask() {
+                            @Override
+                            public void run() {
 //								System.out.println("inside" + Magnet.isActive());
-								Magnet.setIsActiveFalse();
+                                Magnet.setIsActiveFalse();
 //								timer.cancel();
-							}
-						};
+                            }
+                        };
 
-						timer.schedule(task1, element.getValueInt() * 1000);
-					}
+                        timer.schedule(task1, element.getValueInt() * 1000);
+                    }
 
-					if (element instanceof Multiplier) {
-						Timer timer = new Timer();
-						TimerTask task1 = new TimerTask() {
-							@Override
-							public void run() {
-/*								sSystem.out.println(Multiplier.isActive());*/
-								Multiplier.setIsActiveFalse();
-							}
-						};
-						Multiplier.setIsActiveTrue();
-						timer.schedule(task1, element.getValueInt() * 1000);
-					}
+                    if (element instanceof Multiplier) {
+                        Timer timer = new Timer();
+                        TimerTask task1 = new TimerTask() {
+                            @Override
+                            public void run() {
+                                /*								sSystem.out.println(Multiplier.isActive());*/
+                                Multiplier.setIsActiveFalse();
+                            }
+                        };
+                        Multiplier.setIsActiveTrue();
+                        timer.schedule(task1, element.getValueInt() * 1000);
+                    }
 
-					if(element instanceof Shield)
-					{
-						Timer timer = new Timer();
-						TimerTask task1 = new TimerTask() {
-							@Override
-							public void run() {
-								/*								sSystem.out.println(Multiplier.isActive());*/
-								Shield.setIsActiveFalse();
-							}
-						};
-						Shield.setIsActiveTrue();
-						timer.schedule(task1, element.getValueInt() * 1000);
-					}
+                    if (element instanceof Shield) {
+                        Timer timer = new Timer();
+                        TimerTask task1 = new TimerTask() {
+                            @Override
+                            public void run() {
+                                /*								sSystem.out.println(Multiplier.isActive());*/
+                                Shield.setIsActiveFalse();
+                            }
+                        };
+                        Shield.setIsActiveTrue();
+                        timer.schedule(task1, element.getValueInt() * 1000);
+                    }
 
-					if (element instanceof BlockDestroyer)
-					{
-						for (int i=0; i<blocks.length; i++) {
-							if (blocks[i].isVisible()) {
-								PlayBurst(blocks[i].getBoundsInParent());
-								blocks[i].setVisible(false);
-								activeComponentsList.remove(blocks[i]);
-							}
-						}
-					}
+                    if (element instanceof BlockDestroyer) {
+                        for (int i = 0; i < blocks.length; i++) {
+                            if (blocks[i].isVisible()) {
+                                PlayBurst(blocks[i].getBoundsInParent());
+                                String textToSet = "POINTS: ";
+                                coins += Integer.valueOf(blocks[i].getText().getText());
+                                textToSet = textToSet + (Integer.toString(coins));
+                                coinLabel.setText(textToSet);
+                                blocks[i].setVisible(false);
+                                activeComponentsList.remove(blocks[i]);
+
+                            }
+                        }
+                    }
 
 
-				}
+                }
 
-			}
-		}
-	}
+            }
+        }
+    }
 
 //			if (element instanceof SpeedUp) {
 //				ImageView speedup = ((SloMo) element).getImage();
@@ -1024,81 +1122,77 @@ public class GameViewManager {
 //				}
 
 
-
 //	private void checkCollision() {
 //
 //	}
 
-	private class BlockBurstAnimationHandler implements EventHandler<ActionEvent> {
-		private int block_value;
-		private ObservableList<Node> snake;
-		private int iteration;
+    private class BlockBurstAnimationHandler implements EventHandler<ActionEvent> {
+        private int block_value;
+        private ObservableList<Node> snake;
+        private int iteration;
 
-		public BlockBurstAnimationHandler(int block_value, ObservableList<Node> snake) {
-			this.block_value = block_value;
-			this.snake = snake;
-			iteration = 0;
-		}
-		@Override
-		public void handle(ActionEvent event) {
-			AnimationTimer burst =
-					new AnimationTimer() {
+        public BlockBurstAnimationHandler(int block_value, ObservableList<Node> snake) {
+            this.block_value = block_value;
+            this.snake = snake;
+            iteration = 0;
+        }
 
-				@Override
-				public void handle(long now) {
+        @Override
+        public void handle(ActionEvent event) {
+            AnimationTimer burst =
+                    new AnimationTimer() {
 
-					System.out.println("shield"+Shield.isActive());
-					if (block_value >= snake.size()) {
-						if (iteration < block_value && iteration < snake.size()) {
+                        @Override
+                        public void handle(long now) {
 
-								System.out.println("Inside");
-								snake.remove(snake.size() - 1);
-								((Circle) snake.get(snake.size() - 1)).setFill(Color.RED);
+                            System.out.println("shield" + Shield.isActive());
+                            if (block_value >= snake.size()) {
+                                if (iteration < block_value && iteration < snake.size()) {
 
-								iteration++;
+                                    System.out.println("Inside");
+                                    snake.remove(snake.size() - 1);
+                                    setGameSpeedFactor((float) (getGameSpeedFactor() - .02));
+                                    if(snake.size()>0)
+                                    ((Circle) snake.get(snake.size() - 1)).setFill(Color.RED);
 
-						}
-						else {
+                                    iteration++;
 
-								this.stop();
-								gameStage.close();
-								menuStage.show();
+                                } else {
 
-
-						}
-					}
-					else {
-						if (iteration < block_value) {
-
-								System.out.println("Inside");
-								snake.remove(snake.size() - 1);
-								if (snake.size() > 0) {
-									((Circle) snake.get(snake.size() - 1)).setFill(Color.RED);
-								}
-									iteration++;
+                                    this.stop();
+                                    gameStage.close();
+                                    menuStage.show();
 
 
+                                }
+                            } else {
+                                if (iteration < block_value) {
 
-						}
-						else {
-
-								this.stop();
-								gameTimer.start();
-								player.AlignLabel();
-
-
-						}
-					}
-
-
+                                    System.out.println("Inside");
+                                    snake.remove(snake.size() - 1);
+                                    setGameSpeedFactor((float) (getGameSpeedFactor() + .02));
+                                    if (snake.size() > 0) {
+                                        ((Circle) snake.get(snake.size() - 1)).setFill(Color.RED);
+                                    }
+                                    iteration++;
 
 
+                                } else {
 
-				}
-			};
-			burst.start();
-		}
-	}
+                                    this.stop();
+                                    gameTimer.start();
+                                    player.AlignLabel();
+
+
+                                }
+                            }
+
+
+                        }
+                    };
+            burst.start();
+        }
+    }
 
     public void PlayBurst(Bounds bounds) {
         double x = bounds.getMaxX() + bounds.getMinX();
@@ -1174,27 +1268,25 @@ public class GameViewManager {
     }
 
 
+    double calculateDistance(double x1, double x2, double y1, double y2) {
+        return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
+    }
 
-		double calculateDistance ( double x1, double x2, double y1, double y2){
-			return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
-		}
+    public void setGameSpeedFactor(float gameSpeedFactor) {
+        this.gameSpeedFactor = gameSpeedFactor;
+    }
 
-	public void setGameSpeedFactor(float gameSpeedFactor) {
-		this.gameSpeedFactor = gameSpeedFactor;
-	}
+    public int getCoins() {
+        return coins;
+    }
 
-	public int getCoins() {
-		return coins;
-	}
+    public ImageView getBallImage() {
+        return ball.getImage();
+    }
 
-	public ImageView getBallImage()
-	{
-		return ball.getImage();
-	}
-
-	public Random getRandomPositionGenerator() {
-		return randomPositionGenerator;
-	}
+    public Random getRandomPositionGenerator() {
+        return randomPositionGenerator;
+    }
 }
 
 

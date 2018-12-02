@@ -10,9 +10,10 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 
 import javax.swing.text.StyledEditorKit;
+import java.io.Serializable;
 import java.util.Random;
 
-public class GameRectangle extends StackPane{
+public class GameRectangle extends StackPane implements Serializable{
 
     private AnchorPane gamePane;
     private Palette colors;

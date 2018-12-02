@@ -2,7 +2,9 @@ package Application;
 
 import javafx.scene.image.ImageView;
 
-public class BlockDestroyer extends Token{
+import java.io.Serializable;
+
+public class BlockDestroyer extends Token {
 
     private final static String BLOCK_DESTROYER_IMAGE 	= "application/icons8-bulldozer-48.png";
 

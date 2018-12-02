@@ -1,8 +1,9 @@
 package Application;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class DatedScore {
+public class DatedScore implements Serializable{
     private int score;
     private Date date;
 
