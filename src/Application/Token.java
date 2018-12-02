@@ -13,7 +13,7 @@ public abstract class Token extends Component {
 
     public Token(int value, String name, ImageView image,GameViewManager game) {
 
-        super(value, name,game,30);
+        super(value, name,game,48);
         this.image = image;
 
     }
@@ -54,8 +54,6 @@ public abstract class Token extends Component {
         return Integer.parseInt(Value.getText());
     }
 
-    public abstract int computeValue();
-
     public void setNextValue()
     {
         /* Sets value of label*/
@@ -64,10 +62,14 @@ public abstract class Token extends Component {
         text.setTextFill(Color.WHITE);
 //        text.setMinWidth(100);
 //        text.setMinHeight(100);
-        text.setFont(new Font("Cambria", 16));
+        text.setFont(new Font("Cambria", 18));
         text.setStyle("-fx-font-weight: bold");
         setValue(text);
     }
+
+    public abstract int computeValue();
+
+
 
 //    public void setTimeValue(Label timeValue) {
 //        this. = timeValue;

@@ -3,9 +3,11 @@
     import javafx.collections.ObservableList;
     import javafx.scene.Group;
     import javafx.scene.Node;
+    import javafx.scene.control.Label;
     import javafx.scene.image.ImageView;
     import javafx.scene.paint.Color;
     import javafx.scene.shape.Circle;
+    import javafx.scene.text.Font;
 
     public class Snake {
         private final static String BALL_IMAGE = "application/ball_bowling2.png";
@@ -14,8 +16,16 @@
         private final static int BALL_RADIUS = 20;
         private ObservableList<Node> snake;
         private Group snakeBody;
+        private Label Value;
 //        private ImageView[] balls;
 
+        public Label getValue() {
+            return Value;
+        }
+
+        public void setValue(Label label) {
+            this.Value = label;
+        }
 
 
         public Snake(GameViewManager game) {
@@ -26,8 +36,11 @@
             head.setCenterX(game.GAME_WIDTH/2);
             head.setCenterY(game.GAME_HEIGHT - 90);
             head.setRadius(10.0);
-            head.setFill(Color.YELLOW);
+            head.setFill(Color.RED);
             snake.add(head);
+            this.setNextValue();
+            this.AlignLabel();
+//            game.getGamePane().getChildren().add(Value);
 
         }
 
@@ -45,6 +58,38 @@
 
         public static int getBallRadius() {
             return BALL_RADIUS;
+        }
+
+        public void setNextValue()
+        {
+            /* Sets value of label*/
+            Label text;
+            text = new Label(Integer.toString(computeValue()));
+            text.setTextFill(Color.WHITE);
+//        text.setMinWidth(100);
+//        text.setMinHeight(100);
+            text.setFont(new Font("Cambria", 18));
+            text.setStyle("-fx-font-weight: bold");
+            setValue(text);
+        }
+
+        public void changeText()
+        {
+            this.getValue().setText(Integer.toString(computeValue()));
+        }
+
+        public int computeValue() {
+            return snake.size();
+        }
+
+        public void AlignLabel()
+        {
+            Circle head = ((Circle) snake.get(snake.size() - 1));
+//            this.setNextValue();
+            this.changeText();
+            Value.setLayoutX(head.getCenterX()-5);
+            Value.setLayoutY(head.getCenterY()-Ball.getImage_height());
+
         }
 
 //        public ImageView[] getBalls() {

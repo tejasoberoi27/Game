@@ -550,14 +550,22 @@ public class GameViewManager {
 		{
 			System.out.println("FOUND");
 		}
-		i.getImage().setLayoutY(0);
-		i.getImage().setLayoutX(discretePositions[randomPositionGenerator.nextInt(discretePositions.length)]);
+
+		ImageView icon = i.getImage();
+		icon.setLayoutY(0);
+		icon.setLayoutX(discretePositions[randomPositionGenerator.nextInt(discretePositions.length)]);
 		Label increment = i.getValue();
 		if(increment!=null) {
 			System.out.println("text" + increment.getText());
 
-			increment.setLayoutX(i.getImage().getLayoutX() + i.getRadius() / 2);
-			increment.setLayoutY(i.getImage().getLayoutY() + i.getRadius() / 2);
+
+//			increment.setLayoutX(i.getImage().getLayoutX() + i.getRadius() / 2);
+//			increment.setLayoutY(i.getImage().getLayoutY() + i.getRadius() / 2);
+
+			increment.setLayoutX(icon.getLayoutX() + icon.getFitWidth()/2 -5);
+			increment.setLayoutY(icon.getLayoutY() - 0.8*Ball.getImage_height());
+
+
 		}
 
 //			if(i.isActive())
@@ -612,6 +620,8 @@ public class GameViewManager {
 	private void createSnake() {
 		player = new Snake(this);
 		gamePane.getChildren().add(player.getSnakeBody());
+		gamePane.getChildren().add(player.getValue());
+
 	}
 
 	private void createGameLoop() {
@@ -645,7 +655,7 @@ public class GameViewManager {
 				for (int i = 0; i < player.getSnake().size(); i++) {
 					((Circle) player.getSnake().get(i)).setCenterX(((Circle) player.getSnake().get(i)).getCenterX() - gameSpeedFactor * 6);
 				}
-
+				player.getValue().setLayoutX(player.getValue().getLayoutX()-gameSpeedFactor*6);
 			}
 		}
 
@@ -654,6 +664,7 @@ public class GameViewManager {
 				for (int i = 0; i < player.getSnake().size(); i++) {
 					((Circle) player.getSnake().get(i)).setCenterX(((Circle) player.getSnake().get(i)).getCenterX() + gameSpeedFactor * 6);
 				}
+				player.getValue().setLayoutX(player.getValue().getLayoutX()+gameSpeedFactor*6);
 			}
 		}
 
@@ -704,22 +715,22 @@ public class GameViewManager {
 //	//	System.out.println(calculateDistance(((Circle) snake.get(snake.size()-1)).getCenterY(),coin.getLayoutX(),((Circle) snake.get(snake.size()-1)).getCenterY(),coin.getLayoutY()));
 		int SNAKE_RADIUS = player.getSnakeRadius();
 		ObservableList<Node> snake = player.getSnake();
-	//	icon = ((Token) element).getImage();
+		//	icon = ((Token) element).getImage();
 
-	//	if (SNAKE_RADIUS + radius > calculateDistance(((Circle) snake.get(snake.size() - 1)).getCenterX(), icon.getLayoutX(), ((Circle) snake.get(snake.size() - 1)).getCenterY(), icon.getLayoutY())) {
+		//	if (SNAKE_RADIUS + radius > calculateDistance(((Circle) snake.get(snake.size() - 1)).getCenterX(), icon.getLayoutX(), ((Circle) snake.get(snake.size() - 1)).getCenterY(), icon.getLayoutY())) {
 
 
-			for (int i=0; i<blocks.length; i++) {
-				if (Math.sqrt(2) * BLOCK_RADIUS + SNAKE_RADIUS > calculateDistance(((Circle) snake.get(snake.size() - 1)).getCenterX(), blocks[i].getLayoutX(), ((Circle) snake.get(snake.size() - 1)).getCenterY(), blocks[i].getLayoutY()) && blocks[i].isVisible()) {
-					blocks[i].setVisible(false);
-					PlayBurst(blocks[i].getBoundsInParent());
-					int block_value = Integer.valueOf(blocks[i].getText().getText());
+		for (int i = 0; i < blocks.length; i++) {
+			if (Math.sqrt(2) * BLOCK_RADIUS + SNAKE_RADIUS > calculateDistance(((Circle) snake.get(snake.size() - 1)).getCenterX(), blocks[i].getLayoutX(), ((Circle) snake.get(snake.size() - 1)).getCenterY(), blocks[i].getLayoutY()) && blocks[i].isVisible()) {
+				blocks[i].setVisible(false);
+				PlayBurst(blocks[i].getBoundsInParent());
+				int block_value = Integer.valueOf(blocks[i].getText().getText());
 
-					if (snake.size() > block_value && block_value <= 5) {
-						for (int j=0; j<block_value; j++) {
-							snake.remove(0);
-						}
+				if (snake.size() > block_value && block_value <= 5) {
+					for (int j = 0; j < block_value; j++) {
+						snake.remove(0);
 					}
+				}
 
 
 //					ImageView explosion = new ImageView("Application/explosion.gif");
@@ -729,7 +740,7 @@ public class GameViewManager {
 //					explosion.setLayoutX(blocks[i].getLayoutX());
 //					gamePane.getChildren().add(explosion);
 //					gamePane.getChildren().remove(explosion);
-				}
+			}
 		}
 
 //		 ObservableList<Node> snake = player.getSnake();
@@ -799,9 +810,8 @@ public class GameViewManager {
 			if (element instanceof Token) {
 
 				icon = ((Token) element).getImage();
-				System.out.println("STATUS = "+(Magnet.isActive()));
-				if (element instanceof Coin && Magnet.isActive())
-				{
+				System.out.println("STATUS = " + (Magnet.isActive()));
+				if (element instanceof Coin && Magnet.isActive()) {
 					System.out.println("radius increased");
 					radius = 300;
 				}
@@ -811,14 +821,14 @@ public class GameViewManager {
 //					radius = 10*radius;
 //				}
 
-				System.out.println("rad = "+element.getClass()+" "+radius);
+				System.out.println("rad = " + element.getClass() + " " + radius);
 
 				if (SNAKE_RADIUS + radius > calculateDistance(((Circle) snake.get(snake.size() - 1)).getCenterX(),
 						icon.getLayoutX(), ((Circle) snake.get(snake.size() - 1)).getCenterY(), icon.getLayoutY())) {
 
 					((Token) element).getImage().setVisible(false);
-					if(((Token) element).getValue()!=null)
-					((Token) element).getValue().setVisible(false);
+					if (((Token) element).getValue() != null)
+						((Token) element).getValue().setVisible(false);
 					activeComponentsList.remove(element);
 
 					if (element instanceof SloMo) {
@@ -849,28 +859,26 @@ public class GameViewManager {
 
 					if (element instanceof Ball) {
 
-						int increment = Integer.parseInt( ((Ball) element).getValue().getText() );
-						((Circle) snake.get(snake.size()-1)).setFill(Color.YELLOW);
-						for (int i = 0; i < increment ; i++) {
+						int increment = Integer.parseInt(((Ball) element).getValue().getText());
+						((Circle) snake.get(snake.size() - 1)).setFill(Color.YELLOW);
+						for (int i = 0; i < increment; i++) {
 							Circle head = new Circle();
 							head.setFill(Color.YELLOW);
 							head.setCenterX(((Circle) snake.get(snake.size() - 1)).getCenterX());
 							head.setCenterY(((Circle) snake.get(snake.size() - 1)).getCenterY() - 15.0);
 							head.setRadius(10.0);
-							if(i==increment-1)
+							if (i == increment - 1)
 								head.setFill(Color.RED);
 							snake.add(head);
+							player.AlignLabel();
 						}
 					}
 
-					if(element instanceof Coin)
-					{
+					if (element instanceof Coin) {
 						System.out.println("It's a coin");
-						if(Multiplier.isActive())
-						{
-							coins+=2;
-						}
-						else {
+						if (Multiplier.isActive()) {
+							coins += 2;
+						} else {
 							coins++;
 						}
 //						System.out.println(coins);
@@ -884,25 +892,23 @@ public class GameViewManager {
 						System.out.println(textToSet);
 					}
 
-					if (element instanceof Magnet)
-					{
+					if (element instanceof Magnet) {
 
 						Magnet.setIsActiveTrue();
 						Timer timer = new Timer();
 						TimerTask task1 = new TimerTask() {
 							@Override
 							public void run() {
-								System.out.println("inside"+Magnet.isActive());
+								System.out.println("inside" + Magnet.isActive());
 								Magnet.setIsActiveFalse();
 //								timer.cancel();
 							}
 						};
 
-						timer.schedule(task1, element.getValueInt()*1000);
+						timer.schedule(task1, element.getValueInt() * 1000);
 					}
 
-					if (element instanceof Multiplier)
-					{
+					if (element instanceof Multiplier) {
 						Timer timer = new Timer();
 						TimerTask task1 = new TimerTask() {
 							@Override
@@ -916,9 +922,10 @@ public class GameViewManager {
 					}
 
 				}
-			}
 
+			}
 		}
+	}
 
 //			if (element instanceof SpeedUp) {
 //				ImageView speedup = ((SloMo) element).getImage();
@@ -940,7 +947,6 @@ public class GameViewManager {
 
 
 
-	}
 //	private void checkCollision() {
 //
 //	}
