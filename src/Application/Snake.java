@@ -56,7 +56,7 @@
 
             this.setNextValue();
             this.AlignLabel();
-            Value.setText(Integer.toString(2));
+            Value.setText(Integer.toString(4));
 //            game.getGamePane().getChildren().add(Value);
 
         }
