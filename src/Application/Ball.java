@@ -20,6 +20,6 @@ public class Ball extends Token{
 
     @Override
     public int computeValue() {
-            return game.findNextInt(1,3);
+            return game.findNextInt(1,5);
     }
 }

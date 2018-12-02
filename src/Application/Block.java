@@ -57,7 +57,7 @@ public class Block extends StackPane{
         {
             length+=1;
         }
-        high = 3*length;
+        high = 2*length;
 
         int num = (r.nextInt(high - low) + low);
         return (num+"");
@@ -86,6 +86,10 @@ public class Block extends StackPane{
         this.setValue();
         this.getChildren().set(1,text);
 
+    }
+
+    public Label getText() {
+        return this.text;
     }
 
 

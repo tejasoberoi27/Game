@@ -92,7 +92,7 @@ public class GameViewManager {
 	//	private ImageView[] blocks;
 //	private Block[] blocks;
 	private Block[] blocks;
-	private final double BLOCK_RADIUS = 30.0;
+	private final double BLOCK_RADIUS = 20;
 
 	//private StackPane[] blocksPane;
 
@@ -254,24 +254,28 @@ public class GameViewManager {
 
 		double wallGroupHeight = 0.0;
 
-		for (int i=0; i<randomPositionGenerator.nextInt(blockPositions.size()); i++) {
-			int index = randomPositionGenerator.nextInt(blockPositions.size());
-			if (i==0) {
-				Wall wall = new Wall(this);
-				wall.getRectangle().setLayoutX(blockPositions.get(index) + 30.0);
-				gamePane.getChildren().add(wall.getRectangle());
-				activeComponentsList.add(wall);
-				wallGroupHeight = wall.getRectangle().getHeight();
-			}
-			else {
-				Wall wall = new Wall(this);
-				wall.getRectangle().setHeight(wallGroupHeight);
-				wall.getRectangle().setLayoutX(blockPositions.get(index) + 30.0);
-				gamePane.getChildren().add(wall.getRectangle());
-				activeComponentsList.add(wall);
+		if (blockPositions.size() > 0) {
+			for (int i=0; i<randomPositionGenerator.nextInt(blockPositions.size()); i++) {
+				int index = randomPositionGenerator.nextInt(blockPositions.size());
+				if (i==0) {
+					Wall wall = new Wall(this);
+					wall.getRectangle().setLayoutX(blockPositions.get(index) + 30.0);
+					gamePane.getChildren().add(wall.getRectangle());
+					activeComponentsList.add(wall);
+					wallGroupHeight = wall.getRectangle().getHeight();
+				}
+				else {
+					Wall wall = new Wall(this);
+					wall.getRectangle().setHeight(wallGroupHeight);
+					wall.getRectangle().setLayoutX(blockPositions.get(index) + 30.0);
+					gamePane.getChildren().add(wall.getRectangle());
+					activeComponentsList.add(wall);
+				}
+
 			}
 
 		}
+
 
 
 
@@ -512,7 +516,7 @@ public class GameViewManager {
 			gamePane.getChildren().add(multiplier.getImage());
 			initializeToken(multiplier);
 			activeComponentsList.add(multiplier);
-		} else if (choice >= 60 && choice <= 80) {
+		} else if (choice >= 5 && choice <= 80) {
 			int i = randomPositionGenerator.nextInt(3);
 
 			for (int x = 0; x < i; x++) {
@@ -706,9 +710,18 @@ public class GameViewManager {
 
 
 			for (int i=0; i<blocks.length; i++) {
-				if (SNAKE_RADIUS + BLOCK_RADIUS > calculateDistance(((Circle) snake.get(snake.size() - 1)).getCenterX(), blocks[i].getLayoutX(), ((Circle) snake.get(snake.size() - 1)).getCenterY(), blocks[i].getLayoutY())) {
+				if (Math.sqrt(2) * BLOCK_RADIUS + SNAKE_RADIUS > calculateDistance(((Circle) snake.get(snake.size() - 1)).getCenterX(), blocks[i].getLayoutX(), ((Circle) snake.get(snake.size() - 1)).getCenterY(), blocks[i].getLayoutY()) && blocks[i].isVisible()) {
 					blocks[i].setVisible(false);
 					PlayBurst(blocks[i].getBoundsInParent());
+					int block_value = Integer.valueOf(blocks[i].getText().getText());
+
+					if (snake.size() > block_value && block_value <= 5) {
+						for (int j=0; j<block_value; j++) {
+							snake.remove(0);
+						}
+					}
+
+
 //					ImageView explosion = new ImageView("Application/explosion.gif");
 //					explosion.setFitHeight(25);
 //					explosion.setFitWidth(25);
@@ -969,8 +982,8 @@ public class GameViewManager {
             // TODO Auto-generated method stub
 
             for (int i = 0; i < 50; i++) {
-                int rand = (int) (Math.random() * 55);
-                rectangles[i] = new Rectangle(10, 10, Color.hsb(rand, 0.6805, 0.6627));
+                int rand = randomPositionGenerator.nextInt(blockColors.length);
+                rectangles[i] = new Rectangle(10, 10, blockColors[rand]);
                 angles.add(2 * Math.random() * Math.PI);
                 delays.add((long) (Math.random() * duration));
             }
