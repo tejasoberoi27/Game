@@ -32,14 +32,31 @@
             this.game = game;
             snakeBody = new Group();
             snake = snakeBody.getChildren();
-            Circle head = new Circle();
-            head.setCenterX(game.GAME_WIDTH/2);
-            head.setCenterY(game.GAME_HEIGHT - 90);
-            head.setRadius(10.0);
-            head.setFill(Color.RED);
-            snake.add(head);
+            Circle Head = new Circle();
+            Head.setCenterX(game.GAME_WIDTH/2);
+            Head.setCenterY(game.GAME_HEIGHT - 90);
+            Head.setRadius(10.0);
+            Head.setFill(Color.YELLOW);
+
+            snake.add(Head);
+
+            for (int i = 0; i <3; i++) {
+                Circle head = new Circle();
+                head.setFill(Color.YELLOW);
+                head.setCenterX(((Circle) snake.get(i)).getCenterX());
+                head.setCenterY(((Circle) snake.get(i)).getCenterY() - 15.0);
+                head.setRadius(10.0);
+                if (i == 2)
+                    head.setFill(Color.RED);
+                snake.add(head);
+
+            }
+
+
+
             this.setNextValue();
             this.AlignLabel();
+            Value.setText(Integer.toString(4));
 //            game.getGamePane().getChildren().add(Value);
 
         }
@@ -86,6 +103,7 @@
         {
             Circle head = ((Circle) snake.get(snake.size() - 1));
 //            this.setNextValue();
+
             this.changeText();
             Value.setLayoutX(head.getCenterX()-5);
             Value.setLayoutY(head.getCenterY()-Ball.getImage_height());

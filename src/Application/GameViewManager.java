@@ -747,6 +747,14 @@ public class GameViewManager {
 
 				}
 
+				else if (snake.size() <= block_value) {
+					gameTimer.stop();
+					KeyFrame kf = new KeyFrame(Duration.millis(25*snake.size()), new BlockBurstAnimationHandler(block_value, snake));
+					Timeline timeline = new Timeline(kf);
+					timeline.setCycleCount(1);
+					timeline.play();
+				}
+
 
 //					ImageView explosion = new ImageView("Application/explosion.gif");
 //					explosion.setFitHeight(25);
@@ -982,17 +990,38 @@ public class GameViewManager {
 
 				@Override
 				public void handle(long now) {
-					iteration++;
-					if (iteration < block_value) {
-						snake.remove(snake.size()-1);
-						((Circle) snake.get(snake.size()-1)).setFill(Color.RED);
+
+					if (block_value >= snake.size()) {
+						if (iteration < block_value && iteration < snake.size()) {
+							snake.remove(snake.size()-1);
+							((Circle) snake.get(snake.size()-1)).setFill(Color.RED);
+							iteration++;
+						}
+						else {
+							this.stop();
+							gameStage.close();
+							menuStage.show();
+
+						}
 					}
 					else {
-						this.stop();
-						gameTimer.start();
-						player.AlignLabel();
+						if (iteration < block_value) {
+							snake.remove(snake.size()-1);
+							if (snake.size() > 0) {
+								((Circle) snake.get(snake.size()-1)).setFill(Color.RED);
+								iteration++;
+							}
 
+						}
+						else {
+							this.stop();
+							gameTimer.start();
+							player.AlignLabel();
+
+						}
 					}
+
+
 
 
 
