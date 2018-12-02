@@ -729,6 +729,7 @@ public class GameViewManager {
 				if (snake.size() > block_value && block_value <= 5) {
 					for (int j = 0; j < block_value; j++) {
 						snake.remove(0);
+						player.AlignLabel();
 					}
 				}
 
