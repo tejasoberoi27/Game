@@ -33,7 +33,9 @@ import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.util.Duration;
 
+import javax.swing.*;
 import java.io.*;
+import java.util.Timer;
 
 import static java.lang.Math.abs;
 
@@ -724,6 +726,7 @@ public class GameViewManager {
 
 
 		for (int i = 0; i < blocks.length; i++) {
+
 			if (Math.sqrt(2) * BLOCK_RADIUS + SNAKE_RADIUS > calculateDistance(((Circle) snake.get(snake.size() - 1)).getCenterX(), blocks[i].getLayoutX(), ((Circle) snake.get(snake.size() - 1)).getCenterY(), blocks[i].getLayoutY()) && blocks[i].isVisible()) {
 				blocks[i].setVisible(false);
 				PlayBurst(blocks[i].getBoundsInParent());
@@ -731,9 +734,20 @@ public class GameViewManager {
 
 				if (snake.size() > block_value && block_value <= 5) {
 					for (int j = 0; j < block_value; j++) {
-						snake.remove(0);
+						snake.remove(snake.size()-1);
+						((Circle) snake.get(snake.size()-1)).setFill(Color.RED);
 						player.AlignLabel();
 					}
+				}
+
+				else if (snake.size() > block_value && block_value > 5) {
+					gameTimer.stop();
+					KeyFrame kf = new KeyFrame(Duration.millis(25*snake.size()), new BlockBurstAnimationHandler(block_value, snake));
+					Timeline timeline = new Timeline(kf);
+					timeline.setCycleCount(1);
+					timeline.play();
+
+
 				}
 
 
@@ -958,6 +972,42 @@ public class GameViewManager {
 //	private void checkCollision() {
 //
 //	}
+
+	private class BlockBurstAnimationHandler implements EventHandler<ActionEvent> {
+		private int block_value;
+		private ObservableList<Node> snake;
+		private int iteration;
+
+		public BlockBurstAnimationHandler(int block_value, ObservableList<Node> snake) {
+			this.block_value = block_value;
+			this.snake = snake;
+			iteration = 0;
+		}
+		@Override
+		public void handle(ActionEvent event) {
+			AnimationTimer burst = new AnimationTimer() {
+
+				@Override
+				public void handle(long now) {
+					iteration++;
+					if (iteration < block_value) {
+						snake.remove(snake.size()-1);
+						((Circle) snake.get(snake.size()-1)).setFill(Color.RED);
+					}
+					else {
+						this.stop();
+						gameTimer.start();
+						player.AlignLabel();
+
+					}
+
+
+
+				}
+			};
+			burst.start();
+		}
+	}
 
     public void PlayBurst(Bounds bounds) {
         double x = bounds.getMaxX() + bounds.getMinX();
