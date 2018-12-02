@@ -141,7 +141,6 @@
                 head.setRadius(10.0);
                 head.setFill(Color.YELLOW);
                 snake.add(head);
-
             }
         }
 
