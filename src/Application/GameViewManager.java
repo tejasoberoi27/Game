@@ -54,6 +54,7 @@ public class GameViewManager {
 
 	private boolean isWall_left;
 	private boolean isWall_right;
+	private boolean bursted;
 	private ArrayList<Wall> walls_Present = new ArrayList<Wall>() ;
 
 
@@ -129,6 +130,7 @@ public class GameViewManager {
 		initializeStage();
 		createKeyListeners();
 		roknaHai = false;
+		bursted = false;
 		randomPositionGenerator = new Random();
 		blockPositions = new ArrayList<>();
 		gameSpeedFactor = 1;
@@ -727,7 +729,19 @@ public class GameViewManager {
 
 		for (int i = 0; i < blocks.length; i++) {
 
-			if (Math.sqrt(2) * BLOCK_RADIUS + SNAKE_RADIUS > calculateDistance(((Circle) snake.get(snake.size() - 1)).getCenterX(), blocks[i].getLayoutX(), ((Circle) snake.get(snake.size() - 1)).getCenterY(), blocks[i].getLayoutY()) && blocks[i].isVisible()) {
+			if (Math.sqrt(2) * BLOCK_RADIUS + SNAKE_RADIUS > calculateDistance(((Circle) snake.get(snake.size() - 1)).getCenterX(), blocks[i].getLayoutX(), ((Circle) snake.get(snake.size() - 1)).getCenterY(), blocks[i].getLayoutY()) && blocks[i].isVisible() && !bursted) {
+				bursted = true;
+
+				Timer timer = new Timer();
+				TimerTask task1 = new TimerTask() {
+					@Override
+					public void run() {
+						/*								sSystem.out.println(Multiplier.isActive());*/
+						bursted = false;
+					}
+				};
+				timer.schedule(task1, 1000);
+
 				blocks[i].setVisible(false);
 				PlayBurst(blocks[i].getBoundsInParent());
 				int block_value = Integer.valueOf(blocks[i].getText().getText());
@@ -942,7 +956,7 @@ public class GameViewManager {
 							@Override
 							public void run() {
 /*								sSystem.out.println(Multiplier.isActive());*/
-//								Multiplier.setIsActiveFalse();
+								Multiplier.setIsActiveFalse();
 							}
 						};
 						Multiplier.setIsActiveTrue();
