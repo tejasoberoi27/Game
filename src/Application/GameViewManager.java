@@ -2,12 +2,17 @@ package Application;
 
 //import com.sun.org.apache.xpath.internal.operations.Mult;
 //import com.sun.org.apache.xpath.internal.operations.Mult;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -26,13 +31,17 @@ import javafx.animation.AnimationTimer;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
+import javafx.util.Duration;
+
 import java.io.*;
 
 public class GameViewManager {
 
 	private double[] discretePositions = {50.0, 100.0, 150.0, 200.0, 250.0, 300.0, 350.0, 400.0, 450.0, 500.0};
+	private ArrayList<Double> blockPositions;
 	private float gameSpeedFactor;
 	private boolean roknaHai;
+	private int wallFlag;
 	private double currentTime;
 	private AnchorPane gamePane;
 	private Scene gameScene;
@@ -82,6 +91,7 @@ public class GameViewManager {
 	//	private ImageView[] blocks;
 //	private Block[] blocks;
 	private Block[] blocks;
+	private final double BLOCK_RADIUS = 30.0;
 
 	//private StackPane[] blocksPane;
 
@@ -110,7 +120,9 @@ public class GameViewManager {
 		createKeyListeners();
 		roknaHai = false;
 		randomPositionGenerator = new Random();
+		blockPositions = new ArrayList<>();
 		gameSpeedFactor = 1;
+		wallFlag = 0;
 		currentTime = System.currentTimeMillis();
 		activeComponentsList = new ArrayList<Component>();
 	}
@@ -215,10 +227,13 @@ public class GameViewManager {
 					blocks[i].updateValue();
 					blocks[i].setLayoutX(x_coordinates[i]);
 					blocks[i].setLayoutY(y_coordinate);
+					blockPositions.add((double) x_coordinates[i]);
 					x++;
 					occupiedCoordinates[i] = true;
 				}
 			}
+
+			wallFlag = 0;
 
 		}
 
@@ -234,6 +249,32 @@ public class GameViewManager {
 
 	}
 
+	private void createWalls() {
+
+		double wallGroupHeight = 0.0;
+
+		for (int i=0; i<randomPositionGenerator.nextInt(blockPositions.size()); i++) {
+			int index = randomPositionGenerator.nextInt(blockPositions.size());
+			if (i==0) {
+				Wall wall = new Wall(this);
+				wall.getRectangle().setLayoutX(blockPositions.get(index) + 30.0);
+				gamePane.getChildren().add(wall.getRectangle());
+				activeComponentsList.add(wall);
+				wallGroupHeight = wall.getRectangle().getHeight();
+			}
+			else {
+				Wall wall = new Wall(this);
+				wall.getRectangle().setHeight(wallGroupHeight);
+				wall.getRectangle().setLayoutX(blockPositions.get(index) + 30.0);
+				gamePane.getChildren().add(wall.getRectangle());
+				activeComponentsList.add(wall);
+			}
+
+		}
+
+
+
+	}
 
 	private void createGameElements() {
 
@@ -350,22 +391,22 @@ public class GameViewManager {
 
 	private void elementBelowScreen() {
 
+		boolean allBlocksBelowScreen = true;
+		int repBlock = 0;
 
 		//System.out.println("below screen size" + activeComponentsList.size());
 
-		for (int i = 0; i < activeComponentsList.size(); i++) {
+		for (int i = 0; i < activeComponentsList.size() ; i++) {
 			Component current = activeComponentsList.get(i);
-//			System.out.println(current.getClass());
 //			if (activeComponentsList.get(i).getY() > GAME_HEIGHT) {
 //				if(activeComponentsList.get(i).getClass()!=wall.getClass())
 ////				activeComponentsList.remove(i);
 //				activeComponentsList.remove(i);
 //
 //			}
-			if (current.getY() > GAME_HEIGHT && current != null && wall != null) {
-				if (current.getClass() != wall.getClass())
+			if (current.getY() > GAME_HEIGHT) {
 //				activeComponentsList.remove(i);
-					if(current.getClass()==Coin.class||current.getClass()==Coin.class )
+					if(current.getClass()==Coin.class||current.getClass()==Ball.class )
 						gamePane.getChildren().remove(((Token) current).getValue());
 					activeComponentsList.remove(current);
 
@@ -373,29 +414,67 @@ public class GameViewManager {
 			}
 		}
 
-		if (blocks[0].getLayoutY() > GAME_HEIGHT) {
-			create();
+		for (int i=0; i<blocks.length; i++) {
+			if (blocks[i].getLayoutY() < GAME_HEIGHT) {
+				allBlocksBelowScreen = false;
+				repBlock = i;
+				break;
+			}
+
+			else {
+				if (!blocks[i].isVisible()) {
+					blocks[i].setVisible(true);
+				}
+				for (int j=0; j<blockPositions.size(); j++) {
+					if (blocks[i].getLayoutX() == blockPositions.get(j)) {
+						blockPositions.remove(j);
+					}
+				}
+			}
+
 		}
 
-		if (blocks[0].getLayoutY() > GAME_HEIGHT - 50) {
+		if (allBlocksBelowScreen) {
+			create();
+
+			if (wallFlag == 0) {
+				createWalls();
+				wallFlag = 1;
+			}
+
+		}
+
+		else if (blocks[repBlock].getLayoutY() > GAME_HEIGHT - 50) {
 			roknaHai = true;
 			timeElapsedSinceBlock = System.currentTimeMillis();
 		}
 
-		double time = System.currentTimeMillis() - currentTime;
-		time = time / 1000;
+//		if (blocks[0].getLayoutY() > GAME_HEIGHT) {
+//			create();
+//			createWalls();
+//		}
 
-		if (second != (int) time && !roknaHai) {
+//		if (blocks[0].getLayoutY() > GAME_HEIGHT - 50) {
+//			roknaHai = true;
+//			timeElapsedSinceBlock = System.currentTimeMillis();
+//		}
+
+		double time = System.currentTimeMillis() - currentTime;
+		time = time/1000;
+
+		if (second != (int)time && !roknaHai) {
 			generateToken();
-			second = (int) time;
-		} else if (roknaHai) {
-			if (System.currentTimeMillis() - timeElapsedSinceBlock > 250) {
+			second = (int)time;
+		}
+		else if (roknaHai) {
+			if (System.currentTimeMillis() - timeElapsedSinceBlock > 350) {
 				roknaHai = false;
 			}
 		}
 
 //
 	}
+
 
 
 	public void generateToken() {
@@ -602,8 +681,8 @@ public class GameViewManager {
 	}
 
 	private void moveBackground() {
-		gridPane1.setLayoutY(gridPane1.getLayoutY() + gameSpeedFactor * 5);
-		gridPane2.setLayoutY(gridPane2.getLayoutY() + gameSpeedFactor * 5);
+		gridPane1.setLayoutY(gridPane1.getLayoutY() + gameSpeedFactor * 0.5);
+		gridPane2.setLayoutY(gridPane2.getLayoutY() + gameSpeedFactor * 0.5);
 
 		if (gridPane1.getLayoutY() >= 1024) {
 			gridPane1.setLayoutY(-1024);
@@ -619,6 +698,25 @@ public class GameViewManager {
 ////		SpeedUp speedupToken = new SpeedUp(5,"SPEEDUP", speedup);
 //	//	System.out.println(calculateDistance(((Circle) snake.get(snake.size()-1)).getCenterY(),coin.getLayoutX(),((Circle) snake.get(snake.size()-1)).getCenterY(),coin.getLayoutY()));
 		int SNAKE_RADIUS = player.getSnakeRadius();
+		ObservableList<Node> snake = player.getSnake();
+	//	icon = ((Token) element).getImage();
+
+	//	if (SNAKE_RADIUS + radius > calculateDistance(((Circle) snake.get(snake.size() - 1)).getCenterX(), icon.getLayoutX(), ((Circle) snake.get(snake.size() - 1)).getCenterY(), icon.getLayoutY())) {
+
+
+			for (int i=0; i<blocks.length; i++) {
+				if (SNAKE_RADIUS + BLOCK_RADIUS > calculateDistance(((Circle) snake.get(snake.size() - 1)).getCenterX(), blocks[i].getLayoutX(), ((Circle) snake.get(snake.size() - 1)).getCenterY(), blocks[i].getLayoutY())) {
+					blocks[i].setVisible(false);
+					PlayBurst(blocks[i].getBoundsInParent());
+//					ImageView explosion = new ImageView("Application/explosion.gif");
+//					explosion.setFitHeight(25);
+//					explosion.setFitWidth(25);
+//					explosion.setLayoutY(blocks[i].getLayoutY());
+//					explosion.setLayoutX(blocks[i].getLayoutX());
+//					gamePane.getChildren().add(explosion);
+//					gamePane.getChildren().remove(explosion);
+				}
+		}
 
 //		 ObservableList<Node> snake = player.getSnake();
 //		 ImageView coin = coin.getImage();
@@ -683,7 +781,7 @@ public class GameViewManager {
 			int radius = element.getRadius();
 
 			ImageView icon;
-			ObservableList<Node> snake = player.getSnake();
+			//ObservableList<Node> snake = player.getSnake();
 			if (element instanceof Token) {
 
 				icon = ((Token) element).getImage();
@@ -769,7 +867,7 @@ public class GameViewManager {
 //						}
 						textToSet = textToSet + (Integer.toString(coins));
 						coinLabel.setText(textToSet);
-//						System.out.println(textToSet);
+						System.out.println(textToSet);
 					}
 
 					if (element instanceof Magnet)
@@ -832,6 +930,79 @@ public class GameViewManager {
 //	private void checkCollision() {
 //
 //	}
+
+    public void PlayBurst(Bounds bounds) {
+        double x = bounds.getMaxX() + bounds.getMinX();
+        x /= 2;
+        double y = bounds.getMaxY() + bounds.getMinY();
+        y /= 2;
+        BurstAnimation(x, y);
+    }
+
+    public void BurstAnimation(double x, double y) {
+        KeyFrame kf = new KeyFrame(Duration.millis(2), new BurstAnimationHandler(x, y));
+        Timeline timeline = new Timeline(kf);
+        timeline.setCycleCount(1);
+        timeline.play();
+    }
+
+    private class BurstAnimationHandler implements EventHandler<ActionEvent> {
+
+        final double x;
+        final double y;
+        final long duration = java.time.Duration.ofSeconds(1).toNanos();
+        final int side = 60;
+        final double radius = Math.sqrt(2) * side;
+        final Rectangle[] rectangles = new Rectangle[50];
+        final ArrayList<Long> delays = new ArrayList<>();
+        final ArrayList<Double> angles = new ArrayList<Double>();
+
+        public BurstAnimationHandler(double x, double y) {
+            // TODO Auto-generated constructor stub
+            this.x = x;
+            this.y = y;
+        }
+
+        @Override
+        public void handle(ActionEvent event) {
+            // TODO Auto-generated method stub
+
+            for (int i = 0; i < 50; i++) {
+                int rand = (int) (Math.random() * 55);
+                rectangles[i] = new Rectangle(10, 10, Color.hsb(rand, 0.6805, 0.6627));
+                angles.add(2 * Math.random() * Math.PI);
+                delays.add((long) (Math.random() * duration));
+            }
+            gamePane.getChildren().addAll(rectangles);
+
+            AnimationTimer Burst = new AnimationTimer() {
+                int k = 0;
+
+                @Override
+                public void handle(long now) {
+                    // TODO Auto-generated method stub
+                    k++;
+                    // System.out.println(k);
+                    if (k < 10) {
+                        for (int i = 0; i < 50; i++) {
+                            Rectangle rect = rectangles[i];
+                            long time = (now - delays.get(i)) % duration;
+                            double d = time * radius / duration;
+                            rect.setTranslateX(Math.cos(angles.get(i)) * d + x);
+                            rect.setTranslateY(Math.sin(angles.get(i)) * d + y);
+                            rect.setOpacity((duration - time) / (double) duration);
+
+                        }
+                    } else {
+                        this.stop();
+                        gamePane.getChildren().removeAll(rectangles);
+                    }
+
+                }
+            };
+            Burst.start();
+        }
+    }
 
 		double calculateDistance ( double x1, double x2, double y1, double y2){
 			return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));

@@ -7,36 +7,38 @@ import java.util.Random;
 
 public class Wall extends Component{
     private Rectangle wall;
+    private double[] discretePositions = {30.0,90.0,150.0,210.0,270.0,330.0,390.0,450.0,510.0,570.0};
 
     public Wall(GameViewManager game) {
         super(0, "WALL",game,20);
         this.wall = new Rectangle();
-        wall.setWidth(15);
+        wall.setWidth(8);
         wall.setFill(Color.WHITE);
         setNewWallPosition(wall);
         setNewWallDimension(wall);
     }
 
-    public void newWall()
-    {
-        wall.setWidth(15);
-        wall.setFill(Color.WHITE);
-
-        setNewWallPosition(wall);
-        setNewWallDimension(wall);
-    }
+//    public void newWall()
+//    {
+//        wall.setWidth(15);
+//        wall.setFill(Color.WHITE);
+//
+//        setNewWallPosition(wall);
+//        setNewWallDimension(wall);
+//    }
 
     private void setNewWallPosition(Rectangle image) {
-        image.setLayoutX(game.getRandomPositionGenerator().nextInt(game.GAME_WIDTH));
-        image.setLayoutY(10);
+        int index = game.getRandomPositionGenerator().nextInt(discretePositions.length);
+        image.setLayoutX(discretePositions[index]);
+        image.setLayoutY(80);
 //		image.setLayoutY(randomPositionGenerator.nextInt(100));
     }
 
     private void setNewWallDimension(Rectangle image) {
 
         Random r = new Random();
-        int low = 20;
-        int high = game.GAME_HEIGHT/2;
+        int low = 30;
+        int high = game.GAME_HEIGHT/3;
         wall.setHeight(r.nextInt(high - low) + low);
     }
 
