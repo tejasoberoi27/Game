@@ -9,8 +9,8 @@ public class BlockDestroyer extends Token{
     public BlockDestroyer(int value,GameViewManager game) {
         super(value, "BlockDestroyer", new ImageView(BLOCK_DESTROYER_IMAGE),game);
         ImageView block_destroyer = this.getImage();
-        block_destroyer.setFitHeight(25);
-        block_destroyer.setFitWidth(25);
+        block_destroyer.setFitHeight(40);
+        block_destroyer.setFitWidth(40);
     }
 
     @Override

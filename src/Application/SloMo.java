@@ -7,8 +7,8 @@ public class SloMo extends Token {
     public SloMo(int value,GameViewManager game) {
         super(value, "SloMo", new ImageView(SLOMO_IMAGE),game);
         ImageView slomo = this.image;
-        slomo.setFitHeight(25);
-        slomo.setFitWidth(25);
+        slomo.setFitHeight(40);
+        slomo.setFitWidth(40);
     }
 
     @Override

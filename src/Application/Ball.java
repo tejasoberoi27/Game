@@ -7,8 +7,8 @@ public class Ball extends Token{
     public Ball(int value,GameViewManager game) {
         super(value, "Ball", new ImageView(BALL_IMAGE),game);
         ImageView ball = this.image;
-        ball.setFitHeight(25);
-        ball.setFitWidth(25);
+        ball.setFitHeight(40);
+        ball.setFitWidth(40);
 //        game.getGamePane().getChildren().add(getValue());
     }
 

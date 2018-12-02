@@ -8,8 +8,8 @@ public class SpeedUp extends Token {
     public SpeedUp(int value, GameViewManager game) {
         super(value, "SpeedUp", new ImageView(SPEEDUP_IMAGE),game);
         ImageView speedup = this.image;
-        speedup.setFitHeight(25);
-        speedup.setFitWidth(25);
+        speedup.setFitHeight(40);
+        speedup.setFitWidth(40);
 //        this.image = speedup;
     }
 

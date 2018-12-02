@@ -8,8 +8,8 @@ public class Multiplier extends Token{
     public Multiplier(int value, GameViewManager game) {
         super(value, "Multiplier", new ImageView(MULTIPLIER_IMAGE),game);
         ImageView multiplier = this.image;
-        multiplier.setFitHeight(25);
-        multiplier.setFitWidth(25);
+        multiplier.setFitHeight(40);
+        multiplier.setFitWidth(40);
     }
 
     @Override

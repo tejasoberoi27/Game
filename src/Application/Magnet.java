@@ -11,8 +11,8 @@ public class Magnet extends Token{
         {
             isActive = true;
         }
-        magnet.setFitHeight(25);
-        magnet.setFitWidth(25);
+        magnet.setFitHeight(40);
+        magnet.setFitWidth(40);
     }
 
     @Override

@@ -10,8 +10,8 @@ public class Coin extends Token{
         ImageView coin = this.image;
 //        coin.setFitHeight(25);
 //        coin.setFitWidth(25);
-        coin.setFitHeight(25);
-        coin.setFitWidth(25);
+        coin.setFitHeight(40);
+        coin.setFitWidth(40);
 //        game.getGamePane().getChildren().add(getValue());
     }
 

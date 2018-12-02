@@ -38,6 +38,7 @@ import java.io.*;
 public class GameViewManager {
 
 	private double[] discretePositions = {50.0, 100.0, 150.0, 200.0, 250.0, 300.0, 350.0, 400.0, 450.0, 500.0};
+	private Color[] blockColors = {Color.RED, Color.ORANGERED, Color.YELLOW, Color.ORANGE, Color.DARKORANGE};
 	private ArrayList<Double> blockPositions;
 	private float gameSpeedFactor;
 	private boolean roknaHai;
@@ -444,7 +445,7 @@ public class GameViewManager {
 
 		}
 
-		else if (blocks[repBlock].getLayoutY() > GAME_HEIGHT - 50) {
+		else if (blocks[repBlock].getLayoutY() > GAME_HEIGHT - 20) {
 			roknaHai = true;
 			timeElapsedSinceBlock = System.currentTimeMillis();
 		}
@@ -467,7 +468,7 @@ public class GameViewManager {
 			second = (int)time;
 		}
 		else if (roknaHai) {
-			if (System.currentTimeMillis() - timeElapsedSinceBlock > 350) {
+			if (System.currentTimeMillis() - timeElapsedSinceBlock > 450) {
 				roknaHai = false;
 			}
 		}

@@ -11,8 +11,8 @@ public class Shield extends Token {
 //        {
 //            System.out.println("why?");
 //        }
-        shield.setFitHeight(25);
-        shield.setFitWidth(25);
+        shield.setFitHeight(40);
+        shield.setFitWidth(40);
     }
 
     @Override
