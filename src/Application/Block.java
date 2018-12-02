@@ -57,9 +57,18 @@ public class Block extends StackPane{
         {
             length+=1;
         }
-        high = 2*length;
+        high = (int)(1.5*length);
 
-        int num = (r.nextInt(high - low) + low);
+        int x = (high - low) + low + 1;
+        if(x-1>0)
+        {
+            x-=1;
+        }
+
+        int num = (r.nextInt(x));
+        if(num==0)
+            num=1;
+
         return (num+"");
     }
 

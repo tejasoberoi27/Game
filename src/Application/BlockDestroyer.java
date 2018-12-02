@@ -31,4 +31,6 @@ public class BlockDestroyer extends Token{
     public static boolean isActive() {
         return isActive;
     }
+
+
 }

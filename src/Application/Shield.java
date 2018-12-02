@@ -4,6 +4,7 @@ import javafx.scene.image.ImageView;
 
 public class Shield extends Token {
     private final static String SHIELD_IMAGE 	= "Application/icons8-shield-48.png";
+
     public Shield(int value, GameViewManager game) {
         super(value, "Shield", new ImageView(SHIELD_IMAGE) ,game);
         ImageView shield = this.image;
@@ -33,5 +34,7 @@ public class Shield extends Token {
     public static boolean isActive() {
         return isActive;
     }
+
+
 
 }

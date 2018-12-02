@@ -102,7 +102,7 @@ public class GameViewManager {
 	//	private ImageView[] blocks;
 //	private Block[] blocks;
 	private Block[] blocks;
-	private final double BLOCK_RADIUS = 20;
+	private final double BLOCK_RADIUS = 30;
 
 	//private StackPane[] blocksPane;
 
@@ -435,9 +435,9 @@ public class GameViewManager {
 
 	public void generateToken() {
 //		System.out.println("TOKEN CREATED");
-		int choice = randomPositionGenerator.nextInt(100);
+		int choice = randomPositionGenerator.nextInt(300);
 
-		if (choice == 0) {
+		if (choice > 100 && choice < 150) {
 			Shield shield = new Shield(5, this);
 			gamePane.getChildren().add(shield.getImage());
 			initializeToken(shield);
@@ -457,7 +457,7 @@ public class GameViewManager {
 			gamePane.getChildren().add(magnet.getImage());
 			initializeToken(magnet);
 			activeComponentsList.add(magnet);
-		} else if (choice == 4) {
+		} else if (choice >= 150 && choice <=300) {
 			BlockDestroyer blockDestroyer = new BlockDestroyer(5, this);
 			gamePane.getChildren().add(blockDestroyer.getImage());
 			initializeToken(blockDestroyer);
@@ -729,7 +729,14 @@ public class GameViewManager {
 
 		for (int i = 0; i < blocks.length; i++) {
 
-			if (Math.sqrt(2) * BLOCK_RADIUS + SNAKE_RADIUS > calculateDistance(((Circle) snake.get(snake.size() - 1)).getCenterX(), blocks[i].getLayoutX(), ((Circle) snake.get(snake.size() - 1)).getCenterY(), blocks[i].getLayoutY()) && blocks[i].isVisible() && !bursted) {
+//			System.out.println(Shield.isActive());
+
+			if(blocks[i].isVisible())
+			{
+
+			}
+
+			if (BLOCK_RADIUS + SNAKE_RADIUS > calculateDistance(((Circle) snake.get(snake.size() - 1)).getCenterX(), blocks[i].getLayoutX(), ((Circle) snake.get(snake.size() - 1)).getCenterY(), blocks[i].getLayoutY()) && blocks[i].isVisible() && !bursted) {
 				bursted = true;
 
 				Timer timer = new Timer();
@@ -748,13 +755,16 @@ public class GameViewManager {
 
 				if (snake.size() > block_value && block_value <= 5) {
 					for (int j = 0; j < block_value; j++) {
-						snake.remove(snake.size()-1);
-						((Circle) snake.get(snake.size()-1)).setFill(Color.RED);
-						player.AlignLabel();
+						if (!Shield.isActive()) {
+							snake.remove(snake.size()-1);
+							((Circle) snake.get(snake.size()-1)).setFill(Color.RED);
+							player.AlignLabel();
+						}
+
 					}
 				}
 
-				else if (snake.size() > block_value && block_value > 5) {
+				else if (snake.size() > block_value && block_value > 5 && !Shield.isActive()) {
 					gameTimer.stop();
 					KeyFrame kf = new KeyFrame(Duration.millis(25*snake.size()), new BlockBurstAnimationHandler(block_value, snake));
 					Timeline timeline = new Timeline(kf);
@@ -764,7 +774,7 @@ public class GameViewManager {
 
 				}
 
-				else if (snake.size() <= block_value) {
+				else if (snake.size() <= block_value && !Shield.isActive()) {
 					gameTimer.stop();
 					KeyFrame kf = new KeyFrame(Duration.millis(25*snake.size()), new BlockBurstAnimationHandler(block_value, snake));
 					Timeline timeline = new Timeline(kf);
@@ -963,6 +973,30 @@ public class GameViewManager {
 						timer.schedule(task1, element.getValueInt() * 1000);
 					}
 
+					if(element instanceof Shield)
+					{
+						Timer timer = new Timer();
+						TimerTask task1 = new TimerTask() {
+							@Override
+							public void run() {
+								/*								sSystem.out.println(Multiplier.isActive());*/
+								Shield.setIsActiveFalse();
+							}
+						};
+						Shield.setIsActiveTrue();
+						timer.schedule(task1, element.getValueInt() * 1000);
+					}
+
+					if (element instanceof BlockDestroyer)
+					{
+						for (int i=0; i<blocks.length; i++) {
+							if (blocks[i].isVisible()) {
+								PlayBurst(blocks[i].getBoundsInParent());
+								blocks[i].setVisible(false);
+								activeComponentsList.remove(blocks[i]);
+							}
+						}
+					}
 
 
 				}
@@ -1007,37 +1041,51 @@ public class GameViewManager {
 		}
 		@Override
 		public void handle(ActionEvent event) {
-			AnimationTimer burst = new AnimationTimer() {
+			AnimationTimer burst =
+					new AnimationTimer() {
 
 				@Override
 				public void handle(long now) {
 
+					System.out.println("shield"+Shield.isActive());
 					if (block_value >= snake.size()) {
 						if (iteration < block_value && iteration < snake.size()) {
-							snake.remove(snake.size()-1);
-							((Circle) snake.get(snake.size()-1)).setFill(Color.RED);
-							iteration++;
+
+								System.out.println("Inside");
+								snake.remove(snake.size() - 1);
+								((Circle) snake.get(snake.size() - 1)).setFill(Color.RED);
+
+								iteration++;
+
 						}
 						else {
-							this.stop();
-							gameStage.close();
-							menuStage.show();
+
+								this.stop();
+								gameStage.close();
+								menuStage.show();
+
 
 						}
 					}
 					else {
 						if (iteration < block_value) {
-							snake.remove(snake.size()-1);
-							if (snake.size() > 0) {
-								((Circle) snake.get(snake.size()-1)).setFill(Color.RED);
-								iteration++;
-							}
+
+								System.out.println("Inside");
+								snake.remove(snake.size() - 1);
+								if (snake.size() > 0) {
+									((Circle) snake.get(snake.size() - 1)).setFill(Color.RED);
+								}
+									iteration++;
+
+
 
 						}
 						else {
-							this.stop();
-							gameTimer.start();
-							player.AlignLabel();
+
+								this.stop();
+								gameTimer.start();
+								player.AlignLabel();
+
 
 						}
 					}
@@ -1124,6 +1172,8 @@ public class GameViewManager {
             Burst.start();
         }
     }
+
+
 
 		double calculateDistance ( double x1, double x2, double y1, double y2){
 			return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
